@@ -36,6 +36,7 @@ contract TandaBill {
         uint256 totalAmount; // total distributed
         uint256[] payouts;   // per-seat payout amounts
         uint64  settledAt;   // unix timestamp
+        uint64  initiatedAt; // unix timestamp when settlement was initiated (W5: window anchor)
     }
 
     // ─── State ────────────────────────────────────────────────────────────
@@ -168,7 +169,10 @@ contract TandaBill {
         }
 
         uint256 settlementId = settlements.length;
-        settlements.push(Settlement({totalAmount: unsettled, payouts: payouts, settledAt: 0}));
+        // W5: record initiation timestamp for window enforcement.
+        // casting to 'uint64' is safe because block.timestamp < 2^64 until year 584 billion
+        // forge-lint: disable-next-line(unsafe-typecast)
+        settlements.push(Settlement({totalAmount: unsettled, payouts: payouts, settledAt: 0, initiatedAt: uint64(block.timestamp)}));
         escrowBalance -= unsettled;
         settlementInitiated = true; // Gap-2 ruling (Option 1): freeze seat roster
 
@@ -197,8 +201,11 @@ contract TandaBill {
         if (settlementId >= settlements.length) revert SettlementNotReady();
         Settlement storage s = settlements[settlementId];
         require(s.settledAt == 0, AlreadySettled());
-
-        // W1 scaffold: release immediately. W2: enforce SETTLEMENT_WINDOW delay.
+        // W5: enforce SETTLEMENT_WINDOW delay. Funds are held for the window
+        // duration after initiation. The window is inclusive: execution is
+        // allowed at exactly initiatedAt + SETTLEMENT_WINDOW.
+        // forge-lint: disable-next-line(block-timestamp)
+        require(block.timestamp >= uint256(s.initiatedAt) + SETTLEMENT_WINDOW, SettlementNotReady());
         uint256 idx = 0;
         for (uint256 i = 0; i < seats.length; i++) {
             if (seats[i].active) {

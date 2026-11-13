@@ -119,6 +119,8 @@ contract TandaBillTest is Test {
 
         vm.prank(owner);
         bill.initiateSettlement();
+        // W5: warp past the settlement window before executing.
+        vm.warp(block.timestamp + 1 hours);
         vm.prank(owner);
         bill.executeSettlement(0);
 
@@ -141,6 +143,8 @@ contract TandaBillTest is Test {
 
         vm.prank(owner);
         bill.initiateSettlement();
+        // W5: warp past the settlement window.
+        vm.warp(block.timestamp + 1 hours);
         vm.prank(owner);
         bill.executeSettlement(0);
 
@@ -203,6 +207,8 @@ contract TandaBillTest is Test {
         token.approve(address(bill), 60e6);
         bill.fundEscrow(60e6);
         bill.initiateSettlement();
+        // W5: warp past the settlement window.
+        vm.warp(block.timestamp + 1 hours);
         bill.executeSettlement(0); // first: succeeds
         vm.stopPrank();
 
@@ -242,6 +248,8 @@ contract TandaBillTest is Test {
 
         // Roster is frozen: bob is still active, so settlement pays both seats.
         vm.prank(owner);
+        // W5: warp past the settlement window.
+        vm.warp(block.timestamp + 1 hours);
         bill.executeSettlement(0);
         assertEq(token.balanceOf(alice), 1_000_000e6 + 50e6);
         assertEq(token.balanceOf(bob),   1_000_000e6 + 50e6); // NOT stranded — guard held
@@ -295,6 +303,8 @@ contract TandaBillTest is Test {
         token.approve(address(bill), 100e6);
         bill.fundEscrow(100e6);
         bill.initiateSettlement();
+        // W5: warp past the settlement window.
+        vm.warp(block.timestamp + 1 hours);
         bill.executeSettlement(0);
         vm.stopPrank();
 
@@ -303,6 +313,133 @@ contract TandaBillTest is Test {
         assertEq(token.balanceOf(carol), 1_000_000e6 + 25e6);
         assertEq(token.balanceOf(dave),  1_000_000e6 + 25e6);
         assertEq(bill.escrowBalance(), 0);
+    }
+
+    // ─── W5: SETTLEMENT_WINDOW enforcement ───────────────────────────────
+
+    /// W5-1: executeSettlement must revert if called before the settlement
+    /// window has elapsed. The window is anchored to initiatedAt (the block
+    /// timestamp at which initiateSettlement was called). This test warps
+    /// time to just before the window closes and expects a revert with
+    /// SettlementNotReady().
+    function test_W5_executeSettlement_revertsBeforeWindow() public {
+        vm.startPrank(owner);
+        bill.addSeat(alice);
+        bill.addSeat(bob);
+        bill.addExpense(100e6);
+        token.approve(address(bill), 100e6);
+        bill.fundEscrow(100e6);
+
+        uint256 tInit = block.timestamp;
+        bill.initiateSettlement();
+
+        // Warp to just before the window closes (1 hour - 1 second).
+        vm.warp(tInit + 1 hours - 1);
+        vm.expectRevert(TandaBill.SettlementNotReady.selector);
+        bill.executeSettlement(0);
+        vm.stopPrank();
+
+        // No funds should have moved.
+        assertEq(token.balanceOf(alice), 1_000_000e6);
+        assertEq(token.balanceOf(bob),   1_000_000e6);
+        assertEq(token.balanceOf(address(bill)), 100e6);
+    }
+
+    /// W5-2: executeSettlement succeeds exactly at the window boundary
+    /// (block.timestamp == initiatedAt + SETTLEMENT_WINDOW). This pins the
+    /// boundary condition: the window is inclusive, not exclusive.
+    function test_W5_executeSettlement_succeedsAtWindowBoundary() public {
+        vm.startPrank(owner);
+        bill.addSeat(alice);
+        bill.addSeat(bob);
+        bill.addExpense(100e6);
+        token.approve(address(bill), 100e6);
+        bill.fundEscrow(100e6);
+
+        uint256 tInit = block.timestamp;
+        bill.initiateSettlement();
+
+        // Warp to exactly the window boundary.
+        vm.warp(tInit + 1 hours);
+        bill.executeSettlement(0);
+        vm.stopPrank();
+
+        assertEq(token.balanceOf(alice), 1_000_000e6 + 50e6);
+        assertEq(token.balanceOf(bob),   1_000_000e6 + 50e6);
+        assertEq(bill.escrowBalance(), 0);
+    }
+
+    /// W5-3: executeSettlement succeeds after the window has fully elapsed.
+    /// Warps well past the boundary to confirm the happy path is intact.
+    function test_W5_executeSettlement_succeedsAfterWindow() public {
+        vm.startPrank(owner);
+        bill.addSeat(alice);
+        bill.addSeat(bob);
+        bill.addExpense(100e6);
+        token.approve(address(bill), 100e6);
+        bill.fundEscrow(100e6);
+
+        uint256 tInit = block.timestamp;
+        bill.initiateSettlement();
+
+        // Warp well past the window (2 hours).
+        vm.warp(tInit + 2 hours);
+        bill.executeSettlement(0);
+        vm.stopPrank();
+
+        assertEq(token.balanceOf(alice), 1_000_000e6 + 50e6);
+        assertEq(token.balanceOf(bob),   1_000_000e6 + 50e6);
+        assertEq(bill.escrowBalance(), 0);
+    }
+
+    /// W5-4: The window is anchored to initiatedAt, not to the current block
+    /// timestamp at call time. This test warps time BEFORE initiation, then
+    /// initiates, then checks that the window is measured from the initiation
+    /// timestamp (not the pre-warped time).
+    function test_W5_windowAnchoredToInitiatedAt() public {
+        vm.startPrank(owner);
+        bill.addSeat(alice);
+        bill.addSeat(bob);
+        bill.addExpense(100e6);
+        token.approve(address(bill), 100e6);
+        bill.fundEscrow(100e6);
+
+        // Warp to a future time BEFORE initiation.
+        uint256 tFuture = vm.getBlockTimestamp() + 1 days;
+        vm.warp(tFuture);
+        bill.initiateSettlement();
+        // initiatedAt should be tFuture, not the original timestamp.
+
+        // Now warp to tFuture + 30 minutes (halfway through the window).
+        vm.warp(tFuture + 30 minutes);
+        vm.expectRevert(TandaBill.SettlementNotReady.selector);
+        bill.executeSettlement(0);
+        vm.stopPrank();
+
+        // Warp to tFuture + 1 hour (window boundary) → should succeed.
+        vm.prank(owner);
+        vm.warp(tFuture + 1 hours);
+        bill.executeSettlement(0);
+        assertEq(token.balanceOf(alice), 1_000_000e6 + 50e6);
+        assertEq(token.balanceOf(bob),   1_000_000e6 + 50e6);
+    }
+
+    /// W5-5: Existing tests that call executeSettlement immediately after
+    /// initiateSettlement (without warping) will now fail because the window
+    /// hasn't elapsed. This test documents that the existing test suite
+    /// requires vm.warp adjustments. We verify the revert fires.
+    function test_W5_immediateExecuteReverts() public {
+        vm.startPrank(owner);
+        bill.addSeat(alice);
+        bill.addSeat(bob);
+        bill.addExpense(100e6);
+        token.approve(address(bill), 100e6);
+        bill.fundEscrow(100e6);
+        bill.initiateSettlement();
+        // No warp — execute immediately → must revert.
+        vm.expectRevert(TandaBill.SettlementNotReady.selector);
+        bill.executeSettlement(0);
+        vm.stopPrank();
     }
 
     // ─── W3: Settlement execution hardening ──────────────────────────────
@@ -322,6 +459,8 @@ contract TandaBillTest is Test {
         token.approve(address(bill), 100e6);
         bill.fundEscrow(100e6);
         bill.initiateSettlement();
+        // W5: warp past the settlement window.
+        vm.warp(block.timestamp + 1 hours);
         bill.executeSettlement(0); // first: succeeds, pays 50/50
         vm.stopPrank();
 
@@ -411,14 +550,17 @@ contract TandaBillTest is Test {
         bill.initiateSettlement();
 
         // 6. executeSettlement(0) → SettlementExecuted(0, 100e6, ts)
+        // W5: warp past the settlement window.
+        uint256 tExec = vm.getBlockTimestamp() + 1 hours;
+        vm.warp(tExec);
         vm.expectEmit(true, false, false, true);
-        emit TandaBill.SettlementExecuted(0, 100e6, uint64(block.timestamp));
+        emit TandaBill.SettlementExecuted(0, 100e6, uint64(tExec));
         bill.executeSettlement(0);
 
         vm.stopPrank();
 
         // Post-conditions: settlement recorded, escrow drained.
-        (uint256 totalAmount, uint64 settledAt) = bill.settlements(0);
+        (uint256 totalAmount, , uint64 settledAt) = bill.settlements(0);
         assertEq(totalAmount, 100e6);
         assertTrue(settledAt > 0);
         assertEq(bill.escrowBalance(), 0);
