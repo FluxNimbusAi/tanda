@@ -14,7 +14,10 @@ import {TandaBill, IERC20} from "../contracts/TandaBill.sol";
 ///   World Chain mainnet RPC: https://worldchain-mainnet.public.blastapi.io
 ///   World Chain Sepolia testnet: https://worldchain-sepolia.public.blastapi.io
 ///
-///   USDC on World Chain: 0x090E3513A98C7E5A67402872215208FA80aFa7c7 (verify before deploy)
+///   USDC on World Chain — Circle native (source: Circle docs + worldscan, verified 2026-11-13):
+///     mainnet (chain 480):   0x79A02482A880bCe3F13E09da970dC34dB4cD24D1
+///     Sepolia testnet (4801): 0x66145f38cBAC35Ca6F1Dfb4914dF98F1614aeA88
+///   Always pass USDC_ADDRESS explicitly at deploy; do not rely on comments.
 ///
 ///   The constructor takes the ERC20 token address. The deployer becomes `owner`
 ///   (can call executeSettlement). For a multi-user app, consider transferring
