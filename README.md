@@ -19,3 +19,5 @@ On-chain split-bill settlement circles for verified humans. One World ID = one s
 W2 split-bill core → W3 settlement UX + World ID soft gate → W4 testnet deploy + dogfood with 5 real circles. See worldapp-recon/docs/06-name-and-dev-plan.md.
 
 Provenance: repo opened by Flux (PC node, verified gh credential) 2026-11-12; laptop lane (Harley/Xixi) executes W1 scaffold on push once token transport lands.
+
+Build from a fresh clone: `forge install foundry-rs/forge-std` (canonical). A vendored `lib/forge-std/src/Test.sol` is committed for CI-from-clone; submodule conversion at W2.
