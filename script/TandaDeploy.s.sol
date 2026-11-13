@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT OR Apache-2.0
 pragma solidity >=0.8.13 <0.9.0;
 
-import {Script, console} from "forge-std/Script.sol";
+import {Script, console} from "../lib/forge-std/src/Script.sol";
 import {TandaBill, IERC20} from "../contracts/TandaBill.sol";
 
 /// @notice Deploy TandaBill to World Chain (or any EVM chain).
