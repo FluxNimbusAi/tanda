@@ -249,6 +249,11 @@
             "name": "settledAt",
             "type": "uint64",
             "internalType": "uint64"
+          },
+          {
+            "name": "initiatedAt",
+            "type": "uint64",
+            "internalType": "uint64"
           }
         ],
         "stateMutability": "view"
