@@ -212,21 +212,18 @@ contract TandaBillTest is Test {
         bill.executeSettlement(0);
     }
 
-    /// Gap 2: settle-after-seat-removal semantics — PINNED, not assumed.
-    /// DESIGN FINDING (confirmed by execution, not assumption):
-    ///   - initiateSettlement subtracts the FULL unsettled total from escrowBalance
-    ///     at initiation (escrowBalance → 0) and builds payouts[] for N active seats.
-    ///   - executeSettlement re-iterates seats and pays payouts[idx] only to seats
-    ///     active AT EXECUTION. A seat removed between the two calls is skipped.
-    ///   - NET EFFECT: the removed seat's share is NEVER transferred and NEVER
-    ///     accounted for. escrowBalance reads 0, but the contract's token balance
-    ///     still holds the removed seat's share — permanently stranded, with no
-    ///     recovery path (invariant #1: no key custody / no recovery).
-    /// This is a real fund-stranding bug. The test pins current behavior so it
-    /// can't regress unnoticed; the FIX (re-derive payouts at execute, or forbid
-    /// seat removal after initiate) is a design decision for the bus.
-    /// See docs/test-audit-20261113.md gap 2.
-    function test_settlement_seatRemovedBetweenInitiateAndExecute() public {
+    /// Gap 2: settle-after-seat-removal — FIXED by Option 1 (bus ruling).
+    /// BEFORE the fix this was a real fund-stranding bug: initiateSettlement
+    /// zeroed escrowBalance and froze payouts[] for N active seats, then
+    /// executeSettlement skipped a seat removed in between — so the removed
+    /// seat's share was never transferred and never accounted for (stranded in
+    /// the contract, no recovery path, invariant #1).
+    /// OPTION 1 (ratified): removeSeat now reverts once settlementInitiated is
+    /// true, so the stranding state is unreachable by construction. This test
+    /// pins the guard: removing a seat after initiation must revert with
+    /// SettlementInitiatedAlready(), and the roster stays frozen.
+    /// See docs/test-audit-20261113.md gap 2 + W2_FINDINGS.md.
+    function test_removeSeat_revertsAfterSettlementInitiated() public {
         // 2 active seats at initiation: alice + bob, 100 USDC → 50 each
         vm.startPrank(owner);
         bill.addSeat(alice);
@@ -237,19 +234,34 @@ contract TandaBillTest is Test {
         bill.initiateSettlement();
         // escrowBalance is zeroed at initiation (full total subtracted).
         assertEq(bill.escrowBalance(), 0);
-        // Remove bob AFTER initiation, BEFORE execution.
+        assertTrue(bill.settlementInitiated());
+        // Remove bob AFTER initiation, BEFORE execution → must now revert.
+        vm.expectRevert(TandaBill.SettlementInitiatedAlready.selector);
         bill.removeSeat(1);
         vm.stopPrank();
 
+        // Roster is frozen: bob is still active, so settlement pays both seats.
         vm.prank(owner);
         bill.executeSettlement(0);
-
-        // alice gets payouts[0] = 50e6. bob is skipped (inactive at execute).
         assertEq(token.balanceOf(alice), 1_000_000e6 + 50e6);
-        assertEq(token.balanceOf(bob),   1_000_000e6); // unchanged — his 50e6 was dropped
-        // escrowBalance still reads 0, but the contract HOLDS bob's stranded 50e6.
+        assertEq(token.balanceOf(bob),   1_000_000e6 + 50e6); // NOT stranded — guard held
+        // Nothing left in the contract: no stranding possible.
         assertEq(bill.escrowBalance(), 0);
-        assertEq(token.balanceOf(address(bill)), 50e6); // ← FUND STRANDING (the bug)
+        assertEq(token.balanceOf(address(bill)), 0);
+    }
+
+    /// Gap 2 (positive control): removeSeat still works BEFORE initiation.
+    /// The Option-1 guard must not over-restrict — pre-settlement removal is
+    /// the normal flow and must keep working.
+    function test_removeSeat_allowedBeforeSettlementInitiated() public {
+        vm.startPrank(owner);
+        bill.addSeat(alice);
+        bill.addSeat(bob);
+        assertFalse(bill.settlementInitiated());
+        bill.removeSeat(1); // pre-initiation: allowed
+        (, , bool active) = bill.seats(1);
+        assertFalse(active);
+        vm.stopPrank();
     }
 
     /// Gap 3: transferFrom failure path must revert cleanly with TokenTransferFailed().
