@@ -56,6 +56,11 @@ contract TandaBill {
     /// @notice Total amount currently held in escrow (unpaid settlements).
     uint256 public escrowBalance;
 
+    /// @notice True once any settlement has been initiated. Seat removal is
+    ///         forbidden after this (Gap-2 ruling, Option 1): payouts are frozen
+    ///         at initiation, so removing a seat would strand its share.
+    bool public settlementInitiated;
+
     /// @notice Settlement window in seconds. Funds are held only this long after
     ///         all seats have confirmed. Default: 1 hour. (Kill #3: short hold.)
     uint64 public constant SETTLEMENT_WINDOW = 1 hours;
@@ -80,6 +85,7 @@ contract TandaBill {
     error SettlementNotReady();
     error EscrowEmpty();
     error TokenTransferFailed();
+    error SettlementInitiatedAlready();
 
     // ─── Constructor ──────────────────────────────────────────────────────
 
@@ -105,8 +111,11 @@ contract TandaBill {
     }
 
     /// @notice Remove a seat (owner only, before settlement).
+    /// @dev Reverts if any settlement has been initiated (Gap-2 ruling, Option 1):
+    ///      payouts are frozen at initiation, so a removed seat's share would strand.
     function removeSeat(uint256 seatId) external {
         require(msg.sender == owner, NotOwner());
+        require(!settlementInitiated, SettlementInitiatedAlready());
         if (seatId >= seats.length) revert SeatNotFound(seatId);
         if (!seats[seatId].active) revert SeatInactive(seatId);
         seats[seatId].active = false;
@@ -161,6 +170,7 @@ contract TandaBill {
         uint256 settlementId = settlements.length;
         settlements.push(Settlement({totalAmount: unsettled, payouts: payouts, settledAt: 0}));
         escrowBalance -= unsettled;
+        settlementInitiated = true; // Gap-2 ruling (Option 1): freeze seat roster
 
         // Mark expenses as settled
         for (uint256 i = 0; i < expenses.length; i++) {
