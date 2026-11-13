@@ -304,6 +304,125 @@ contract TandaBillTest is Test {
         assertEq(token.balanceOf(dave),  1_000_000e6 + 25e6);
         assertEq(bill.escrowBalance(), 0);
     }
+
+    // ─── W3: Settlement execution hardening ──────────────────────────────
+
+    /// W3-1: Idempotent payout re-entry guard.
+    /// executeSettlement must be strictly single-shot per settlement id.
+    /// The guard `require(s.settledAt == 0, AlreadySettled())` ensures that a
+    /// second call on the same id reverts BEFORE any token transfer, so no
+    /// seat can be paid twice. This test pins the guard: after a successful
+    /// execution, a re-entry (even from a different caller context) must
+    /// revert with AlreadySettled() and leave all balances unchanged.
+    function test_W3_executeSettlement_revertsOnReentry() public {
+        vm.startPrank(owner);
+        bill.addSeat(alice);
+        bill.addSeat(bob);
+        bill.addExpense(100e6);
+        token.approve(address(bill), 100e6);
+        bill.fundEscrow(100e6);
+        bill.initiateSettlement();
+        bill.executeSettlement(0); // first: succeeds, pays 50/50
+        vm.stopPrank();
+
+        // Capture post-execution balances.
+        uint256 aliceAfter = token.balanceOf(alice);
+        uint256 bobAfter   = token.balanceOf(bob);
+        uint256 contractAfter = token.balanceOf(address(bill));
+
+        // Re-entry: same settlement id, must revert with AlreadySettled().
+        vm.prank(owner);
+        vm.expectRevert(TandaBill.AlreadySettled.selector);
+        bill.executeSettlement(0);
+
+        // Balances must be unchanged — no double-payout.
+        assertEq(token.balanceOf(alice), aliceAfter);
+        assertEq(token.balanceOf(bob),   bobAfter);
+        assertEq(token.balanceOf(address(bill)), contractAfter);
+    }
+
+    /// W3-2: Zero-split edge case — settlement with zero unsettled expenses.
+    /// initiateSettlement requires `unsettled > 0`, so a bill with no expenses
+    /// (or all expenses already settled) must revert with EscrowEmpty() before
+    /// any payout array is constructed. This pins the guard against a
+    /// degenerate zero-split that would produce an empty payouts[] and a
+    /// settlement that pays nothing.
+    function test_W3_initiateSettlement_revertsIfNoUnsettledExpenses() public {
+        vm.startPrank(owner);
+        bill.addSeat(alice);
+        bill.addSeat(bob);
+        // No expenses added — unsettled total is 0.
+        token.approve(address(bill), 100e6);
+        bill.fundEscrow(100e6); // escrow has funds, but nothing to settle
+        vm.expectRevert(TandaBill.EscrowEmpty.selector);
+        bill.initiateSettlement();
+        vm.stopPrank();
+    }
+
+    /// W3-2b: Zero-split edge case — all seats removed before initiation.
+    /// If the owner removes every seat, activeCount is 0 and
+    /// initiateSettlement must revert with SeatNotFound(0) (the existing
+    /// guard for "no active seats"). This prevents a settlement with an
+    /// empty payouts[] that would strand the full escrow balance.
+    function test_W3_initiateSettlement_revertsIfNoActiveSeats() public {
+        vm.startPrank(owner);
+        bill.addSeat(alice);
+        bill.addSeat(bob);
+        bill.addExpense(100e6);
+        token.approve(address(bill), 100e6);
+        bill.fundEscrow(100e6);
+        // Remove ALL seats before initiation.
+        bill.removeSeat(0);
+        bill.removeSeat(1);
+        vm.expectRevert(abi.encodeWithSelector(TandaBill.SeatNotFound.selector, 0));
+        bill.initiateSettlement();
+        vm.stopPrank();
+    }
+
+    /// W3-3: Event-emission audit — full lifecycle emits the correct event
+    /// sequence with correct parameters. This is a regression guard: if a
+    /// future change alters the event signature, drops an emission, or
+    /// reorders the sequence, this test catches it.
+    function test_W3_eventEmissionAudit_fullLifecycle() public {
+        vm.startPrank(owner);
+
+        // 1. addSeat(alice) → SeatAdded(0, alice, ts)
+        vm.expectEmit(true, false, false, true);
+        emit TandaBill.SeatAdded(0, alice, uint64(block.timestamp));
+        bill.addSeat(alice);
+
+        // 2. addSeat(bob) → SeatAdded(1, bob, ts)
+        vm.expectEmit(true, false, false, true);
+        emit TandaBill.SeatAdded(1, bob, uint64(block.timestamp));
+        bill.addSeat(bob);
+
+        // 3. addExpense(100e6) → ExpenseAdded(0, owner, 100e6)
+        vm.expectEmit(true, false, false, true);
+        emit TandaBill.ExpenseAdded(0, owner, 100e6);
+        bill.addExpense(100e6);
+
+        // 4. fundEscrow — no event (by design: transferFrom is the observable)
+
+        // 5. initiateSettlement → SettlementInitiated(0, 100e6, 2)
+        token.approve(address(bill), 100e6);
+        bill.fundEscrow(100e6);
+        vm.expectEmit(true, false, false, true);
+        emit TandaBill.SettlementInitiated(0, 100e6, 2);
+        bill.initiateSettlement();
+
+        // 6. executeSettlement(0) → SettlementExecuted(0, 100e6, ts)
+        vm.expectEmit(true, false, false, true);
+        emit TandaBill.SettlementExecuted(0, 100e6, uint64(block.timestamp));
+        bill.executeSettlement(0);
+
+        vm.stopPrank();
+
+        // Post-conditions: settlement recorded, escrow drained.
+        (uint256 totalAmount, uint64 settledAt) = bill.settlements(0);
+        assertEq(totalAmount, 100e6);
+        assertTrue(settledAt > 0);
+        assertEq(bill.escrowBalance(), 0);
+    }
 }
 
 /// @notice Token that always fails transferFrom — for the failure-path test.
