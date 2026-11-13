@@ -5,7 +5,7 @@ On-chain split-bill settlement circles for verified humans. One World ID = one s
 **Why:** split-bills are a recurring, non-terminal ritual (the daily hook). Personhood-as-seat is the moat: identity is the collateral that off-chain trust circles lack. ROSCA pots are deferred until collateral + compliance mechanics are designed — see `docs/killpass-adjudication.md`.
 
 ## Architecture
-- `contracts/TandaLedger.sol` — expense ledger + equal-share settlement escrow (short hold, non-custodial copy must match code).
+- `contracts/TandaBill.sol` — expense ledger + equal-share settlement escrow (short hold, non-custodial copy must match code).
 - MiniKit app shell — seat registration via World ID integration, bill creation, share settlement.
 - Fee model deferred: fee-free MVP; priced from real ticket data, not before it exists.
 
