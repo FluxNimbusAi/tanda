@@ -18,29 +18,20 @@
   "immutable_slots": {
    "count": 3,
    "byte_ranges": [
-    [
-     752,
-     771
-    ],
-    [
-     1568,
-     1587
-    ],
-    [
-     3657,
-     3676
-    ]
+    [752, 771],
+    [1568, 1587],
+    [3657, 3676]
    ],
    "all_baked_with": "USDC sepolia addr",
-   "baked_runtime_sha256_expected_at_W7": "6aa4c60ef2478a76.. wait see correction"
+   "baked_runtime_sha256_expected_at_W7": "6aa4c60ef2d13d6f"
   },
   "fork_sees_boss_wallet": {
    "eth": "0.1",
    "usdc": "20.000000",
    "nonce_live": 0
   },
-  "baked_runtime_sha256_expected_at_W7": "6aa4c60ef2d13d6f",
-  "notes": "artifact runtime sha (immutables zeroed) = dcde760ef2478a76; identical to repo pin; chain bytes differ ONLY in the 3 listed slots"
+  "baked_runtime_sha256_expected_at_W7": "6aa4c60ef2d13d6f"
  },
+ "notes": "CORRECTED by Harley 2026-11-14: nested immutable_slots.baked_runtime_sha256_expected_at_W7 carried placeholder '6aa4c60ef2478a76.. wait see correction'; aligned to top-level corrected value 6aa4c60ef2d13d6f (commit 6d00b09b claimed placeholder cleanup but missed the nested key). Artifact runtime sha (immutables zeroed) = dcde760ef2478a76; identical to repo pin; chain bytes differ ONLY in the 3 listed slots.",
  "protocol_correction": "eth_getCode on-chain runtime must be diffed against artifact with expected 3x20B immutable slots replaced by USDC_ADDRESS; naive sha compare vs dcde760ef2478a76 FAILS by construction for any deployment with constructor-baked immutables."
 }
