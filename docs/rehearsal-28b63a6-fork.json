@@ -1,0 +1,45 @@
+{
+ "event": "W7 fork dress rehearsal (World Chain Sepolia state @ anvil 1.9.1)",
+ "date_utc": "2026-11-13T22:3xZ",
+ "node": "PC",
+ "repo_tip": "28b63a6",
+ "fork_rpc": "anvil -f worldchain-sepolia.g.alchemy.com/public --chain-id 4801",
+ "deploy": {
+  "contract": "TandaBill",
+  "fork_addr": "0x2279B7A0a67DB372996a5FaB50D91eAA73d2eBe6",
+  "tx": "ONCHAIN EXECUTION COMPLETE & SUCCESSFUL",
+  "sender": "anvil genesis test key (public dev value)",
+  "est_gas_live": 1367453,
+  "est_cost_wrld": "0.000000273"
+ },
+ "verification": {
+  "constructor_wiring_token()": "0x66145f38cbac35ca6f1dfb4914df98f1614aea88 OK",
+  "chain_runtime_size": 4508,
+  "shape_sha256_vs_artifact": "dcde760ef2478a76.. == artifact deployedBytecode (immutables zeroed)",
+  "immutable_slots": {
+   "count": 3,
+   "byte_ranges": [
+    [
+     752,
+     771
+    ],
+    [
+     1568,
+     1587
+    ],
+    [
+     3657,
+     3676
+    ]
+   ],
+   "all_baked_with": "USDC sepolia addr",
+   "baked_runtime_sha256_expected_at_W7": "6aa4c60ef2478a76.. wait see correction"
+  },
+  "fork_sees_boss_wallet": {
+   "eth": "0.1",
+   "usdc": "20.000000",
+   "nonce_live": 0
+  }
+ },
+ "protocol_correction": "eth_getCode on-chain runtime must be diffed against artifact with expected 3x20B immutable slots replaced by USDC_ADDRESS; naive sha compare vs dcde760ef2478a76 FAILS by construction for any deployment with constructor-baked immutables."
+}
