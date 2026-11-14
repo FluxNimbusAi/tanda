@@ -3,7 +3,7 @@
   "description": "Split-bill expense ledger with short-hold settlement escrow. Create a bill, add seats, log expenses, and settle in USDC on World Chain. No key custody, no protocol fees, fee-free MVP.",
   "icon": "/assets/tanda-icon.png",
   "contract": {
-    "address": "0xf63c92456D68A97B75C86a72Aec092f091DD7bb2",
+    "address": "0x8644095B9722a41281314158006d194C59ab9b12",
     "abi": [
       {
         "type": "constructor",

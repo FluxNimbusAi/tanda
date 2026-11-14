@@ -4,26 +4,46 @@
     "name": "World Chain Sepolia",
     "chainId": 4801
   },
-  "contract": "0xf63c92456D68A97B75C86a72Aec092f091DD7bb2",
-  "transactionHash": "0xbba0ba48c289655cea0a904f3a5afff305bcea2001b890aaab05d94bd2f33608",
-  "blockNumber": 37058616,
+  "contract": "0x8644095B9722a41281314158006d194C59ab9b12",
+  "transactionHash": "0x1d0037ff87518d31256b88883fbc668e5b99f7712ebcfd17e5344d21d6c499fa",
+  "blockNumber": 37059680,
   "status": 1,
-  "gasUsed": 1737137,
+  "gasUsed": 1051887,
+  "nonce_used": 1,
   "deployer": "0x78dC32F6a4edF80c538A75e1F7664505B1969E7A",
-  "constructorArgs": {
-    "_token": "0x66145f38cBAC35Ca6F1Dfb4914dF98F1614aeA88",
-    "token_note": "Circle native USDC WC-Sepolia (verified docs.circle.com 2026-11-14)"
+  "artifact": {
+    "source": ".tip_28b63a6/out/TandaBill.sol/TandaBill.json (byte-verified across 3 nodes)",
+    "init_bytes": 4671,
+    "runtime_bytes_onchain": 4508
   },
-  "artifactSource": {
-    "commit": "28b63a6",
-    "bytecode_sha256": "68fc665f0d7dcf78ba29b0d92b179ec595d36de53497affa6401a0cde8c5f898",
-    "runtime_bytes_onchain": 7696
-  },
+  "immutable_slots_baked_with_USDC": [
+    [
+      752,
+      771
+    ],
+    [
+      1568,
+      1587
+    ],
+    [
+      3657,
+      3676
+    ]
+  ],
   "postDeployChecks": {
     "owner()": "0x78dC32F6a4edF80c538A75e1F7664505B1969E7A",
-    "SETTLEMENT_WINDOW()": 3600
+    "SETTLEMENT_WINDOW()": 3600,
+    "token()": "0x66145f38cBAC35Ca6F1Dfb4914dF98F1614aeA88"
   },
-  "timestamp": "2026-11-14T13:38:15Z",
-  "deployed_by": "Nimbus (COO lane), sign-off Flux #5884 queue",
-  "explorer": "https://sepolia.worldscan.org/address/0xf63c92456D68A97B75C86a72Aec092f091DD7bb2"
+  "supersession": {
+    "previous_attempt": {
+      "contract": "0xf63c92456D68A97B75C86a72Aec092f091DD7bb2",
+      "tx": "0xbba0ba48c289655cea0a904f3a5afff305bcea2001b890aaab05d94bd2f33608",
+      "gasUsed": 1737137,
+      "reason_superseded": "deployed from non-canonical local variant tanda_bytecode_W5.txt (init 8058/runtime 7696) instead of tip build; caught by Harley 2026-11-14 lane; artifacts repo overwrite (commit 86c848c) reverted; old contract left unused",
+      "status": "SUPERSEDED \u2014 wrong artifact lineage"
+    }
+  },
+  "timestamp": "2026-11-14T14:34Z",
+  "explorer": "https://sepolia.worldscan.org/address/0x8644095B9722a41281314158006d194C59ab9b12"
 }
