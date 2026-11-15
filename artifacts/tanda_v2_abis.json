@@ -1,0 +1,834 @@
+{
+ "TandaBillV2": [
+  {
+   "inputs": [],
+   "name": "AlreadyConfirmed",
+   "type": "error"
+  },
+  {
+   "inputs": [],
+   "name": "AlreadyInitialized",
+   "type": "error"
+  },
+  {
+   "inputs": [],
+   "name": "AlreadySettled",
+   "type": "error"
+  },
+  {
+   "inputs": [
+    {
+     "internalType": "address",
+     "name": "wallet",
+     "type": "address"
+    }
+   ],
+   "name": "DuplicateSeat",
+   "type": "error"
+  },
+  {
+   "inputs": [],
+   "name": "EscrowEmpty",
+   "type": "error"
+  },
+  {
+   "inputs": [],
+   "name": "NoActiveSeats",
+   "type": "error"
+  },
+  {
+   "inputs": [],
+   "name": "NotAnExpectedSeat",
+   "type": "error"
+  },
+  {
+   "inputs": [],
+   "name": "NotAwaitingConfirmations",
+   "type": "error"
+  },
+  {
+   "inputs": [],
+   "name": "NotFullyConfirmed",
+   "type": "error"
+  },
+  {
+   "inputs": [],
+   "name": "NotOwner",
+   "type": "error"
+  },
+  {
+   "inputs": [],
+   "name": "RefundNotAvailable",
+   "type": "error"
+  },
+  {
+   "inputs": [
+    {
+     "internalType": "uint256",
+     "name": "seatId",
+     "type": "uint256"
+    }
+   ],
+   "name": "SeatInactive",
+   "type": "error"
+  },
+  {
+   "inputs": [
+    {
+     "internalType": "uint256",
+     "name": "seatId",
+     "type": "uint256"
+    }
+   ],
+   "name": "SeatNotFound",
+   "type": "error"
+  },
+  {
+   "inputs": [],
+   "name": "SettlementInitiatedAlready",
+   "type": "error"
+  },
+  {
+   "inputs": [],
+   "name": "SettlementNotFound",
+   "type": "error"
+  },
+  {
+   "inputs": [],
+   "name": "TokenTransferFailed",
+   "type": "error"
+  },
+  {
+   "inputs": [],
+   "name": "TooManySeats",
+   "type": "error"
+  },
+  {
+   "inputs": [],
+   "name": "WindowNotElapsed",
+   "type": "error"
+  },
+  {
+   "anonymous": false,
+   "inputs": [
+    {
+     "indexed": true,
+     "internalType": "address",
+     "name": "token",
+     "type": "address"
+    },
+    {
+     "indexed": true,
+     "internalType": "address",
+     "name": "owner",
+     "type": "address"
+    }
+   ],
+   "name": "BillInitialized",
+   "type": "event"
+  },
+  {
+   "anonymous": false,
+   "inputs": [
+    {
+     "indexed": true,
+     "internalType": "address",
+     "name": "funder",
+     "type": "address"
+    },
+    {
+     "indexed": false,
+     "internalType": "uint256",
+     "name": "amount",
+     "type": "uint256"
+    }
+   ],
+   "name": "EscrowFunded",
+   "type": "event"
+  },
+  {
+   "anonymous": false,
+   "inputs": [
+    {
+     "indexed": true,
+     "internalType": "uint256",
+     "name": "expenseId",
+     "type": "uint256"
+    },
+    {
+     "indexed": true,
+     "internalType": "address",
+     "name": "paidBy",
+     "type": "address"
+    },
+    {
+     "indexed": false,
+     "internalType": "uint256",
+     "name": "amount",
+     "type": "uint256"
+    }
+   ],
+   "name": "ExpenseAdded",
+   "type": "event"
+  },
+  {
+   "anonymous": false,
+   "inputs": [
+    {
+     "indexed": true,
+     "internalType": "uint256",
+     "name": "seatId",
+     "type": "uint256"
+    },
+    {
+     "indexed": true,
+     "internalType": "address",
+     "name": "wallet",
+     "type": "address"
+    },
+    {
+     "indexed": false,
+     "internalType": "uint64",
+     "name": "joinedAt",
+     "type": "uint64"
+    }
+   ],
+   "name": "SeatAdded",
+   "type": "event"
+  },
+  {
+   "anonymous": false,
+   "inputs": [
+    {
+     "indexed": true,
+     "internalType": "uint256",
+     "name": "settlementId",
+     "type": "uint256"
+    },
+    {
+     "indexed": true,
+     "internalType": "uint256",
+     "name": "seatId",
+     "type": "uint256"
+    }
+   ],
+   "name": "SeatConfirmed",
+   "type": "event"
+  },
+  {
+   "anonymous": false,
+   "inputs": [
+    {
+     "indexed": true,
+     "internalType": "uint256",
+     "name": "seatId",
+     "type": "uint256"
+    },
+    {
+     "indexed": true,
+     "internalType": "address",
+     "name": "wallet",
+     "type": "address"
+    }
+   ],
+   "name": "SeatRemoved",
+   "type": "event"
+  },
+  {
+   "anonymous": false,
+   "inputs": [
+    {
+     "indexed": true,
+     "internalType": "uint256",
+     "name": "settlementId",
+     "type": "uint256"
+    },
+    {
+     "indexed": false,
+     "internalType": "uint256",
+     "name": "totalAmount",
+     "type": "uint256"
+    },
+    {
+     "indexed": false,
+     "internalType": "uint64",
+     "name": "settledAt",
+     "type": "uint64"
+    }
+   ],
+   "name": "SettlementExecuted",
+   "type": "event"
+  },
+  {
+   "anonymous": false,
+   "inputs": [
+    {
+     "indexed": true,
+     "internalType": "uint256",
+     "name": "settlementId",
+     "type": "uint256"
+    },
+    {
+     "indexed": false,
+     "internalType": "uint64",
+     "name": "at",
+     "type": "uint64"
+    }
+   ],
+   "name": "SettlementFullyConfirmed",
+   "type": "event"
+  },
+  {
+   "anonymous": false,
+   "inputs": [
+    {
+     "indexed": true,
+     "internalType": "uint256",
+     "name": "settlementId",
+     "type": "uint256"
+    },
+    {
+     "indexed": false,
+     "internalType": "uint256",
+     "name": "totalAmount",
+     "type": "uint256"
+    },
+    {
+     "indexed": false,
+     "internalType": "uint256",
+     "name": "expectedSeats",
+     "type": "uint256"
+    }
+   ],
+   "name": "SettlementInitiated",
+   "type": "event"
+  },
+  {
+   "anonymous": false,
+   "inputs": [
+    {
+     "indexed": true,
+     "internalType": "uint256",
+     "name": "settlementId",
+     "type": "uint256"
+    },
+    {
+     "indexed": false,
+     "internalType": "uint256",
+     "name": "amount",
+     "type": "uint256"
+    }
+   ],
+   "name": "SettlementRefunded",
+   "type": "event"
+  },
+  {
+   "inputs": [],
+   "name": "MAX_HOLD",
+   "outputs": [
+    {
+     "internalType": "uint64",
+     "name": "",
+     "type": "uint64"
+    }
+   ],
+   "stateMutability": "view",
+   "type": "function"
+  },
+  {
+   "inputs": [],
+   "name": "MAX_SEATS",
+   "outputs": [
+    {
+     "internalType": "uint256",
+     "name": "",
+     "type": "uint256"
+    }
+   ],
+   "stateMutability": "view",
+   "type": "function"
+  },
+  {
+   "inputs": [],
+   "name": "SETTLEMENT_WINDOW",
+   "outputs": [
+    {
+     "internalType": "uint64",
+     "name": "",
+     "type": "uint64"
+    }
+   ],
+   "stateMutability": "view",
+   "type": "function"
+  },
+  {
+   "inputs": [],
+   "name": "activeSeatCount",
+   "outputs": [
+    {
+     "internalType": "uint256",
+     "name": "",
+     "type": "uint256"
+    }
+   ],
+   "stateMutability": "view",
+   "type": "function"
+  },
+  {
+   "inputs": [
+    {
+     "internalType": "uint256",
+     "name": "amount",
+     "type": "uint256"
+    }
+   ],
+   "name": "addExpense",
+   "outputs": [],
+   "stateMutability": "nonpayable",
+   "type": "function"
+  },
+  {
+   "inputs": [
+    {
+     "internalType": "address",
+     "name": "wallet",
+     "type": "address"
+    }
+   ],
+   "name": "addSeat",
+   "outputs": [],
+   "stateMutability": "nonpayable",
+   "type": "function"
+  },
+  {
+   "inputs": [
+    {
+     "internalType": "uint256",
+     "name": "settlementId",
+     "type": "uint256"
+    }
+   ],
+   "name": "confirmSettlement",
+   "outputs": [],
+   "stateMutability": "nonpayable",
+   "type": "function"
+  },
+  {
+   "inputs": [],
+   "name": "escrowBalance",
+   "outputs": [
+    {
+     "internalType": "uint256",
+     "name": "",
+     "type": "uint256"
+    }
+   ],
+   "stateMutability": "view",
+   "type": "function"
+  },
+  {
+   "inputs": [
+    {
+     "internalType": "uint256",
+     "name": "settlementId",
+     "type": "uint256"
+    }
+   ],
+   "name": "executeSettlement",
+   "outputs": [],
+   "stateMutability": "nonpayable",
+   "type": "function"
+  },
+  {
+   "inputs": [
+    {
+     "internalType": "uint256",
+     "name": "",
+     "type": "uint256"
+    }
+   ],
+   "name": "expenses",
+   "outputs": [
+    {
+     "internalType": "uint256",
+     "name": "amount",
+     "type": "uint256"
+    },
+    {
+     "internalType": "address",
+     "name": "paidBy",
+     "type": "address"
+    },
+    {
+     "internalType": "uint64",
+     "name": "addedAt",
+     "type": "uint64"
+    },
+    {
+     "internalType": "bool",
+     "name": "settled",
+     "type": "bool"
+    }
+   ],
+   "stateMutability": "view",
+   "type": "function"
+  },
+  {
+   "inputs": [
+    {
+     "internalType": "uint256",
+     "name": "amount",
+     "type": "uint256"
+    }
+   ],
+   "name": "fundEscrow",
+   "outputs": [],
+   "stateMutability": "nonpayable",
+   "type": "function"
+  },
+  {
+   "inputs": [
+    {
+     "internalType": "contract IERC20",
+     "name": "_token",
+     "type": "address"
+    },
+    {
+     "internalType": "address",
+     "name": "creator",
+     "type": "address"
+    },
+    {
+     "internalType": "address[]",
+     "name": "initialSeats",
+     "type": "address[]"
+    }
+   ],
+   "name": "initialize",
+   "outputs": [],
+   "stateMutability": "nonpayable",
+   "type": "function"
+  },
+  {
+   "inputs": [],
+   "name": "initiateSettlement",
+   "outputs": [],
+   "stateMutability": "nonpayable",
+   "type": "function"
+  },
+  {
+   "inputs": [
+    {
+     "internalType": "uint256",
+     "name": "settlementId",
+     "type": "uint256"
+    },
+    {
+     "internalType": "address",
+     "name": "wallet",
+     "type": "address"
+    }
+   ],
+   "name": "isSeatConfirmed",
+   "outputs": [
+    {
+     "internalType": "bool",
+     "name": "",
+     "type": "bool"
+    }
+   ],
+   "stateMutability": "view",
+   "type": "function"
+  },
+  {
+   "inputs": [],
+   "name": "owner",
+   "outputs": [
+    {
+     "internalType": "address",
+     "name": "",
+     "type": "address"
+    }
+   ],
+   "stateMutability": "view",
+   "type": "function"
+  },
+  {
+   "inputs": [
+    {
+     "internalType": "uint256",
+     "name": "settlementId",
+     "type": "uint256"
+    }
+   ],
+   "name": "refundSettlement",
+   "outputs": [],
+   "stateMutability": "nonpayable",
+   "type": "function"
+  },
+  {
+   "inputs": [
+    {
+     "internalType": "uint256",
+     "name": "seatId",
+     "type": "uint256"
+    }
+   ],
+   "name": "removeSeat",
+   "outputs": [],
+   "stateMutability": "nonpayable",
+   "type": "function"
+  },
+  {
+   "inputs": [
+    {
+     "internalType": "address",
+     "name": "",
+     "type": "address"
+    }
+   ],
+   "name": "seatIdOf",
+   "outputs": [
+    {
+     "internalType": "uint256",
+     "name": "",
+     "type": "uint256"
+    }
+   ],
+   "stateMutability": "view",
+   "type": "function"
+  },
+  {
+   "inputs": [
+    {
+     "internalType": "uint256",
+     "name": "",
+     "type": "uint256"
+    }
+   ],
+   "name": "seats",
+   "outputs": [
+    {
+     "internalType": "address",
+     "name": "wallet",
+     "type": "address"
+    },
+    {
+     "internalType": "uint64",
+     "name": "joinedAt",
+     "type": "uint64"
+    },
+    {
+     "internalType": "bool",
+     "name": "active",
+     "type": "bool"
+    }
+   ],
+   "stateMutability": "view",
+   "type": "function"
+  },
+  {
+   "inputs": [],
+   "name": "settlementInitiated",
+   "outputs": [
+    {
+     "internalType": "bool",
+     "name": "",
+     "type": "bool"
+    }
+   ],
+   "stateMutability": "view",
+   "type": "function"
+  },
+  {
+   "inputs": [
+    {
+     "internalType": "uint256",
+     "name": "",
+     "type": "uint256"
+    }
+   ],
+   "name": "settlements",
+   "outputs": [
+    {
+     "internalType": "uint256",
+     "name": "totalAmount",
+     "type": "uint256"
+    },
+    {
+     "internalType": "uint64",
+     "name": "settledAt",
+     "type": "uint64"
+    },
+    {
+     "internalType": "uint64",
+     "name": "initiatedAt",
+     "type": "uint64"
+    },
+    {
+     "internalType": "uint256",
+     "name": "expectedMask",
+     "type": "uint256"
+    },
+    {
+     "internalType": "uint256",
+     "name": "confirmedMask",
+     "type": "uint256"
+    },
+    {
+     "internalType": "uint64",
+     "name": "fullyConfirmedAt",
+     "type": "uint64"
+    },
+    {
+     "internalType": "bool",
+     "name": "refunded",
+     "type": "bool"
+    }
+   ],
+   "stateMutability": "view",
+   "type": "function"
+  },
+  {
+   "inputs": [],
+   "name": "token",
+   "outputs": [
+    {
+     "internalType": "contract IERC20",
+     "name": "",
+     "type": "address"
+    }
+   ],
+   "stateMutability": "view",
+   "type": "function"
+  },
+  {
+   "inputs": [],
+   "name": "totalExpenses",
+   "outputs": [
+    {
+     "internalType": "uint256",
+     "name": "total",
+     "type": "uint256"
+    }
+   ],
+   "stateMutability": "view",
+   "type": "function"
+  }
+ ],
+ "TandaBillFactory": [
+  {
+   "inputs": [
+    {
+     "internalType": "address",
+     "name": "_implementation",
+     "type": "address"
+    }
+   ],
+   "stateMutability": "nonpayable",
+   "type": "constructor"
+  },
+  {
+   "inputs": [],
+   "name": "CreateFailed",
+   "type": "error"
+  },
+  {
+   "inputs": [],
+   "name": "NoSeats",
+   "type": "error"
+  },
+  {
+   "inputs": [],
+   "name": "TooManySeats",
+   "type": "error"
+  },
+  {
+   "anonymous": false,
+   "inputs": [
+    {
+     "indexed": true,
+     "internalType": "address",
+     "name": "bill",
+     "type": "address"
+    },
+    {
+     "indexed": true,
+     "internalType": "address",
+     "name": "creator",
+     "type": "address"
+    },
+    {
+     "indexed": true,
+     "internalType": "address",
+     "name": "token",
+     "type": "address"
+    },
+    {
+     "indexed": false,
+     "internalType": "uint256",
+     "name": "seatCount",
+     "type": "uint256"
+    }
+   ],
+   "name": "BillCreated",
+   "type": "event"
+  },
+  {
+   "inputs": [
+    {
+     "internalType": "contract IERC20",
+     "name": "token",
+     "type": "address"
+    },
+    {
+     "internalType": "address[]",
+     "name": "seats",
+     "type": "address[]"
+    }
+   ],
+   "name": "createBill",
+   "outputs": [
+    {
+     "internalType": "address",
+     "name": "bill",
+     "type": "address"
+    }
+   ],
+   "stateMutability": "nonpayable",
+   "type": "function"
+  },
+  {
+   "inputs": [],
+   "name": "implementation",
+   "outputs": [
+    {
+     "internalType": "address",
+     "name": "",
+     "type": "address"
+    }
+   ],
+   "stateMutability": "view",
+   "type": "function"
+  },
+  {
+   "inputs": [
+    {
+     "internalType": "address",
+     "name": "",
+     "type": "address"
+    }
+   ],
+   "name": "isBill",
+   "outputs": [
+    {
+     "internalType": "bool",
+     "name": "",
+     "type": "bool"
+    }
+   ],
+   "stateMutability": "view",
+   "type": "function"
+  }
+ ]
+}
