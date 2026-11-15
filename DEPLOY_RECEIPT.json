@@ -45,5 +45,7 @@
     }
   },
   "timestamp": "2026-11-14T14:34Z",
-  "explorer": "https://sepolia.worldscan.org/address/0x8644095B9722a41281314158006d194C59ab9b12"
+  "explorer": "https://sepolia.worldscan.org/address/0x8644095B9722a41281314158006d194C59ab9b12",
+  "runtime_sha256": "6aa4c60ef2d13d6fe18113aaebcb169e70c6b9f691bc4f249488d22107d21188",
+  "runtime_sha256_note": "sha256 of eth_getCode(0x8644..b12) runtime bytes (4508) via public Alchemy RPC, 2026-11-14 \u2014 EQUALS the rehearsal's baked_runtime_sha256_expected_at_W7 pin 6aa4c60ef2d13d6f (docs/rehearsal-28b63a6-fork.json). Predicted==observed: W7 bake protocol fully closed."
 }
