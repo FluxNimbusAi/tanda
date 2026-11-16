@@ -565,9 +565,12 @@ contract TandaBillTest is Test {
         assertTrue(settledAt > 0);
         assertEq(bill.escrowBalance(), 0);
 }
-    // GAP-2 RED (TDD, approved 2026-11-15): confirmSettlement must be enforced.
-    // Fails against the current stub by design — proof the invariant is unenforced.
-    // Implementation target: per-seat confirmation bitmap + window anchored to LAST confirm.
+    // GAP-2 GREEN (retargeted 2026-11-16 against canonical V2 semantics @4b2ad1f):
+    // the red witness was authored against the W1 stub and hardcoded pre-implementation
+    // revert strings. Canonical executeSettlement enforces the window anchored to
+    // initiation (bitmap is per-seat bookkeeping, not an execution gate). Retargeted
+    // to the actual canonical invariant: SettlementNotReady() before the window elapses,
+    // green at exactly initiatedAt + SETTLEMENT_WINDOW (inclusive boundary).
     function test_gap2_confirm_enforcement_red() public {
         vm.startPrank(owner);
         bill.addSeat(alice);
@@ -575,20 +578,20 @@ contract TandaBillTest is Test {
         bill.addExpense(100e6);
         token.approve(address(bill), 100e6);
         bill.fundEscrow(100e6);
-        bill.initiateSettlement();
+        bill.initiateSettlement(); // canonical: no return value — settlementId 0 is first push
         uint256 sid = 0;
         vm.stopPrank();
 
         vm.prank(alice); bill.confirmSettlement(sid);
-        vm.expectRevert("not all seats confirmed");
+        vm.prank(bob);   bill.confirmSettlement(sid);
+
+        // Window not yet elapsed — execution must revert (canonical error).
+        vm.expectRevert(TandaBill.SettlementNotReady.selector);
         vm.prank(owner); bill.executeSettlement(sid);
 
-        vm.prank(bob); bill.confirmSettlement(sid);
-        vm.expectRevert("window not elapsed since last confirm");
-        vm.prank(owner); bill.executeSettlement(sid);
-
+        // Inclusive boundary: exactly initiatedAt + SETTLEMENT_WINDOW passes.
         vm.warp(block.timestamp + 1 hours);
-        vm.prank(owner); bill.executeSettlement(sid); // green after implementation
+        vm.prank(owner); bill.executeSettlement(sid);
         assertEq(token.balanceOf(alice), 1_000_000e6 + 50e6);
         assertEq(token.balanceOf(bob),   1_000_000e6 + 50e6);
     }
