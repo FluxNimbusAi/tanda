@@ -76,6 +76,7 @@ contract TandaBillV2 {
     event BillInitialized(address indexed token, address indexed owner);
     event SeatAdded(uint256 indexed seatId, address indexed wallet, uint64 joinedAt);
     event SeatRemoved(uint256 indexed seatId, address indexed wallet);
+    event SeatWalletRotated(uint256 indexed seatId, address indexed from, address indexed to);
     event ExpenseAdded(uint256 indexed expenseId, address indexed paidBy, uint256 amount);
     event EscrowFunded(address indexed funder, uint256 amount);
     event SettlementInitiated(uint256 indexed settlementId, uint256 totalAmount, uint256 expectedSeats);
@@ -91,6 +92,10 @@ contract TandaBillV2 {
     error SeatNotFound(uint256 seatId);
     error SeatInactive(uint256 seatId);
     error DuplicateSeat(address wallet);
+    error ZeroWallet();
+    error NotSeatOrOwner();
+    error SeatRotationClosed();
+    error RotationWindowLocked();
     error TooManySeats();
     error SettlementNotFound();
     error AlreadySettled();
@@ -151,6 +156,36 @@ contract TandaBillV2 {
         seats[seatId].active = false;
         seatIdOf[seats[seatId].wallet] = 0; // re-invitable at a new id (mask snapshot stays)
         emit SeatRemoved(seatId, seats[seatId].wallet);
+    }
+
+    /// @notice Rotate a seat's payout wallet. Confirm/payout state is seat-indexed, so
+    ///         rotation preserves it exactly. P0.1: un-dead-locks confirmed escrow when a
+    ///         seat wallet rejects inbound USDC (reverting receiver / blacklisted address).
+    /// @dev    Callable by the seat itself OR owner (recovery). Allowed while the latest
+    ///         settlement is open (and pre-initiation). Seat-gate policy (W8): frontend must
+    ///         collect a fresh World ID proof from newWallet before exposing this action.
+    function rotateSeatWallet(uint256 seatId, address newWallet) external {
+        if (seatId >= seats.length) revert SeatNotFound(seatId);
+        if (!seats[seatId].active) revert SeatInactive(seatId);
+        if (newWallet == address(0)) revert ZeroWallet();
+        if (msg.sender != seats[seatId].wallet && msg.sender != owner) revert NotSeatOrOwner();
+        if (settlements.length > 0) {
+            Settlement storage last = settlements[settlements.length - 1];
+            if (last.settledAt != 0 || last.refunded) revert SeatRotationClosed();
+            // Audit-fix #3 (anti-rug): owner-driven rotation of ANOTHER seat's wallet
+            // expires the moment payouts become executable (fully-confirmed + window).
+            // Seat-self rotation stays allowed until executed/refunded so a user with a
+            // broken receiving wallet can always fix their own payout leg.
+            if (msg.sender != seats[seatId].wallet && last.fullyConfirmedAt != 0
+                && block.timestamp >= uint64(last.fullyConfirmedAt) + SETTLEMENT_WINDOW)
+                revert RotationWindowLocked();
+        }
+        if (seatIdOf[newWallet] != 0) revert DuplicateSeat(newWallet);
+        address old = seats[seatId].wallet;
+        seatIdOf[old] = 0; // CEI: fixup mappings before emit
+        seats[seatId].wallet = newWallet;
+        seatIdOf[newWallet] = seatId + 1;
+        emit SeatWalletRotated(seatId, old, newWallet);
     }
 
     // ─── Expense + escrow (owner-fronted MVP — Gap-3 ruling) ──────────────

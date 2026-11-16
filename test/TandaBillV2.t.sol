@@ -529,4 +529,99 @@ contract TandaBillV2Test is Test {
         assertEq(impl.SETTLEMENT_WINDOW(), 1 hours);
         assertEq(impl.MAX_HOLD(), 72 hours);
     }
+
+    // ─── P0.1 rotateSeatWallet (W10 gate suite) ─────────────────────────
+
+    function test_rotate_preInitiate_seatSelf() public {
+        TandaBillV2 bill = _createAs(owner, _seats3());
+        vm.prank(alice);
+        bill.rotateSeatWallet(1, eve);
+        (address w0, , ) = bill.seats(0);
+        (address w1, , ) = bill.seats(1);
+        assertEq(w1, eve);
+        assertEq(w0, owner);
+        assertEq(bill.seatIdOf(eve), 2);   // seatId+1
+        assertEq(bill.seatIdOf(alice), 0); // old mapping cleared
+    }
+
+    function test_rotate_byOwner_recovery() public {
+        TandaBillV2 bill = _createAs(owner, _seats3());
+        vm.prank(owner);
+        bill.rotateSeatWallet(2, dan);
+        (address w2, , ) = bill.seats(2);
+        assertEq(w2, dan);
+    }
+
+    function test_rotate_stranger_reverts() public {
+        TandaBillV2 bill = _createAs(owner, _seats3());
+        vm.prank(carol);
+        vm.expectRevert(TandaBillV2.NotSeatOrOwner.selector);
+        bill.rotateSeatWallet(1, eve);
+    }
+
+    function test_rotate_duplicateTarget_reverts() public {
+        TandaBillV2 bill = _createAs(owner, _seats3());
+        vm.prank(alice);
+        vm.expectRevert(abi.encodeWithSelector(TandaBillV2.DuplicateSeat.selector, bob));
+        bill.rotateSeatWallet(1, bob);
+    }
+
+    function test_rotate_zeroWallet_reverts() public {
+        TandaBillV2 bill = _createAs(owner, _seats3());
+        vm.prank(alice);
+        vm.expectRevert(TandaBillV2.ZeroWallet.selector);
+        bill.rotateSeatWallet(1, address(0));
+    }
+
+    /// @notice THE money test: rotate AFTER full confirm (dead-lock relief window),
+    ///         then execute must pay the NEW wallet, old wallet receives nothing,
+    ///         and all other seats' payouts are untouched.
+    function test_rotate_postFullConfirm_paysNewWallet() public {
+        TandaBillV2 bill = _initiatedBill(300e6);
+        _fullConfirm3(bill);
+        assertTrue(bill.settlementInitiated());
+
+        uint256 evePre = token.balanceOf(eve);
+        uint256 alicePre = token.balanceOf(alice);
+        vm.prank(alice);
+        bill.rotateSeatWallet(1, eve); // seat-self, settlement still open => allowed
+
+        vm.warp(block.timestamp + 1 hours + 1);
+        bill.executeSettlement(0);
+
+        assertEq(token.balanceOf(eve),   evePre + 100e6);
+        assertEq(token.balanceOf(alice), alicePre);       // got nothing
+        assertEq(token.balanceOf(owner), 1_000_000e6 - 300e6 + 100e6); // funded 300, received own 100 share
+        assertEq(token.balanceOf(bob),   1_000_000e6 + 100e6);
+    }
+
+    function test_rotate_afterExecute_reverts() public {
+        TandaBillV2 bill = _initiatedBill(300e6);
+        _fullConfirm3(bill);
+        vm.warp(block.timestamp + 1 hours + 1);
+        bill.executeSettlement(0);
+        vm.prank(alice);
+        vm.expectRevert(TandaBillV2.SeatRotationClosed.selector);
+        bill.rotateSeatWallet(1, eve);
+    }
+
+    /// @notice Audit-fix #3: at executability (fully-confirmed + window elapsed),
+    ///         OWNER-driven rotation of another seat locks (anti-rug), while the
+    ///         seat ITSELF can still rotate until executed/refunded.
+    function test_rotate_ownerLockedAtExecutability_selfStillOk() public {
+        TandaBillV2 bill = _initiatedBill(300e6);
+        _fullConfirm3(bill);
+        vm.warp(block.timestamp + 1 hours + 1);
+
+        vm.prank(owner);
+        vm.expectRevert(TandaBillV2.RotationWindowLocked.selector);
+        bill.rotateSeatWallet(1, dan); // owner redirect attempt at the finish line
+
+        vm.prank(alice); // seat-self unaffected
+        bill.rotateSeatWallet(1, eve);
+
+        bill.executeSettlement(0); // pays eve, not dan
+        assertEq(token.balanceOf(eve),   1_000_000e6 + 100e6);
+        assertEq(token.balanceOf(dan),   1_000_000e6);
+    }
 }
