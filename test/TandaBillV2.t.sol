@@ -677,6 +677,17 @@ contract TandaBillV2Test is Test {
         factory.callBill(address(0xBAD), hex"00");
     }
 
+    /// @notice Freeze-receipt addendum (Flux): clone initialize is one-shot - a non-factory
+    ///         direct initialize on a live clone reverts, so the _caller trust anchor cannot
+    ///         be re-pointed post-create.
+    function test_forwarder_initialize_guard() public {
+        TandaBillV2 bill = _createAs(owner, _seats3());
+        vm.prank(carol);
+        vm.expectRevert(TandaBillV2.AlreadyInitialized.selector);
+        bill.initialize(IERC20(address(token)), carol, _seats3());
+        assertEq(address(bill.factory()), address(factory)); // anchor still canonical
+    }
+
     function test_rotate_afterExecute_reverts() public {
         TandaBillV2 bill = _initiatedBill(300e6);
         _fullConfirm3(bill);
