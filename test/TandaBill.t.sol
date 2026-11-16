@@ -565,12 +565,12 @@ contract TandaBillTest is Test {
         assertTrue(settledAt > 0);
         assertEq(bill.escrowBalance(), 0);
 }
-    // GAP-2 GREEN (retargeted 2026-11-16 against canonical V2 semantics @4b2ad1f):
-    // the red witness was authored against the W1 stub and hardcoded pre-implementation
-    // revert strings. Canonical executeSettlement enforces the window anchored to
-    // initiation (bitmap is per-seat bookkeeping, not an execution gate). Retargeted
-    // to the actual canonical invariant: SettlementNotReady() before the window elapses,
-    // green at exactly initiatedAt + SETTLEMENT_WINDOW (inclusive boundary).
+    // GAP-2 GREEN witness (retargeted 2026-11-16 per adjudication @275f116): this suite
+    // binds the legacy stub TandaBill.sol, so its green path is the LEGACY-era anchor:
+    // initiateSettlement() starts the window; execute passes at exactly initiatedAt +
+    // SETTLEMENT_WINDOW (inclusive). V2 clones gate on fullyConfirmedAt + WINDOW instead
+    // — that invariant is proven in test/TandaBillV2.t.sol (test_gap2_executeRevertsNotFullyConfirmed
+    // + WindowNotElapsed), not here. Era-correct anchors, both green at 60/60.
     function test_gap2_confirm_enforcement_red() public {
         vm.startPrank(owner);
         bill.addSeat(alice);
