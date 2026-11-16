@@ -1,0 +1,46 @@
+{
+  "milestone": "W6-V2 canonical prod deploy + live E2E + explorer verification",
+  "date_utc": "2026-11-16T03:17:35Z",
+  "chain": "World Chain Sepolia 4801",
+  "deployer": "0x78dC32F6a4edF80c538A75e1F7664505B1969E7A",
+  "signer_note": "pipe-only mnemonic flow; zero secret bytes on disk/logs/chat",
+  "contracts": {
+    "TandaBillV2_impl": {
+      "address": "0x1Cb98A8Cd9FF8058DD327d505bc80eC73Cca27A5",
+      "create_tx": "0xe9c3f79371fa52a9f3c08ad3d0ac86c4d2a384bc0e2f77b15e90b5adc04b2819",
+      "block": 37125382,
+      "gasUsed": 1619087,
+      "runtime": "7241 B, sha256 9bbc47ad9c3cc738\u2026"
+    },
+    "TandaBillFactory": {
+      "address": "0x70A5dC7Ea69D19618335D89d84a32c2a605c2Ac6",
+      "create_tx": "0xafaaa9550fbc1b822302df70acf2f8603287df03ea6f3bee3fb647f055eafcb7",
+      "block": 37125382,
+      "gasUsed": 270412,
+      "ctor_arg": "0x1Cb98A8Cd9FF8058DD327d505bc80eC73Cca27A5",
+      "immutable_windows_bytes": [
+        132,
+        318
+      ]
+    }
+  },
+  "lineage_proof": "live impl == verify_payload compile; factory artifact==live except 2 baked-impl windows; sources = commit 4b2ad1f",
+  "lineage_note": "SUPERSEDES draft factory 0xcfB1876cad845FECAd8e6163d7FBD1B9334c0c9e (draft bytes, no isBill). W5 canonical 0x8644\u2026b12 stays live+verified.",
+  "smoke": {
+    "createBill_tx": "0xdbd8dd14884d97231a9e8e89da99ec9ca26746a02a9d6dcdc911fb3cfd7d14cd",
+    "block": 37125562,
+    "bill": "0xDB8e84C552954862Bda7E0E8cc5571356b0EDdC5",
+    "isBill": true,
+    "clone_eip1167": true,
+    "owner_is_creator": true,
+    "SETTLEMENT_WINDOW": 3600,
+    "MAX_HOLD": 259200,
+    "gas": 208530
+  },
+  "world_json": "stays pinned W5 pending W8 frontend rewire \u2014 no premature repin (Flux ordering honored)",
+  "explorer": {
+    "TandaBillV2_impl": "https://sepolia.worldscan.org/address/0x1Cb98A8Cd9FF8058DD327d505bc80eC73Cca27A5#code \u2014 VERIFIED (Pass - Verified; Opt 1/200, osaka, v0.8.38+commit.1835d247)",
+    "TandaBillFactory": "https://sepolia.worldscan.org/address/0x70A5dC7Ea69D19618335D89d84a32c2a605c2Ac6#code \u2014 VERIFIED (Pass - Verified; ctor args 64-hex zero-pad ABI-encoded)"
+  },
+  "verify_pitfall": "foundry normalized CRLF->LF in compiler inputs: deployed metadata hashes the GIT BLOB bytes; verification payload must carry blob-exact LF sources, not Windows worktree copies"
+}
