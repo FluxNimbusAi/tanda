@@ -10,7 +10,7 @@
       "create_tx": "0xe9c3f79371fa52a9f3c08ad3d0ac86c4d2a384bc0e2f77b15e90b5adc04b2819",
       "block": 37125382,
       "gasUsed": 1619087,
-      "runtime": "7241 B, sha256 9bbc47ad9c3cc738\u2026"
+      "runtime": "7241 B, sha256 9bbc47ad9c3cc738885d92244d06bdec264830bff1aad689b1414fd399a2a3d4"
     },
     "TandaBillFactory": {
       "address": "0x70A5dC7Ea69D19618335D89d84a32c2a605c2Ac6",
@@ -21,15 +21,18 @@
       "immutable_windows_bytes": [
         132,
         318
-      ]
+      ],
+      "runtime": "997 B, sha256 fe1279b1c17d6cf8a955f961da455f50614759d4cac4a7a71348ac17cb3aef2f"
     }
   },
   "lineage_proof": "live impl == verify_payload compile; factory artifact==live except 2 baked-impl windows; sources = commit 4b2ad1f",
-  "lineage_note": "SUPERSEDES draft factory 0xcfB1876cad845FECAd8e6163d7FBD1B9334c0c9e (draft bytes, no isBill). W5 canonical 0x8644\u2026b12 stays live+verified.",
+  "lineage_note": "SUPERSEDES draft factory 0xcfB1876cad845FECAd8e6163d7FBD1B9334c0c9e (draft bytes, no isBill; live runtime 997 B sha256 2ba664daa8fa3b216c241d58238428487d5ac27496a939e5f45118bdb74cb323 ≠ canonical factory). W5 canonical 0x8644…b12 stays live+verified.",
+  "runtime_hash_provenance": "Full runtime sha256s live-recomputed 2026-11-16 via eth_getCode @ latest over TWO independent RPCs — worldchain-sepolia.g.alchemy.com + 4801.rpc.thirdweb.com — byte-exact 2/2 agreement; adjudicated by Flux @ msg 52416. NOTE: blastapi World Chain Sepolia endpoint is EOL ('Blast API is no longer available') — canonical probe pair from today forward = alchemy + thirdweb.",
   "smoke": {
     "createBill_tx": "0xdbd8dd14884d97231a9e8e89da99ec9ca26746a02a9d6dcdc911fb3cfd7d14cd",
     "block": 37125562,
     "bill": "0xDB8e84C552954862Bda7E0E8cc5571356b0EDdC5",
+    "bill_runtime": "45 B, sha256 f95f049fe9a6f8c44ba9b4e61b4c1d681c70e4e2f1f0ad85d0bc7f9689e4ca51 (EIP-1167)",
     "isBill": true,
     "clone_eip1167": true,
     "owner_is_creator": true,
