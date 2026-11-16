@@ -66,6 +66,10 @@ contract TandaBillV2 {
 
     uint256 public escrowBalance;
     bool public settlementInitiated;
+    /// @notice Creator factory; enables the trusted-forwarder _caller() path (MiniKit
+    ///         entrypoint gate). Zero = legacy direct deploy -> _caller falls back to
+    ///         msg.sender, so W5-era bills keep exact semantics.
+    address public factory;
 
     uint64 public constant SETTLEMENT_WINDOW = 1 hours; // hold after full confirmation
     uint64 public constant MAX_HOLD = 72 hours;         // refund escape if never confirmed
@@ -117,6 +121,7 @@ contract TandaBillV2 {
     function initialize(IERC20 _token, address creator, address[] calldata initialSeats) external {
         require(!_initialized, AlreadyInitialized());
         _initialized = true;
+        factory = msg.sender; // trusted-forwarder anchor (direct call: msg.sender == factory)
         token = _token;
         owner = creator;
         for (uint256 i = 0; i < initialSeats.length; i++) {
@@ -132,10 +137,24 @@ contract TandaBillV2 {
         emit BillInitialized(address(_token), creator);
     }
 
+    /// @notice Recovers the original sender for factory-forwarded calls: the canonical
+    ///         factory's callBill appends the caller's 20-byte address to calldata.
+    ///         Direct EOA/script calls (msg.sender != factory) fall back to msg.sender,
+    ///         and a forged trailing tail cannot spoof (fallback branch ignores it).
+    function _caller() internal view returns (address forwarded) {
+        if (msg.sender == factory && msg.data.length >= 20) {
+            assembly {
+                forwarded := shr(96, calldataload(sub(calldatasize(), 20)))
+            }
+        } else {
+            forwarded = msg.sender;
+        }
+    }
+
     // ─── Seat management (owner only, pre-settlement) ─────────────────────
 
     function addSeat(address wallet) external {
-        require(msg.sender == owner, NotOwner());
+        require(_caller() == owner, NotOwner());
         if (seatIdOf[wallet] != 0) revert DuplicateSeat(wallet);
         if (seats.length >= MAX_SEATS) revert TooManySeats();
         uint256 seatId = seats.length;
@@ -149,7 +168,7 @@ contract TandaBillV2 {
 
     /// @dev Forbidden after any settlement initiation (roster freeze — W5 ruling stands).
     function removeSeat(uint256 seatId) external {
-        require(msg.sender == owner, NotOwner());
+        require(_caller() == owner, NotOwner());
         require(!settlementInitiated, SettlementInitiatedAlready());
         if (seatId >= seats.length) revert SeatNotFound(seatId);
         if (!seats[seatId].active) revert SeatInactive(seatId);
@@ -168,17 +187,22 @@ contract TandaBillV2 {
         if (seatId >= seats.length) revert SeatNotFound(seatId);
         if (!seats[seatId].active) revert SeatInactive(seatId);
         if (newWallet == address(0)) revert ZeroWallet();
-        if (msg.sender != seats[seatId].wallet && msg.sender != owner) revert NotSeatOrOwner();
+        address caller = _caller();
+        if (caller != seats[seatId].wallet && caller != owner) revert NotSeatOrOwner();
         if (settlements.length > 0) {
             Settlement storage last = settlements[settlements.length - 1];
             if (last.settledAt != 0 || last.refunded) revert SeatRotationClosed();
-            // Audit-fix #3 (anti-rug): owner-driven rotation of ANOTHER seat's wallet
-            // expires the moment payouts become executable (fully-confirmed + window).
-            // Seat-self rotation stays allowed until executed/refunded so a user with a
-            // broken receiving wallet can always fix their own payout leg.
-            if (msg.sender != seats[seatId].wallet && last.fullyConfirmedAt != 0
-                && block.timestamp >= uint64(last.fullyConfirmedAt) + SETTLEMENT_WINDOW)
-                revert RotationWindowLocked();
+            // Ratified split-lock (2026-11-16 remediation):
+            //  - owner-driven rotation of another seat dies at full confirmation
+            //    (kept strict through executability until executed/refunded)
+            //  - confirmed seat-self rotation locked inside the settlement window;
+            //    unconfirmed seats may always fix their own payout wallet
+            if (last.fullyConfirmedAt != 0) {
+                bool inWindow = block.timestamp < uint256(last.fullyConfirmedAt) + SETTLEMENT_WINDOW;
+                if (caller != seats[seatId].wallet && caller == owner) revert RotationWindowLocked();
+                if (caller == seats[seatId].wallet && inWindow
+                    && (last.confirmedMask & (uint256(1) << seatId)) != 0) revert RotationWindowLocked();
+            }
         }
         if (seatIdOf[newWallet] != 0) revert DuplicateSeat(newWallet);
         address old = seats[seatId].wallet;
@@ -191,25 +215,25 @@ contract TandaBillV2 {
     // ─── Expense + escrow (owner-fronted MVP — Gap-3 ruling) ──────────────
 
     function addExpense(uint256 amount) external {
-        require(msg.sender == owner, NotOwner());
+        require(_caller() == owner, NotOwner());
         uint256 expenseId = expenses.length;
         // casting to 'uint64' is safe because block.timestamp < 2^64 until year 584 billion
         // forge-lint: disable-next-line(unsafe-typecast)
-        expenses.push(Expense({amount: amount, paidBy: msg.sender, addedAt: uint64(block.timestamp), settled: false}));
-        emit ExpenseAdded(expenseId, msg.sender, amount);
+        expenses.push(Expense({amount: amount, paidBy: _caller(), addedAt: uint64(block.timestamp), settled: false}));
+        emit ExpenseAdded(expenseId, _caller(), amount);
     }
 
     function fundEscrow(uint256 amount) external {
-        require(token.transferFrom(msg.sender, address(this), amount), TokenTransferFailed());
+        require(token.transferFrom(_caller(), address(this), amount), TokenTransferFailed());
         escrowBalance += amount;
-        emit EscrowFunded(msg.sender, amount);
+        emit EscrowFunded(_caller(), amount);
     }
 
     // ─── Settlement ───────────────────────────────────────────────────────
 
     /// @notice Split all unsettled expenses equally among active seats; snapshot confirmation roster.
     function initiateSettlement() external {
-        require(msg.sender == owner, NotOwner());
+        require(_caller() == owner, NotOwner());
         uint256 unsettled = _unsettledTotal();
         require(unsettled > 0, EscrowEmpty());
         require(escrowBalance >= unsettled, EscrowEmpty());
@@ -263,7 +287,7 @@ contract TandaBillV2 {
         if (s.settledAt != 0 || s.refunded) revert AlreadySettled();
         if (s.fullyConfirmedAt != 0) revert NotAwaitingConfirmations();
 
-        uint256 raw = seatIdOf[msg.sender];
+        uint256 raw = seatIdOf[_caller()];
         if (raw == 0) revert NotAnExpectedSeat();
         uint256 seatId = raw - 1;
         uint256 bit = 1 << seatId;
@@ -315,7 +339,7 @@ contract TandaBillV2 {
     ///         MAX_HOLD of initiation, escrow returns to this contract's funder side (owner,
     ///         per Gap-3 owner-fronted ruling). Funds can never sit frozen indefinitely.
     function refundSettlement(uint256 settlementId) external {
-        require(msg.sender == owner, NotOwner());
+        require(_caller() == owner, NotOwner());
         if (settlementId >= settlements.length) revert SettlementNotFound();
         Settlement storage s = settlements[settlementId];
         if (s.settledAt != 0 || s.refunded) revert AlreadySettled();

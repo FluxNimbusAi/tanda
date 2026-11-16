@@ -1,5 +1,23 @@
 # W10 Audit Corrections — Implementation Memo (2026-11-16)
 
+## RESOLUTION 2026-11-16b (ratified by d3b0m3n after Flux review) — APPLIED
+- #1 SOLVED via Trusted Factory Forwarder: factory.callBill(bill, data) appends caller
+  address; clone's _caller() decodes iff msg.sender == factory (recorded in initialize);
+  direct EOA/script path unchanged; legacy bills (factory slot == 0) untouched.
+  MiniKit entrypoint = factory only (+ USDC for approve). NOTES: (a) d3b0m3n snippet's
+  `address caller` name collides with Yul builtin (CALLER opcode) — renamed to
+  `forwarded`; (b) checklist REUSE=1 against live factory 0x03012C8e is impossible —
+  that factory predates callBill; fresh impl+factory deploy is MANDATORY.
+- #3 RATIFIED split-lock: owner-driven rotation dies at FULL CONFIRM (kept locked through
+  executability until executed/refunded — stricter than spec, delta signed off in chat);
+  confirmed-self locked inside window; unconfirmed-self always free until closed.
+- Unit gate: 73/73 (added: unconfirmedSelf money path, confirmedSelf window lock,
+  ownerFullConfirm lock, callBill full lifecycle + identity enforcement + NotBill bubble).
+- E2E (4801): harness rewritten for forwarder routing (8 cases); BLOCKED on deployer
+  top-up — needs ~0.000003 ETH total (deploy 2 contracts + ~15 txs @ 0.0011 gwei).
+
+--- original memo follows ---
+
 Source: d3b0m3n/Flux World Chain + MiniKit v2 review, relayed 2026-11-16 (4 mandatory
 corrections to be incorporated BEFORE freezing P0.1 bytecode + Slice 3 schema).
 Owner of items 2-4 impl: Nimbus. Item 1 = dispatch architecture → Flux ruling REQUIRED.

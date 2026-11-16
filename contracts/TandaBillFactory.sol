@@ -18,6 +18,7 @@ contract TandaBillFactory {
     event BillCreated(address indexed bill, address indexed creator, address indexed token, uint256 seatCount);
 
     error CreateFailed();
+    error NotBill();
     error NoSeats();
     error TooManySeats();
 
@@ -50,5 +51,21 @@ contract TandaBillFactory {
         // initialize(), not the bill owner, so the public addSeat owner gate cannot apply there.
         TandaBillV2(payable(bill)).initialize(token, msg.sender, seats);
         emit BillCreated(bill, msg.sender, address(token), seats.length);
+    }
+
+    /// @notice Trusted forwarder (MiniKit entrypoint-gate remediation): the static
+    ///         factory is the single Contract Entrypoint; bill logic runs in the clone,
+    ///         so per-clone escrow isolation and approve-to-clone semantics are intact.
+    ///         The caller address is appended to calldata; the clone's _caller() decodes
+    ///         it (msg.sender == factory proves this path). Revert data bubbles unchanged.
+    function callBill(address bill, bytes calldata data) external {
+        if (!isBill[bill]) revert NotBill();
+        (bool success, bytes memory retdata) =
+            bill.call(abi.encodePacked(data, uint160(msg.sender)));
+        if (!success) {
+            assembly {
+                revert(add(retdata, 0x20), mload(retdata))
+            }
+        }
     }
 }
