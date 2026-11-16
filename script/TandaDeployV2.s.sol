@@ -21,8 +21,11 @@ contract TandaDeployV2 is Script {
         require(usdc != address(0), "Set USDC_ADDRESS env var");
 
         vm.startBroadcast();
-        TandaBillFactory factory = new TandaBillFactory(IERC20(usdc));
+        TandaBillV2 impl = new TandaBillV2();
+        TandaBillFactory factory = new TandaBillFactory(address(impl));
         vm.stopBroadcast();
+
+        require(address(factory.implementation()) == address(impl), "Impl mismatch");
 
         console.log("implProd:", address(factory.implementation()));
         console.log("facProd:", address(factory));
