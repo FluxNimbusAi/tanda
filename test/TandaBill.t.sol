@@ -564,6 +564,33 @@ contract TandaBillTest is Test {
         assertEq(totalAmount, 100e6);
         assertTrue(settledAt > 0);
         assertEq(bill.escrowBalance(), 0);
+}
+    // GAP-2 RED (TDD, approved 2026-11-15): confirmSettlement must be enforced.
+    // Fails against the current stub by design — proof the invariant is unenforced.
+    // Implementation target: per-seat confirmation bitmap + window anchored to LAST confirm.
+    function test_gap2_confirm_enforcement_red() public {
+        vm.startPrank(owner);
+        bill.addSeat(alice);
+        bill.addSeat(bob);
+        bill.addExpense(100e6);
+        token.approve(address(bill), 100e6);
+        bill.fundEscrow(100e6);
+        bill.initiateSettlement();
+        uint256 sid = 0;
+        vm.stopPrank();
+
+        vm.prank(alice); bill.confirmSettlement(sid);
+        vm.expectRevert("not all seats confirmed");
+        vm.prank(owner); bill.executeSettlement(sid);
+
+        vm.prank(bob); bill.confirmSettlement(sid);
+        vm.expectRevert("window not elapsed since last confirm");
+        vm.prank(owner); bill.executeSettlement(sid);
+
+        vm.warp(block.timestamp + 1 hours);
+        vm.prank(owner); bill.executeSettlement(sid); // green after implementation
+        assertEq(token.balanceOf(alice), 1_000_000e6 + 50e6);
+        assertEq(token.balanceOf(bob),   1_000_000e6 + 50e6);
     }
 }
 
