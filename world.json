@@ -3,120 +3,143 @@
   "description": "Split-bill expense ledger with short-hold settlement escrow. Create a bill, add seats, log expenses, and settle in USDC on World Chain. No key custody, no protocol fees, fee-free MVP.",
   "icon": "/assets/tanda-icon.png",
   "contract": {
-    "address": "0x70A5dC7Ea69D19618335D89d84a32c2a605c2Ac6",
+    "address": "0x96B6Ebc35aD760561d26a6C57d5b3F491B524332",
     "abi": [
       {
+        "type": "constructor",
         "inputs": [
           {
-            "internalType": "address",
             "name": "_implementation",
-            "type": "address"
+            "type": "address",
+            "internalType": "address"
           }
         ],
-        "stateMutability": "nonpayable",
-        "type": "constructor"
+        "stateMutability": "nonpayable"
       },
       {
-        "inputs": [],
-        "name": "CreateFailed",
-        "type": "error"
-      },
-      {
-        "inputs": [],
-        "name": "NoSeats",
-        "type": "error"
-      },
-      {
-        "inputs": [],
-        "name": "TooManySeats",
-        "type": "error"
-      },
-      {
-        "anonymous": false,
+        "type": "function",
+        "name": "callBill",
         "inputs": [
           {
-            "indexed": true,
-            "internalType": "address",
             "name": "bill",
-            "type": "address"
+            "type": "address",
+            "internalType": "address"
           },
           {
-            "indexed": true,
-            "internalType": "address",
-            "name": "creator",
-            "type": "address"
-          },
-          {
-            "indexed": true,
-            "internalType": "address",
-            "name": "token",
-            "type": "address"
-          },
-          {
-            "indexed": false,
-            "internalType": "uint256",
-            "name": "seatCount",
-            "type": "uint256"
+            "name": "data",
+            "type": "bytes",
+            "internalType": "bytes"
           }
         ],
-        "name": "BillCreated",
-        "type": "event"
+        "outputs": [],
+        "stateMutability": "nonpayable"
       },
       {
-        "inputs": [
-          {
-            "internalType": "contract IERC20",
-            "name": "token",
-            "type": "address"
-          },
-          {
-            "internalType": "address[]",
-            "name": "seats",
-            "type": "address[]"
-          }
-        ],
+        "type": "function",
         "name": "createBill",
-        "outputs": [
-          {
-            "internalType": "address",
-            "name": "bill",
-            "type": "address"
-          }
-        ],
-        "stateMutability": "nonpayable",
-        "type": "function"
-      },
-      {
-        "inputs": [],
-        "name": "implementation",
-        "outputs": [
-          {
-            "internalType": "address",
-            "name": "",
-            "type": "address"
-          }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-      },
-      {
         "inputs": [
           {
-            "internalType": "address",
-            "name": "",
-            "type": "address"
+            "name": "token",
+            "type": "address",
+            "internalType": "contract IERC20"
+          },
+          {
+            "name": "seats",
+            "type": "address[]",
+            "internalType": "address[]"
           }
         ],
-        "name": "isBill",
         "outputs": [
           {
-            "internalType": "bool",
-            "name": "",
-            "type": "bool"
+            "name": "bill",
+            "type": "address",
+            "internalType": "address"
           }
         ],
-        "stateMutability": "view",
-        "type": "function"
+        "stateMutability": "nonpayable"
+      },
+      {
+        "type": "function",
+        "name": "implementation",
+        "inputs": [],
+        "outputs": [
+          {
+            "name": "",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "stateMutability": "view"
+      },
+      {
+        "type": "function",
+        "name": "isBill",
+        "inputs": [
+          {
+            "name": "",
+            "type": "address",
+            "internalType": "address"
+          }
+        ],
+        "outputs": [
+          {
+            "name": "",
+            "type": "bool",
+            "internalType": "bool"
+          }
+        ],
+        "stateMutability": "view"
+      },
+      {
+        "type": "event",
+        "name": "BillCreated",
+        "inputs": [
+          {
+            "name": "bill",
+            "type": "address",
+            "indexed": true,
+            "internalType": "address"
+          },
+          {
+            "name": "creator",
+            "type": "address",
+            "indexed": true,
+            "internalType": "address"
+          },
+          {
+            "name": "token",
+            "type": "address",
+            "indexed": true,
+            "internalType": "address"
+          },
+          {
+            "name": "seatCount",
+            "type": "uint256",
+            "indexed": false,
+            "internalType": "uint256"
+          }
+        ],
+        "anonymous": false
+      },
+      {
+        "type": "error",
+        "name": "CreateFailed",
+        "inputs": []
+      },
+      {
+        "type": "error",
+        "name": "NoSeats",
+        "inputs": []
+      },
+      {
+        "type": "error",
+        "name": "NotBill",
+        "inputs": []
+      },
+      {
+        "type": "error",
+        "name": "TooManySeats",
+        "inputs": []
       }
     ],
     "chainId": 4801
@@ -126,21 +149,26 @@
     "source": "https://github.com/FluxNimbusAi/tanda"
   },
   "metadata": {
-    "version": "1.0.0",
+    "version": "1.1.0",
     "category": "finance",
     "tags": [
       "split-bill",
       "expense",
       "escrow",
-      "usdc"
+      "usdc",
+      "forwarder"
     ],
     "author": "FluxNimbusAi",
     "license": "MIT"
   },
   "_lineage": {
-    "canonical_pair": "impl 0x1Cb98A8Cd9FF8058DD327d505bc80eC73Cca27A5 + factory 0x70A5dC7Ea69D19618335D89d84a32c2a605c2Ac6 (4801, both source-verified)",
-    "bill_abi": "interact with cloned bills via TandaBillV2 abi from artifacts/tanda_v2_abis.json @ 6b0fb2d",
-    "superseded": "W5 app contract 0x8644095B9722a41281314158006d194C59ab9b12 (stays live+verified for legacy bills); draft factory 0xcfB1876cad845FECAd8e6163d7FBD1B9334c0c9e (never cite)",
-    "status": "DRAFT — fires only at W8 implementation start, Flux approval gate"
+    "canonical_pair": "prod impl 0xD33A44fC56Fb859be08a8aAc5Cc26Cd2a27D47c6 (runtime sha256 f8f6d5b577bbfb4d7adae6aa29a19dcd81a8fd1dd9efcee575df67bee4dd1278, 8474 B, live==artifact EXACT) + prod factory 0x96B6Ebc35aD760561d26a6C57d5b3F491B524332 (runtime sha256 bf3e6bf366202ce0fcc4e6d3d8e98337fdb2e2db2be32d95a761a3f2aab2a048, 1402 B, immutable window = prod impl pointer; implementation() round-trips). Frozen per Flux signature on receipt dff3e65; both deployed 2026-11-16 with rotateSeatWallet + callBill forwarder (W10 remediated arch).",
+    "e2e_gate": "docs/W10_E2E_RECEIPT_20261116.md @ dff3e65 - 11/11 on fast twin (impl 0x52d2b14c, factory 0x65Ba0bB4; live==artifact there too). Gas: prod impl deploy 1885708 (W6 +266,621), factory 357929 (+87,517).",
+    "portal_entrypoints": "0x96B6Ebc35aD760561d26a6C57d5b3F491B524332 (factory - ALL bill interaction routes through callBill; clones are never client targets) + USDC 0x66145f38cBAC35Ca6F1Dfb4914dF98F1614aeA88 (direct approve only). Set in Developer Portal -> Permissions -> Contract Entrypoints.",
+    "bill_abi": "artifacts/tanda_v2_abis.json - regenerated from frozen prod artifacts (now includes rotateSeatWallet, factory(), SeatWalletRotated, RotationWindowLocked/SeatRotationClosed/NotSeatOrOwner/ZeroWallet, callBill, NotBill)",
+    "event_selector_note": "live SeatWalletRotated = (seatId indexed, from indexed, to indexed) - 3 topics, NO uint64 'at' param (ruling spec line vs shipped code; timestamp via block). Indexers use the LIVE selector.",
+    "superseded": "W5 app contract 0x8644095B9722a41281314158006d194C59ab9b12 stays live+verified for legacy bills (runtime-locked 6aa4c60e, Q4 ruling: never patched); pre-forwarder V2 factory 0x70A5dC7Ea69D19618335D89d84a32c2a605c2Ac6 + impl 0x1Cb98A8Cd9FF8058DD327d505bc80eC73Cca27A5 remain LIVE for bills already created through them (interact via their old ABIs - no rotation, no forwarder); draft factory 0xcfB1876c never cite; phantoms 0x864473/0xB02880 retired.",
+    "debris": "clone 0x24d15e40397744694c04d42D4f4Cb8463a535Ed1 SETTLED VIA REFUND 2026-11-16: initiate -> MAX_HOLD 120s -> refundSettlement(0); 12.0 USDC back to deployer (1.6 -> 13.6e6 raw, escrow 0, refunded=true). No stranded test funds remain.",
+    "status": "REPINNED W10 2026-11-16 - Flux signed freeze (receipt dff3e65) and ordered this repin PR."
   }
 }
