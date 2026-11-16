@@ -529,4 +529,192 @@ contract TandaBillV2Test is Test {
         assertEq(impl.SETTLEMENT_WINDOW(), 1 hours);
         assertEq(impl.MAX_HOLD(), 72 hours);
     }
+
+    // ─── P0.1 rotateSeatWallet (W10 gate suite) ─────────────────────────
+
+    function test_rotate_preInitiate_seatSelf() public {
+        TandaBillV2 bill = _createAs(owner, _seats3());
+        vm.prank(alice);
+        bill.rotateSeatWallet(1, eve);
+        (address w0, , ) = bill.seats(0);
+        (address w1, , ) = bill.seats(1);
+        assertEq(w1, eve);
+        assertEq(w0, owner);
+        assertEq(bill.seatIdOf(eve), 2);   // seatId+1
+        assertEq(bill.seatIdOf(alice), 0); // old mapping cleared
+    }
+
+    function test_rotate_byOwner_recovery() public {
+        TandaBillV2 bill = _createAs(owner, _seats3());
+        vm.prank(owner);
+        bill.rotateSeatWallet(2, dan);
+        (address w2, , ) = bill.seats(2);
+        assertEq(w2, dan);
+    }
+
+    function test_rotate_stranger_reverts() public {
+        TandaBillV2 bill = _createAs(owner, _seats3());
+        vm.prank(carol);
+        vm.expectRevert(TandaBillV2.NotSeatOrOwner.selector);
+        bill.rotateSeatWallet(1, eve);
+    }
+
+    function test_rotate_duplicateTarget_reverts() public {
+        TandaBillV2 bill = _createAs(owner, _seats3());
+        vm.prank(alice);
+        vm.expectRevert(abi.encodeWithSelector(TandaBillV2.DuplicateSeat.selector, bob));
+        bill.rotateSeatWallet(1, bob);
+    }
+
+    function test_rotate_zeroWallet_reverts() public {
+        TandaBillV2 bill = _createAs(owner, _seats3());
+        vm.prank(alice);
+        vm.expectRevert(TandaBillV2.ZeroWallet.selector);
+        bill.rotateSeatWallet(1, address(0));
+    }
+
+    /// @notice Ratified semantics: UNCONFIRMED self-rotation is the rescue path - alice
+    ///         rotates before confirming; eve then confirms the seat via the new wallet
+    ///         (seat-indexed confirm state follows the wallet), execute pays eve.
+    function test_rotate_unconfirmedSelf_beforeConfirm_paysNewWallet() public {
+        TandaBillV2 bill = _initiatedBill(300e6);
+        // owner + bob confirm; alice NOT yet confirmed => not fullyConfirmed
+        _confirmAs(owner, bill, 0);
+        _confirmAs(bob, bill, 0);
+
+        uint256 evePre = token.balanceOf(eve);
+        uint256 alicePre = token.balanceOf(alice);
+        vm.prank(alice);
+        bill.rotateSeatWallet(1, eve); // unconfirmed self, FCA==0 => always allowed
+
+        _confirmAs(eve, bill, 0); // eve confirms seat 1 via new wallet
+        assertTrue(_s(bill, 0).fullyConfirmedAt != 0);
+
+        vm.warp(block.timestamp + 1 hours + 1);
+        bill.executeSettlement(0);
+
+        assertEq(token.balanceOf(eve),   evePre + 100e6);
+        assertEq(token.balanceOf(alice), alicePre);       // old wallet got nothing
+        assertEq(token.balanceOf(owner), 1_000_000e6 - 300e6 + 100e6);
+        assertEq(token.balanceOf(bob),   1_000_000e6 + 100e6);
+    }
+
+    /// @notice Ratified split-lock: a seat that ALREADY CONFIRMED cannot rotate inside
+    ///         the settlement window (no last-second self-redirection of confirmed state).
+    function test_rotate_confirmedSelf_lockedInWindow() public {
+        TandaBillV2 bill = _initiatedBill(300e6);
+        _fullConfirm3(bill); // alice confirmed as herself
+        vm.prank(alice);
+        vm.expectRevert(TandaBillV2.RotationWindowLocked.selector);
+        bill.rotateSeatWallet(1, eve);
+        // after the window (executable), self-rescue of own funds is allowed again
+        vm.warp(block.timestamp + 1 hours + 1);
+        vm.prank(alice);
+        bill.rotateSeatWallet(1, eve);
+        bill.executeSettlement(0);
+        assertEq(token.balanceOf(eve), 1_000_000e6 + 100e6);
+    }
+
+    /// @notice Owner-driven rotation of another seat dies at FULL CONFIRMATION (in-window),
+    ///         strictly earlier than the window-expiry rule it replaces.
+    function test_rotate_ownerLockedAtFullConfirm_inWindow() public {
+        TandaBillV2 bill = _initiatedBill(300e6);
+        _fullConfirm3(bill);
+        vm.prank(owner);
+        vm.expectRevert(TandaBillV2.RotationWindowLocked.selector);
+        bill.rotateSeatWallet(1, dan); // inside window, not executable yet
+    }
+
+    // ─── Trusted forwarder (correction #1 remediation) ──────────────────
+
+    function test_forwarder_callBill_fullLifecycle() public {
+        address[] memory roster = new address[](2);
+        roster[0] = owner;
+        roster[1] = alice;
+        vm.prank(owner);
+        address billAddr = factory.createBill(IERC20(address(token)), roster);
+        TandaBillV2 hub = TandaBillV2(payable(billAddr));
+        assertEq(address(hub.factory()), address(factory));
+
+        bytes memory cd;
+        // owner actions via forwarder
+        vm.startPrank(owner);
+        cd = abi.encodeCall(hub.addExpense, (200e6));
+        factory.callBill(billAddr, cd);
+        token.approve(billAddr, 200e6); // approve stays direct: spender is the CLONE
+        cd = abi.encodeCall(hub.fundEscrow, (200e6));
+        factory.callBill(billAddr, cd);
+        cd = abi.encodeCall(hub.initiateSettlement, ());
+        factory.callBill(billAddr, cd);
+        vm.stopPrank();
+
+        // confirmations via forwarder from each seat wallet (identity preserved)
+        vm.prank(owner);
+        cd = abi.encodeCall(hub.confirmSettlement, (0));
+        factory.callBill(billAddr, cd);
+        vm.prank(alice);
+        cd = abi.encodeCall(hub.confirmSettlement, (0));
+        factory.callBill(billAddr, cd);
+        assertEq(_s(hub, 0).fullyConfirmedAt != 0, true);
+
+        vm.warp(block.timestamp + 1 hours + 1);
+        vm.prank(carol); // permissionless execute, still permissionless via forwarder
+        cd = abi.encodeCall(hub.executeSettlement, (0));
+        factory.callBill(billAddr, cd);
+        assertEq(token.balanceOf(alice), 1_000_000e6 + 100e6);
+        assertEq(token.balanceOf(owner), 1_000_000e6 - 200e6 + 100e6);
+    }
+
+    function test_forwarder_callBill_identityEnforced() public {
+        TandaBillV2 bill = _createAs(owner, _seats3());
+        vm.prank(carol);
+        vm.expectRevert(TandaBillV2.NotSeatOrOwner.selector); // bubbled revert, selector intact
+        factory.callBill(address(bill), abi.encodeCall(bill.rotateSeatWallet, (1, eve)));
+    }
+
+    function test_forwarder_callBill_notBill_reverts() public {
+        vm.expectRevert(TandaBillFactory.NotBill.selector);
+        factory.callBill(address(0xBAD), hex"00");
+    }
+
+    /// @notice Freeze-receipt addendum (Flux): clone initialize is one-shot - a non-factory
+    ///         direct initialize on a live clone reverts, so the _caller trust anchor cannot
+    ///         be re-pointed post-create.
+    function test_forwarder_initialize_guard() public {
+        TandaBillV2 bill = _createAs(owner, _seats3());
+        vm.prank(carol);
+        vm.expectRevert(TandaBillV2.AlreadyInitialized.selector);
+        bill.initialize(IERC20(address(token)), carol, _seats3());
+        assertEq(address(bill.factory()), address(factory)); // anchor still canonical
+    }
+
+    function test_rotate_afterExecute_reverts() public {
+        TandaBillV2 bill = _initiatedBill(300e6);
+        _fullConfirm3(bill);
+        vm.warp(block.timestamp + 1 hours + 1);
+        bill.executeSettlement(0);
+        vm.prank(alice);
+        vm.expectRevert(TandaBillV2.SeatRotationClosed.selector);
+        bill.rotateSeatWallet(1, eve);
+    }
+
+    /// @notice Audit-fix #3: at executability (fully-confirmed + window elapsed),
+    ///         OWNER-driven rotation of another seat locks (anti-rug), while the
+    ///         seat ITSELF can still rotate until executed/refunded.
+    function test_rotate_ownerLockedAtExecutability_selfStillOk() public {
+        TandaBillV2 bill = _initiatedBill(300e6);
+        _fullConfirm3(bill);
+        vm.warp(block.timestamp + 1 hours + 1);
+
+        vm.prank(owner);
+        vm.expectRevert(TandaBillV2.RotationWindowLocked.selector);
+        bill.rotateSeatWallet(1, dan); // owner redirect attempt at the finish line
+
+        vm.prank(alice); // seat-self unaffected
+        bill.rotateSeatWallet(1, eve);
+
+        bill.executeSettlement(0); // pays eve, not dan
+        assertEq(token.balanceOf(eve),   1_000_000e6 + 100e6);
+        assertEq(token.balanceOf(dan),   1_000_000e6);
+    }
 }
