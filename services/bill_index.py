@@ -40,6 +40,8 @@ HEX64 = re.compile(r"^0x[0-9a-fA-F]{64}$")
 ADDR_RE = re.compile(r"^0x[a-fA-F0-9]{40}$")
 RP_ID_RE = re.compile(r"^rp_[a-z0-9]+$")
 
+SERVER_START = time.time()  # Track A #8: uptime basis for GET /health
+
 
 def _write_key():
     """Bearer for POST /grants. Env wins; else the vaulted runtime-generated key.
@@ -259,7 +261,27 @@ class Handler(BaseHTTPRequestHandler):
         db.commit()
         return self._json(200, {"status": "granted", "bill": bill, "wallet": wallet, "nullifier": nul.lower()})
 
+    def _handle_health(self):
+        """Track A #8: liveness/readiness probe. Local-only by design — never
+        touches RPC or the userop API, so upstream flakiness can't poison
+        health. Auth-free: exposes counters and uptime only, no secrets."""
+        db = get_db()
+        return self._json(200, {
+            "status": "ok",
+            "service": "bill_index",
+            "chain_id": 4801,
+            "uptime_s": round(time.time() - SERVER_START, 1),
+            "db": "ok",
+            "bills_indexed": db.execute("SELECT COUNT(*) FROM bill_index").fetchone()[0],
+            "bills_resolved": db.execute(
+                "SELECT COUNT(*) FROM bill_index WHERE status='success'").fetchone()[0],
+            "seat_grants": db.execute("SELECT COUNT(*) FROM seat_grants").fetchone()[0],
+            "verifications": db.execute("SELECT COUNT(*) FROM idkit_verifications").fetchone()[0],
+        })
+
     def do_GET(self):
+        if self.path == "/health":
+            return self._handle_health()
         if self.path.startswith("/grants"):
             if not self._authed():
                 return self._json(401, {"error": "bad write key"})
@@ -321,5 +343,6 @@ if __name__ == "__main__":
         get_db()
         PORT = int(__import__("os").environ.get("BILL_INDEX_PORT", "8091"))
         srv = ThreadingHTTPServer(("127.0.0.1", PORT), Handler)
-        print(f"bill_index service on http://127.0.0.1:{PORT} (POST /bills, GET /bills/by-userop/{'{hash}'})")
+        print(f"bill_index service on http://127.0.0.1:{PORT} "
+              f"(GET /health, POST /bills, GET /bills/by-userop/{'{hash}'})")
         srv.serve_forever()
