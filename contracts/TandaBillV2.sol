@@ -24,6 +24,11 @@ interface IERC20 {
 ///   - seat roster cap 256 (uint256 mask); duplicate-seat guard via seatIdOf (documented design).
 ///   - Gap-3 ruling (pending Flux sign-off): MVP stays owner-fronted — addExpense/fundEscrow are
 ///     owner-only by design; Expense.paidBy records the funder == owner. Refund returns to owner.
+/// @dev v2.1 (P0.1a pull-claim): settlement leg switched push-loop → per-seat pull
+///      (PaymentSplitter pattern, backlog option (a), TANDA_W10_BACKLOG_20261116.md).
+///      executeSettlement now only OPENS claims; each seat pulls its payout via
+///      claimSettlement(). Removes the reverting/blacklisted-receiver escrow deadlock:
+///      one bad receiver can no longer block the whole settlement leg.
 contract TandaBillV2 {
     // ─── Types ────────────────────────────────────────────────────────────
 
@@ -47,6 +52,7 @@ contract TandaBillV2 {
         uint64  initiatedAt;    // unix timestamp when settlement was initiated
         uint256 expectedMask;   // snapshot: bit i set = seat i invited to confirm
         uint256 confirmedMask;  // bit i set = seat i confirmed
+        uint256 claimedMask;    // P0.1a: bit i set = seat i pulled its payout (post-execute)
         uint64  fullyConfirmedAt; // 0 until every expected seat confirmed
         bool    refunded;       // escrow returned to funder via refundSettlement
     }
@@ -87,6 +93,7 @@ contract TandaBillV2 {
     event SeatConfirmed(uint256 indexed settlementId, uint256 indexed seatId);
     event SettlementFullyConfirmed(uint256 indexed settlementId, uint64 at);
     event SettlementExecuted(uint256 indexed settlementId, uint256 totalAmount, uint64 settledAt);
+    event SeatPayoutClaimed(uint256 indexed settlementId, uint256 indexed seatId, address indexed wallet, uint256 amount);
     event SettlementRefunded(uint256 indexed settlementId, uint256 amount);
 
     // ─── Errors ───────────────────────────────────────────────────────────
@@ -108,6 +115,8 @@ contract TandaBillV2 {
     error AlreadyConfirmed();
     error NotFullyConfirmed();
     error WindowNotElapsed();
+    error NotYetClaimable();
+    error PayoutAlreadyClaimed();
     error RefundNotAvailable();
     error EscrowEmpty();
     error NoActiveSeats();
@@ -265,6 +274,7 @@ contract TandaBillV2 {
             initiatedAt: uint64(block.timestamp),
             expectedMask: mask,
             confirmedMask: 0,
+            claimedMask: 0,
             fullyConfirmedAt: 0,
             refunded: false
         }));
@@ -305,11 +315,16 @@ contract TandaBillV2 {
         }
     }
 
-    /// @notice Release payouts. Requires ALL expected seats confirmed + window since last confirm.
-    ///         v2: callable by ANYONE — payouts are fully determined by the confirmed roster, so
-    ///         gating on owner would let owner inaction freeze confirmed funds (execute-after-
-    ///         full-confirm cannot be blocked by refund path by design). Incentive-neutral: the
-    ///         caller only spends gas; value moves seat → seat. (Gap-2 addendum)
+    /// @notice Open per-seat payout claims. Requires ALL expected seats confirmed + window
+    ///         since last confirm. P0.1a: no longer pushes transfers — escrow stays intact and
+    ///         each seat pulls its payout via claimSettlement(). The W1-era assumption that
+    ///         "per-seat failure is not a concern" (one reverting/blacklisted receiver
+    ///         deadlocks the whole leg) is removed.
+    /// @dev  v2: callable by ANYONE — claim-open is fully determined by the confirmed roster,
+    ///         so gating on owner would let owner inaction freeze confirmed funds (execute-
+    ///         after-full-confirm cannot be blocked by the refund path by design). Incentive-
+    ///         neutral: the caller only spends gas; value moves only seat → same seat.
+    ///         (Gap-2 addendum, P0.1a revision)
     function executeSettlement(uint256 settlementId) external {
         if (settlementId >= settlements.length) revert SettlementNotFound();
         Settlement storage s = settlements[settlementId];
@@ -318,21 +333,41 @@ contract TandaBillV2 {
         // forge-lint: disable-next-line(block-timestamp)
         require(block.timestamp >= uint256(s.fullyConfirmedAt) + SETTLEMENT_WINDOW, WindowNotElapsed());
 
-        uint256 idx = 0;
-        for (uint256 i = 0; i < seats.length; i++) {
-            if ((s.expectedMask & (1 << i)) != 0) {
-                // USDC (World Chain) has no transfer hooks — all-or-nothing revert protects
-                // partial settlement; per-seat failure is not a concern.
-                // forge-lint: disable-next-line(calls-loop, require-revert-in-loop)
-                require(token.transfer(seats[i].wallet, s.payouts[idx]), TokenTransferFailed());
-                idx++;
-            }
-        }
+        // P0.1a: claims-open only — no transfers here (pull leg = claimSettlement below).
         // casting to 'uint64' is safe because block.timestamp < 2^64 until year 584 billion
         // forge-lint: disable-next-line(unsafe-typecast)
         s.settledAt = uint64(block.timestamp);
         // forge-lint: disable-next-line(unsafe-typecast, reentrancy-events)
         emit SettlementExecuted(settlementId, s.totalAmount, uint64(block.timestamp));
+    }
+
+    /// @notice Pull one seat's payout from an executed settlement (P0.1a pull-claim,
+    ///         peanutsplit / OZ PaymentSplitter pattern). A seat whose wallet reverts on
+    ///         inbound ERC-20 (mis-set Safe / USDC-blacklisted) can no longer block anyone
+    ///         else: every other seat drains independently. The affected seat rotates its
+    ///         payout wallet before execute (P0.1b self-rotation) and claims with the new
+    ///         wallet; an unclaimed share stays in escrow, pullable only by that seat —
+    ///         never by anyone else.
+    /// @dev    Callable by the seat itself (or its forwarder-identity caller). The payout
+    ///         vector is dense over expectedMask; seat i's share sits at rank
+    ///         popcount(expectedMask bits below i) — see _payoutAt.
+    function claimSettlement(uint256 settlementId) external {
+        if (settlementId >= settlements.length) revert SettlementNotFound();
+        Settlement storage s = settlements[settlementId];
+        if (s.settledAt == 0) revert NotYetClaimable(); // still pending confirmations, or refunded
+
+        uint256 raw = seatIdOf[_caller()];
+        if (raw == 0) revert NotAnExpectedSeat();
+        uint256 seatId = raw - 1;
+        uint256 bit = 1 << seatId;
+        if ((s.expectedMask & bit) == 0 || !seats[seatId].active) revert NotAnExpectedSeat();
+        if ((s.claimedMask & bit) != 0) revert PayoutAlreadyClaimed();
+
+        uint256 amount = _payoutAt(s, seatId);
+        s.claimedMask |= bit; // CEI: flag before external call; a failed transfer reverts the flag too → claim stays retryable
+        require(token.transfer(seats[seatId].wallet, amount), TokenTransferFailed());
+        // forge-lint: disable-next-line(reentrancy-events)
+        emit SeatPayoutClaimed(settlementId, seatId, seats[seatId].wallet, amount);
     }
 
     /// @notice Short-hold guarantee, other leg: if the roster never fully confirms within
@@ -363,6 +398,31 @@ contract TandaBillV2 {
         for (uint256 i = 0; i < seats.length; i++) {
             if (seats[i].active) count++;
         }
+    }
+
+    /// @notice Payout vector of a settlement is dense over expectedMask (initiate-time
+    ///         snapshot): seat i's share sits at rank = number of expected bits below i.
+    function _payoutAt(Settlement storage s, uint256 seatId) internal view returns (uint256) {
+        uint256 rank;
+        for (uint256 i = 0; i < seatId; i++) {
+            if ((s.expectedMask & (1 << i)) != 0) rank++;
+        }
+        return s.payouts[rank];
+    }
+
+    /// @notice P0.1a frontend view: amount `wallet` can pull right now (0 = nothing claimable:
+    ///         settlement not executed, wallet holds no unclaimed expected seat, or already claimed).
+    function claimablePayout(uint256 settlementId, address wallet) external view returns (uint256) {
+        if (settlementId >= settlements.length) return 0;
+        Settlement storage s = settlements[settlementId];
+        if (s.settledAt == 0) return 0;
+        uint256 raw = seatIdOf[wallet];
+        if (raw == 0) return 0;
+        uint256 seatId = raw - 1;
+        uint256 bit = 1 << seatId;
+        if ((s.expectedMask & bit) == 0 || !seats[seatId].active) return 0;
+        if ((s.claimedMask & bit) != 0) return 0;
+        return _payoutAt(s, seatId);
     }
 
     function totalExpenses() external view returns (uint256 total) {
