@@ -20,7 +20,11 @@ import urllib.request
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 
-DB_PATH = Path(__file__).resolve().parent / "bill_index.db"
+# Track A incident 2026-11-17: launching from services/ silently forked the ledger
+# onto a fresh empty sibling DB while consumers (Next /api/seat-grants default
+# path) kept reading the canonical one. Env override kills the whole class.
+DB_PATH = Path(os.environ.get("BILL_INDEX_DB")
+               or Path(__file__).resolve().parent / "bill_index.db")
 RPC_URL = "https://worldchain-sepolia.g.alchemy.com/public"          # 4801
 USEROP_API = "https://developer.world.org/api/v2/minikit/userop/{h}"
 # W10: three mint eras are decodable (prod forwarder, fast twin, pre-forwarder).
