@@ -1,6 +1,6 @@
 # P0.1 Proposal — `rotateSeatWallet` hot-patch for TandaBillV2 (2026-11-16)
 
-Status: **DRAFT — awaiting Flux ruling** (contract lane). Author: Nimbus.
+Status: **RATIFIED & SHIPPED** — ruled in docs/FLUX_RULING_P01_ROTATION_2026-11-16.md, merged via PR #2 @17a34e2 (origin/main), E2E 11/11 (docs/W10_E2E_RECEIPT_20261116.md). Author: Nimbus. Original draft text preserved below; see §Ratification delta for every divergence. (Synced 2026-11-17, Track A #1.)
 Supersedes nothing; pairs with W8 seat-gate schema's open "wallet-rotation clause" item (commit 2772c8f).
 
 ## The bug this fixes (evidence: TandaBillV2.sol @ main, 326 L / 17,127 B)
@@ -67,3 +67,17 @@ function rotateSeatWallet(uint256 seatId, address newWallet) external {
 5. Indexer: bill_index update on SeatWalletRotated (per W8 design doc).
 
 Effort: ~2 h impl + tests in lane; factory re-pin + docs another ~1 h.
+
+## §Ratification delta — draft vs shipped (synced 2026-11-17, Track A #1)
+Bases: FLUX ruling 2026-11-16; shipped `contracts/TandaBillV2.sol` @17a34e2 (L83 event, L98–102 errors, L186–213 body); W10 E2E receipt (gates C1–C9, 11/11, 4801).
+
+| # | Draft said | Ratified / shipped | Verdict |
+|---|---|---|---|
+| Q1 | seat-self ∨ owner via `msg.sender` | Accepted as drafted; caller identity resolves through `_caller()` (trusted factory forwarder, audit correction #1) — forwarder and direct paths both proven (C1/C2) | as draft + forwarder |
+| Q2 | rotation allowed until executed/refunded | Hardened to RATIFIED SPLIT-LOCK (RESOLUTION 2026-11-16b): owner-driven rotation dies at FULL CONFIRM — stricter than the ruling's window-end rule, signed off in chat; confirmed seat-self locked inside window; unconfirmed seat-self always free; `SeatRotationClosed` after executed/refunded (C6/C8) | superseded (stricter) |
+| Q3 | sybil gate = frontend policy + event trail | Accepted per ruling; enforcement joins `seat_grants` (schema v2, correction #2), rotation alert N7 | as draft |
+| Q4 | V2-era only | Accepted; W5 legacy 0x8644095B… runtime-hash-locked, untouched | as draft |
+| Event | `SeatWalletRotated(seatId, indexed from, indexed to)` | Shipped **as drafted (3-arg)**; ruling spec had proposed a 4th param `uint64 at` — not shipped; indexer timestamps from block (`seat_grants.granted_at`) | deviation, documented |
+| Errors | `NotSeatOrOwner`, `ZeroWallet`, `DuplicateSeat` | All shipped as drafted; **added** `SeatRotationClosed` + `RotationWindowLocked()` (bare, vs ruling spec's `(uint256 settlementId)`) | superset |
+| Window scan | Ruling spec looped all settlements | Shipped inspects `settlements[last]` only — single-active-settlement MVP; concurrent pending settlements NOT audited for the lock | deviation, recorded |
+| Test plan | 5 items incl. dead-lock repro on unpatched impl | Superseded by actuals: 74/74 unit @dff3e65, E2E 11/11 C1–C9 on 4801. Item 4 (dead-lock repro) NOT exercised on-chain — structural argument stands in ruling's verdict basis | partially replaced |
