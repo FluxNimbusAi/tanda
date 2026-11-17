@@ -17,7 +17,7 @@ contract MockToken {
         balanceOf[to] += amount;
     }
 
-    function transfer(address to, uint256 amount) external returns (bool) {
+    function transfer(address to, uint256 amount) external virtual returns (bool) {
         require(balanceOf[msg.sender] >= amount, "insufficient");
         balanceOf[msg.sender] -= amount;
         balanceOf[to] += amount;
@@ -35,6 +35,24 @@ contract MockToken {
 
     function approve(address spender, uint256 amount) external returns (bool) {
         allowance[msg.sender][spender] = amount;
+        return true;
+    }
+}
+
+/// @notice P0.1a test token: per-address inbound blacklist mimicking a USDC-frozen wallet or
+///         reverting receiver hook — transfer() INTO a blocked address reverts the whole call.
+contract BlockableToken is MockToken {
+    mapping(address => bool) public blocked;
+
+    function blockAddress(address a) external {
+        blocked[a] = true;
+    }
+
+    function transfer(address to, uint256 amount) external override returns (bool) {
+        require(!blocked[to], "receiver blocked");
+        require(balanceOf[msg.sender] >= amount, "insufficient");
+        balanceOf[msg.sender] -= amount;
+        balanceOf[to] += amount;
         return true;
     }
 }
@@ -117,6 +135,18 @@ contract TandaBillV2Test is Test {
         _confirmAs(bob, bill, 0);
     }
 
+    function _claimAs(address who, TandaBillV2 bill, uint256 sid) internal {
+        vm.prank(who);
+        bill.claimSettlement(sid);
+    }
+
+    /// @notice P0.1a: drain the standard 3-seat roster's claims (owner/alice/bob).
+    function _drain3(TandaBillV2 bill) internal {
+        _claimAs(owner, bill, 0);
+        _claimAs(alice, bill, 0);
+        _claimAs(bob, bill, 0);
+    }
+
     function _sum(uint256[] memory v) internal pure returns (uint256 acc) {
         for (uint256 i = 0; i < v.length; i++) acc += v[i];
     }
@@ -128,13 +158,14 @@ contract TandaBillV2Test is Test {
         uint64 initiatedAt;
         uint256 expectedMask;
         uint256 confirmedMask;
+        uint256 claimedMask;
         uint64 fullyConfirmedAt;
         bool refunded;
     }
 
     function _s(TandaBillV2 bill, uint256 sid) internal view returns (SView memory v) {
-        (uint256 totalAmount_, uint64 settledAt_, uint64 initiatedAt_, uint256 expectedMask_, uint256 confirmedMask_, uint64 fullyConfirmedAt_, bool refunded_) = bill.settlements(sid);
-        v = SView(settledAt_, initiatedAt_, expectedMask_, confirmedMask_, fullyConfirmedAt_, refunded_);
+        (uint256 totalAmount_, uint64 settledAt_, uint64 initiatedAt_, uint256 expectedMask_, uint256 confirmedMask_, uint256 claimedMask_, uint64 fullyConfirmedAt_, bool refunded_) = bill.settlements(sid);
+        v = SView(settledAt_, initiatedAt_, expectedMask_, confirmedMask_, claimedMask_, fullyConfirmedAt_, refunded_);
     }
 
     // ─── Factory / clone shape ───────────────────────────────────────────
@@ -243,6 +274,9 @@ contract TandaBillV2Test is Test {
         uint64 fc = _s(bill, 0).fullyConfirmedAt;
         vm.warp(fc + impl.SETTLEMENT_WINDOW());
         bill.executeSettlement(0);
+        // P0.1a: execute only OPENS claims — escrow intact until each seat pulls.
+        assertEq(token.balanceOf(address(bill)), amount);
+        _drain3(bill);
 
         assertEq(token.balanceOf(owner), 1_000_000e6 - amount + amount / 3);
         assertEq(token.balanceOf(alice), 1_000_000e6 + amount / 3);
@@ -376,11 +410,14 @@ contract TandaBillV2Test is Test {
         _fullConfirm3(bill);
         vm.warp(_s(bill, 0).fullyConfirmedAt + 3600);
         bill.executeSettlement(0);
+        _drain3(bill); // snapshot seats drain; dan (post-initiate) has no claim
 
         uint256[] memory payouts = bill.settlementPayouts(0);
         assertEq(payouts.length, 3); // snapshot: owner+alice+bob
         assertEq(_sum(payouts), amount);
         assertEq(token.balanceOf(dan), 1_000_000e6); // received nothing
+        vm.expectRevert(TandaBillV2.NotAnExpectedSeat.selector);
+        _claimAs(dan, bill, 0);
     }
 
     function test_removeSeat_beforeInitiate_excludedFromPayout() public {
@@ -398,6 +435,10 @@ contract TandaBillV2Test is Test {
         _confirmAs(alice, bill, 0);
         vm.warp(_s(bill, 0).fullyConfirmedAt + 3600);
         bill.executeSettlement(0);
+        _claimAs(owner, bill, 0);
+        _claimAs(alice, bill, 0); // removed bob cannot claim: seatIdOf cleared
+        vm.expectRevert(TandaBillV2.NotAnExpectedSeat.selector);
+        _claimAs(bob, bill, 0);
         uint256[] memory payouts = bill.settlementPayouts(0);
         assertEq(payouts.length, 2);
         assertEq(token.balanceOf(bob), 1_000_000e6); // untouched
@@ -519,6 +560,7 @@ contract TandaBillV2Test is Test {
         _confirmAs(owner, bill, 0);
         vm.warp(_s(bill, 0).fullyConfirmedAt + 3600);
         bill.executeSettlement(0);
+        _claimAs(owner, bill, 0); // P0.1a: sole seat pulls its own payout
         assertEq(token.balanceOf(owner), 1_000_000e6); // own expense returned to self
     }
 
@@ -592,6 +634,9 @@ contract TandaBillV2Test is Test {
 
         vm.warp(block.timestamp + 1 hours + 1);
         bill.executeSettlement(0);
+        _claimAs(owner, bill, 0);
+        _claimAs(bob, bill, 0);
+        _claimAs(eve, bill, 0); // seat 1's rotated wallet pulls the payout (P0.1a)
 
         assertEq(token.balanceOf(eve),   evePre + 100e6);
         assertEq(token.balanceOf(alice), alicePre);       // old wallet got nothing
@@ -612,6 +657,7 @@ contract TandaBillV2Test is Test {
         vm.prank(alice);
         bill.rotateSeatWallet(1, eve);
         bill.executeSettlement(0);
+        _claimAs(eve, bill, 0); // P0.1a: rotated wallet claims after execute
         assertEq(token.balanceOf(eve), 1_000_000e6 + 100e6);
     }
 
@@ -660,6 +706,13 @@ contract TandaBillV2Test is Test {
         vm.warp(block.timestamp + 1 hours + 1);
         vm.prank(carol); // permissionless execute, still permissionless via forwarder
         cd = abi.encodeCall(hub.executeSettlement, (0));
+        factory.callBill(billAddr, cd);
+        // P0.1a: claim leg flows through the forwarder too — _caller() identity survives.
+        vm.prank(owner);
+        cd = abi.encodeCall(hub.claimSettlement, (0));
+        factory.callBill(billAddr, cd);
+        vm.prank(alice);
+        cd = abi.encodeCall(hub.claimSettlement, (0));
         factory.callBill(billAddr, cd);
         assertEq(token.balanceOf(alice), 1_000_000e6 + 100e6);
         assertEq(token.balanceOf(owner), 1_000_000e6 - 200e6 + 100e6);
@@ -713,8 +766,165 @@ contract TandaBillV2Test is Test {
         vm.prank(alice); // seat-self unaffected
         bill.rotateSeatWallet(1, eve);
 
-        bill.executeSettlement(0); // pays eve, not dan
+        bill.executeSettlement(0); // P0.1a: opens claims; eve (rotated seat wallet) pulls
+        _claimAs(eve, bill, 0);
         assertEq(token.balanceOf(eve),   1_000_000e6 + 100e6);
         assertEq(token.balanceOf(dan),   1_000_000e6);
+    }
+
+    // ─── P0.1a pull-claim settlement (W10 backlog option (a)) ─────────────
+
+    function test_pull_executeOpensClaims_nothingMoves() public {
+        TandaBillV2 bill = _initiatedBill(300e6);
+        _fullConfirm3(bill);
+        vm.warp(block.timestamp + 1 hours + 1);
+        bill.executeSettlement(0);
+
+        assertTrue(_s(bill, 0).settledAt != 0);
+        assertEq(_s(bill, 0).claimedMask, 0);
+        // Escrow fully intact: pull leg, not push leg.
+        assertEq(token.balanceOf(address(bill)), 300e6);
+        assertEq(token.balanceOf(alice), 1_000_000e6);
+        // Claims visible per seat (frontend view); non-seat sees zero.
+        assertEq(bill.claimablePayout(0, owner), 100e6);
+        assertEq(bill.claimablePayout(0, alice), 100e6);
+        assertEq(bill.claimablePayout(0, bob),   100e6);
+        assertEq(bill.claimablePayout(0, eve),   0);
+    }
+
+    function test_pull_claim_allSeats_drainsContract() public {
+        TandaBillV2 bill = _initiatedBill(300e6);
+        _fullConfirm3(bill);
+        vm.warp(block.timestamp + 1 hours + 1);
+        bill.executeSettlement(0);
+        _drain3(bill);
+
+        assertEq(token.balanceOf(address(bill)), 0);
+        assertEq(token.balanceOf(owner), 1_000_000e6 - 300e6 + 100e6);
+        assertEq(token.balanceOf(alice), 1_000_000e6 + 100e6);
+        assertEq(token.balanceOf(bob),   1_000_000e6 + 100e6);
+        assertEq(_s(bill, 0).claimedMask, _s(bill, 0).expectedMask); // fully drained
+        assertEq(bill.claimablePayout(0, alice), 0);
+    }
+
+    function test_pull_claim_gatesBeforeExecuteAndAfterRefund() public {
+        TandaBillV2 bill = _initiatedBill(100e6);
+        // (a) settlement initiated but not executed → nothing claimable
+        vm.expectRevert(TandaBillV2.NotYetClaimable.selector);
+        _claimAs(alice, bill, 0);
+        // (b) unknown settlement id (bounds check runs first)
+        vm.expectRevert(TandaBillV2.SettlementNotFound.selector);
+        _claimAs(alice, bill, 99);
+        // (c) refunded settlement stays NotYetClaimable forever (settledAt never set)
+        vm.warp(block.timestamp + 72 hours);
+        vm.prank(owner);
+        bill.refundSettlement(0);
+        vm.expectRevert(TandaBillV2.NotYetClaimable.selector);
+        _claimAs(alice, bill, 0);
+    }
+
+    function test_pull_claim_revertsNotAnExpectedSeat() public {
+        TandaBillV2 bill = _initiatedBill(300e6);
+        vm.prank(owner);
+        bill.addSeat(dan); // post-initiate seat → outside the snapshot mask
+        _fullConfirm3(bill);
+        vm.warp(block.timestamp + 1 hours + 1);
+        bill.executeSettlement(0);
+        vm.expectRevert(TandaBillV2.NotAnExpectedSeat.selector);
+        _claimAs(eve, bill, 0); // holds no seat at all
+        vm.expectRevert(TandaBillV2.NotAnExpectedSeat.selector);
+        _claimAs(dan, bill, 0); // seat, but not in expectedMask
+    }
+
+    function test_pull_claim_revertsPayoutAlreadyClaimed() public {
+        TandaBillV2 bill = _initiatedBill(300e6);
+        _fullConfirm3(bill);
+        vm.warp(block.timestamp + 1 hours + 1);
+        bill.executeSettlement(0);
+        _claimAs(alice, bill, 0);
+        vm.expectRevert(TandaBillV2.PayoutAlreadyClaimed.selector);
+        _claimAs(alice, bill, 0);
+    }
+
+    /// @notice THE P0.1a deadlock-cure repro (backlog evidence: reverting/blacklisted seat
+    ///         receiver dead-locked the push-loop escrow permanently). Act 1: with alice
+    ///         inbound-blocked, executeSettlement still succeeds and every honest seat
+    ///         drains; only alice's own claim reverts, state rolled back and retryable,
+    ///         her share escrowed to her alone. Act 2: the operational cure — seat rotates
+    ///         to a clean wallet before execute (P0.1b path), the new wallet pulls.
+    function test_pull_deadlockCure_blacklistedReceiver() public {
+        BlockableToken bt = new BlockableToken();
+        bt.mint(owner, 1_000_000e6);
+        bt.mint(alice, 1_000_000e6);
+        bt.mint(bob,   1_000_000e6);
+
+        vm.prank(owner);
+        TandaBillV2 bill = TandaBillV2(payable(factory.createBill(IERC20(address(bt)), _seats3())));
+        vm.startPrank(owner);
+        bill.addExpense(300e6);
+        bt.approve(address(bill), 300e6);
+        bill.fundEscrow(300e6);
+        bill.initiateSettlement();
+        vm.stopPrank();
+        bt.blockAddress(alice);
+
+        _confirmAs(owner, bill, 0);
+        _confirmAs(alice, bill, 0);
+        _confirmAs(bob, bill, 0);
+        vm.warp(block.timestamp + 1 hours + 1);
+
+        // Push-loop world: this reverts forever on alice's transfer. Pull world: claims open.
+        bill.executeSettlement(0);
+        _claimAs(owner, bill, 0);
+        _claimAs(bob, bill, 0);
+        assertEq(bt.balanceOf(owner), 1_000_000e6 - 300e6 + 100e6);
+        assertEq(bt.balanceOf(bob),   1_000_000e6 + 100e6);
+
+        vm.expectRevert(bytes("receiver blocked"));
+        _claimAs(alice, bill, 0);
+        // CEI: failed transfer rolls back the claim bit — retryable, not burned.
+        assertEq((_s(bill, 0).claimedMask & (uint256(1) << 1)), 0);
+        assertEq(bt.balanceOf(alice), 1_000_000e6);          // blocked wallet received nothing
+        assertEq(bill.claimablePayout(0, alice), 100e6);      // share escrowed, pullable only by alice
+        assertEq(bt.balanceOf(address(bill)), 100e6);
+
+        // Act 2 — cure: rotate to a clean wallet before execute, claim after.
+        vm.prank(owner);
+        TandaBillV2 b2 = TandaBillV2(payable(factory.createBill(IERC20(address(bt)), _seats3())));
+        vm.startPrank(owner);
+        b2.addExpense(300e6);
+        bt.approve(address(b2), 300e6);
+        b2.fundEscrow(300e6);
+        b2.initiateSettlement();
+        vm.stopPrank();
+        _confirmAs(owner, b2, 0);
+        _confirmAs(bob, b2, 0);
+        vm.prank(alice);
+        b2.rotateSeatWallet(1, eve); // unconfirmed self-rotation (P0.1b rescue path)
+        _confirmAs(eve, b2, 0);      // seat 1 confirms via the clean wallet
+        vm.warp(block.timestamp + 1 hours + 1);
+        b2.executeSettlement(0);
+        _claimAs(owner, b2, 0);
+        _claimAs(bob, b2, 0);
+        _claimAs(eve, b2, 0);
+        assertEq(bt.balanceOf(eve), 100e6);              // rescued payout landed on new wallet
+        assertEq(bt.balanceOf(alice), 1_000_000e6);      // old (blocked) wallet still nothing
+        assertEq(bt.balanceOf(address(b2)), 0);          // settlement fully drained
+    }
+
+    function test_claimablePayout_view_states() public {
+        uint256 amount = 100e6; // 3 seats → 33,333,334 / 33,333,333 / 33,333,333
+        TandaBillV2 bill = _initiatedBill(amount);
+        assertEq(bill.claimablePayout(0, owner), 0); // pre-execute
+        _fullConfirm3(bill);
+        vm.warp(block.timestamp + 1 hours + 1);
+        bill.executeSettlement(0);
+        assertEq(bill.claimablePayout(0, owner), 33_333_334); // rank-0 seat carries the remainder wei
+        assertEq(bill.claimablePayout(0, alice), 33_333_333);
+        assertEq(bill.claimablePayout(0, bob),   33_333_333);
+        _claimAs(alice, bill, 0);
+        assertEq(bill.claimablePayout(0, alice), 0); // post-claim
+        assertEq(bill.claimablePayout(0, eve),   0); // non-seat
+        assertEq(bill.claimablePayout(9, alice), 0); // unknown settlement
     }
 }
