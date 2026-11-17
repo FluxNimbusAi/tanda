@@ -104,3 +104,10 @@ Signal binding (crypto-enforced, not client-metadata-trusted):
 - FAST-lane e2e of patched V2: proceeds on 4801 (EOA RPC lane, logic verification only,
   zero prod impact). Gas delta reported from live receipts.
 - Repin world.json: after e2e green + Flux sign-off (per his sequencing).
+
+## §SYNC 2026-11-17 — state reconciliation vs TANDA_P01_ROTATION_PATCH_DRAFT.md (Track A #1)
+Reconciled against the proposal draft and shipped code @17a34e2 (PR #2 merged 2026-11-16T23:08Z).
+- **Correction #1 — CLOSED.** Trusted factory forwarder shipped: `_caller()` in TandaBillV2.sol, `factory.callBill` @c88be67, unforgeable initialize anchor (C9). The forwarder resolves the draft's option-A concern ("seat actions would need EIP-712 inner sigs — heavy V2 churn") without it: seat identity survives dispatch, no signature churn.
+- **Correction #3 — shipped, residual CLOSED.** The §#3 "residual (flagged)" line predates RESOLUTION 2026-11-16b. Under the ratified stricter split-lock, owner-driven rotation reverts `RotationWindowLocked` whenever `fullyConfirmedAt != 0` — the in-window owner takeover of a confirmed seat is now structurally impossible (C6 on-chain), not merely surfaced via event trail. Seat-self counter-rotation remains the live recovery path (C5b/C7).
+- **Draft status flipped:** proposal header moved DRAFT → RATIFIED & SHIPPED with full delta table (event stays 3-arg `from/to`; `RotationWindowLocked` bare; window scan covers `settlements[last]` only — deviations recorded there, not silently fixed).
+- **Freeze status — all three lines SUPERSEDED:** P0.1 bytecode FROZEN per receipt runtime hashes (impl sha256 97d16481…, artifact==live); world.json re-pinned @c88be67 → factory 0x65Ba0bB4…; FAST-lane e2e green 11/11 @dff3e65. Carried forward to W9: prod-impl runtime sha pinned at prod broadcast (1h/72h dual-build constants).
