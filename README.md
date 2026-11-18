@@ -9,6 +9,7 @@ On-chain split-bill settlement circles for verified humans. One World ID = one s
 ## Architecture
 - `contracts/TandaBill.sol` — expense ledger + equal-share settlement escrow (short hold, non-custodial copy must match code).
 - MiniKit app shell — seat registration via World ID integration, bill creation, share settlement.
+- `services/nudge_engine.py` — P1.1 MiniKit cadence nudge (six settlement triggers, hard frequency caps, default-off). Guide: `docs/MINIKIT_CADENCE_NUDGE.md`; release entry: `CHANGELOG.md`.
 - Fee model deferred: fee-free MVP; priced from real ticket data, not before it exists.
 
 ## W1 scope (this week)
