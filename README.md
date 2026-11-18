@@ -1,3 +1,5 @@
+[![CI](https://github.com/FluxNimbusAi/tanda/actions/workflows/ci.yml/badge.svg)](https://github.com/FluxNimbusAi/tanda/actions/workflows/ci.yml)
+
 # Tanda
 
 On-chain split-bill settlement circles for verified humans. One World ID = one seat. Members record shared expenses; the contract settles equal shares on settlement — short hold, no custody of keys, no pots.
