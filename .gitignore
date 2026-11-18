@@ -3,3 +3,5 @@ cache/
 .env
 *.swp
 *.swo
+__pycache__/
+*.pyc

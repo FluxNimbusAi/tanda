@@ -352,7 +352,7 @@ def evaluate_bill(b, now_ts, grants):
     sid = b["set_count"] - 1
 
     if awaiting:
-        need = [w for i, w in enumerate(active.values())
+        need = [w for i, w in active.items()
                 if (s["expectedMask"] >> i) & 1 and not (s["confirmedMask"] >> i) & 1
                 and w in grants]
         k = len(need)
