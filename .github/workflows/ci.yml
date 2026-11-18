@@ -1,0 +1,33 @@
+name: CI
+
+# Honest-green Foundry gate: build + full test suite.
+# forge-std is vendored in lib/ (see README "Build from a fresh clone"),
+# so no submodule step is needed — CI works from a plain clone.
+# Foundry is pinned to v1.9.0 to match the PC/laptop lanes (dist build
+# 6056c584, released 2026-11-02).
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  foundry:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Install Foundry (pinned v1.9.0)
+        uses: foundry-rs/foundry-toolchain@v1
+        with:
+          version: v1.9.0
+
+      - name: Show forge version
+        run: forge --version
+
+      - name: Build
+        run: forge build
+
+      - name: Test
+        run: forge test -vv
