@@ -31,3 +31,22 @@ jobs:
 
       - name: Test
         run: forge test -vv
+
+  # Python lane for services/nudge_engine.py (stdlib-only, zero network):
+  # the 80-test regression suite + the shipped offline self-test gate.
+  python:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Set up Python (pinned 3.12)
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Nudge engine regression suite
+        run: python -m unittest discover -s tests -v
+
+      - name: Nudge engine offline self-test
+        run: python services/nudge_engine.py --self-test
+
