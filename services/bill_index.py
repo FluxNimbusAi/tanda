@@ -247,10 +247,24 @@ class Handler(BaseHTTPRequestHandler):
         existing = db.execute("SELECT * FROM bill_index WHERE bill_address=?", (d["bill"],)).fetchone()
         if existing:
             return self._json(200, dict(existing))
-        db.execute(TX_LANE_INSERT_SQL,
-                   (th, d["bill"], d["creator"], d["token"], d["seatCount"]))
-        db.commit()
-        return self._json(201, dict(db.execute("SELECT * FROM bill_index WHERE bill_address=?", (d["bill"],)).fetchone()))
+        # SR-KP-A2 (Flux ruling 2026-11-19, issue #17): a concurrent writer on
+        # the same bill must never escape as IntegrityError/TypeError — that
+        # killed the handler thread mid-response and the client saw
+        # RemoteDisconnected (T13 class). Wrap, roll back, reconcile by read.
+        try:
+            db.execute(TX_LANE_INSERT_SQL,
+                       (th, d["bill"], d["creator"], d["token"], d["seatCount"]))
+            db.commit()
+        except sqlite3.IntegrityError:
+            db.rollback()  # lost the race; winner's row is authoritative
+        except sqlite3.Error as e:  # never die silently on the socket
+            db.rollback()
+            return self._json(503, {"error": f"tx-lane write failed: {e}"})
+        row = db.execute("SELECT * FROM bill_index WHERE bill_address=?",
+                         (d["bill"],)).fetchone()
+        if not row:
+            return self._json(503, {"error": "tx-lane write lost; retry"})
+        return self._json(201, dict(row))
 
     def _authed(self):
         got = (self.headers.get("Authorization") or "").removeprefix("Bearer ").strip()
