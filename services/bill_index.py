@@ -36,6 +36,10 @@ FACTORIES = [
 FACTORY = FACTORIES[-1]  # kept for self-test back-compat
 WRITE_KEY_FILE = Path("~/.hermes-secrets/index_write_key.txt").expanduser()
 BILLCREATED_TOPIC0 = "0xb6216d646e5d618b749776ebeba03f10245718ba2872d5b57ce0ebac8d3beae9"
+# SR-KP-A1 (Flux ruling 2026-11-19, issue #18): SettlementExecuted(uint256 indexed
+# settlementId, uint256 totalAmount, uint64 settledAt) — cast keccak of the ABI sig;
+# emitted BY THE BILL CONTRACT, so log address == bill_address.
+SETTLEMENT_EXECUTED_TOPIC0 = "0x6e15c64adb1391003365f3c4b622f5e671638baa46af47c046068a9154f37858"
 # t_0588553b: single source of truth for the tx-lane 201 INSERT (10 columns).
 # The shipped blob carried VALUES (NULL,?,?,?,?,?,?,...) = 11 values for 10
 # columns vs only 5 bindings -> sqlite prepare error escaped _handle_tx_lane
@@ -131,6 +135,20 @@ def get_db():
         verified_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%SZ','now')),
         PRIMARY KEY (bill_address, nullifier),
         UNIQUE (bill_address, wallet_address)
+    )""")
+    # SR-KP-A1 (Flux ruling 2026-11-19, issue #18): settlement index written
+    # in the same tx-lane as bill_index rows — indexer stays the single
+    # audited source for the M3 settlement-vector render (NOT client RPC).
+    db.execute("""CREATE TABLE IF NOT EXISTS settlements (
+        bill_id TEXT NOT NULL,
+        settlement_id NUMERIC NOT NULL,
+        user_op_hash TEXT,
+        tx_hash TEXT NOT NULL,
+        block NUMERIC,
+        total_amount NUMERIC,
+        settled_at NUMERIC,
+        confirmed_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%SZ','now')),
+        PRIMARY KEY (bill_id, settlement_id)
     )""")
     return db
 
@@ -240,10 +258,42 @@ class Handler(BaseHTTPRequestHandler):
         logs = [l for l in rec["logs"]
                 if l["address"].lower() in FACTORIES
                 and l["topics"][0].lower() == BILLCREATED_TOPIC0]
-        if not logs:
-            return self._json(422, {"error": "no BillCreated in receipt"})
-        d = decode_billcreated(logs[0])
         db = get_db()
+        d = decode_billcreated(logs[0]) if logs else None
+        # SR-KP-A1 watcher: SettlementExecuted logs (emitted by indexed bills)
+        # land in `settlements` in this same handler — INSERT OR IGNORE keyed
+        # by (bill_id, settlement_id) so repeat POSTs are idempotent.
+        known = {r[0].lower() for r in
+                 db.execute("SELECT bill_address FROM bill_index WHERE bill_address IS NOT NULL")}
+        if d:
+            known.add(d["bill"].lower())
+        slogs = [l for l in rec["logs"]
+                 if l.get("topics") and len(l["topics"]) > 1
+                 and l["topics"][0].lower() == SETTLEMENT_EXECUTED_TOPIC0
+                 and l["address"].lower() in known]
+        n_settle = 0
+        blk = rec.get("blockNumber")
+        block = int(blk, 16) if blk else None
+        for l in slogs:
+            data = (l.get("data") or "0x")[2:]
+            words = [data[i:i + 64] for i in range(0, len(data), 64)]
+            try:
+                cur = db.execute(
+                    "INSERT OR IGNORE INTO settlements (bill_id, settlement_id,"
+                    " user_op_hash, tx_hash, block, total_amount, settled_at)"
+                    " VALUES (?,?,?,?,?,?,?)",
+                    (l["address"], int(l["topics"][1], 16), None, th, block,
+                     int(words[0], 16) if words else None,
+                     int(words[1], 16) if len(words) > 1 else None))
+                n_settle += cur.rowcount
+                db.commit()
+            except sqlite3.Error as e:
+                db.rollback()
+                return self._json(503, {"error": f"settlement write failed: {e}"})
+        if not logs and not slogs:
+            return self._json(422, {"error": "no BillCreated/SettlementExecuted in receipt"})
+        if not d:
+            return self._json(200, {"settlements_recorded": n_settle, "tx_hash": th})
         existing = db.execute("SELECT * FROM bill_index WHERE bill_address=?", (d["bill"],)).fetchone()
         if existing:
             return self._json(200, dict(existing))
@@ -344,6 +394,7 @@ class Handler(BaseHTTPRequestHandler):
                 "SELECT COUNT(*) FROM bill_index WHERE status='success'").fetchone()[0],
             "seat_grants": db.execute("SELECT COUNT(*) FROM seat_grants").fetchone()[0],
             "verifications": db.execute("SELECT COUNT(*) FROM idkit_verifications").fetchone()[0],
+            "settlements": db.execute("SELECT COUNT(*) FROM settlements").fetchone()[0],
         })
 
     def do_GET(self):

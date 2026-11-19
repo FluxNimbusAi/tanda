@@ -94,6 +94,8 @@ def main():
             if sql is bi.TX_LANE_INSERT_SQL:
                 self.inserted = True
                 return FakeRow0()
+            if "bill_address IS NOT NULL" in sql:
+                return []  # A1 known-bills scan finds nothing (fake boundary)
             return FakeRow0()  # winner vanished -> lost write
 
         def commit(self):
