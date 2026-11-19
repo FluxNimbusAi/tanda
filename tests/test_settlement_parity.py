@@ -184,5 +184,94 @@ class EndpointShape(unittest.TestCase):
         self.assertIn("FROM settlements", src)
 
 
+
+class QueryEndpoint(unittest.TestCase):
+    """M4-2 issue #19 SR-RV-A1: GET /api/settlements?bill=&page= — auth-free,
+    paginated, 400 on malformed page/address, empty rows -> [] not error.
+    Drives the real Handler.do_GET with a captured _json (no sockets)."""
+
+    BILL = "0x" + "ab" * 20
+    TX = "0x" + "12" * 32
+
+    def setUp(self):
+        db = bi.get_db()
+        # 7-event lifecycle on settlement 1 (mirrors IngestParity shape)
+        logs = [
+            {"address": self.BILL, "topics": [PINNED["SettlementInitiated"], w(1)],
+             "data": "0x" + w(30) + w(2), "logIndex": "0x0"},
+            {"address": self.BILL, "topics": [PINNED["SeatConfirmed"], w(1), w(1)],
+             "logIndex": "0x1"},
+            {"address": self.BILL, "topics": [PINNED["SeatConfirmed"], w(1), w(2)],
+             "logIndex": "0x2"},
+            {"address": self.BILL, "topics": [PINNED["SettlementFullyConfirmed"], w(1)],
+             "data": "0x" + w(1700), "logIndex": "0x3"},
+            {"address": self.BILL, "topics": [PINNED["SeatPayoutClaimed"], w(1), w(1),
+                                              "0x" + "00" * 12 + "aa" * 20],
+             "data": "0x" + w(15), "logIndex": "0x4"},
+            {"address": self.BILL, "topics": [PINNED["SettlementExecuted"], w(1)],
+             "data": "0x" + w(30) + w(1800), "logIndex": "0x5"},
+            {"address": self.BILL, "topics": [PINNED["SeatPayoutClaimed"], w(1), w(2),
+                                              "0x" + "00" * 12 + "bb" * 20],
+             "data": "0x" + w(15), "logIndex": "0x6"},
+        ]
+        # UNIQUE(tx_hash, log_index) makes re-ingest across tests a no-op
+        bi._ingest_settlement_logs(db, logs, {self.BILL.lower()}, self.TX, 111)
+        # 20 extra confirm events on settlement 9, block 112 -> total 27 events,
+        # exercises the 20-row page window (27 = 20 + 7 + 0)
+        extra = [{"address": self.BILL,
+                  "topics": [PINNED["SeatConfirmed"], w(1), w(i)],
+                  "logIndex": hex(i)} for i in range(20)]
+        bi._ingest_settlement_logs(db, extra, {self.BILL.lower()}, self.TX[:-2] + "ee", 112)
+
+    def call(self, path):
+        h = bi.Handler.__new__(bi.Handler)
+        h.path = path
+        sent = {}
+        h._json = lambda code, obj: sent.update(code=code, obj=obj)
+        bi.Handler.do_GET(h)
+        return sent
+
+    def test_malformed_bill_400(self):
+        self.assertEqual(self.call("/api/settlements?bill=nothex")["code"], 400)
+
+    def test_missing_bill_400(self):
+        self.assertEqual(self.call("/api/settlements")["code"], 400)
+
+    def test_malformed_pages_400(self):
+        q = f"/api/settlements?bill={self.BILL}"
+        for bad in ("0", "-1", "abc", "1.5", ""):
+            self.assertEqual(self.call(q + f"&page={bad}")["code"], 400, bad)
+
+    def test_empty_bill_returns_lists_not_error(self):
+        r = self.call(f"/api/settlements?bill={'0x' + 'ef' * 20}")
+        self.assertEqual(r["code"], 200)
+        b = r["obj"]
+        self.assertEqual(b["settlements"], [])
+        self.assertEqual(b["events"], [])
+        self.assertEqual((b["total_settlements"], b["total_events"]), (0, 0))
+
+    def test_page_window_and_totals(self):
+        q = f"/api/settlements?bill={self.BILL}"
+        p1 = self.call(q + "&page=1")["obj"]
+        self.assertEqual(self.call(q)["obj"]["page"], 1)  # default page
+        self.assertEqual((p1["page_size"], len(p1["events"]), p1["total_events"]),
+                         (20, 20, 27))
+        self.assertEqual(p1["total_settlements"], 1)
+        self.assertEqual(len(p1["settlements"]), 1)
+        self.assertEqual(p1["settlements"][0]["claimed_count"], 2)
+        p2 = self.call(q + "&page=2")["obj"]
+        self.assertEqual((p2["page"], len(p2["events"])), (2, 7))
+        self.assertEqual(p2["settlements"], [])  # settlement 1 already on page 1
+        p3 = self.call(q + "&page=3")["obj"]
+        self.assertEqual(self.call(q + "&page=3")["code"], 200)
+        self.assertEqual((len(p3["events"]), p3["total_events"]), (0, 27))
+        # events feed ordering is (block, log_index): block 111 leg first
+        self.assertEqual(p1["events"][0]["block"], 111)
+
+    def test_path_form_still_served(self):
+        r = self.call(f"/settlements/{self.BILL}")
+        self.assertEqual(r["code"], 200)
+        self.assertEqual(len(r["obj"]["settlements"]), 1)
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)

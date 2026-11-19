@@ -69,6 +69,7 @@ RECEIPT_RETRIES = 3               # replica-lag lesson (W6)
 
 HEX64 = re.compile(r"^0x[0-9a-fA-F]{64}$")
 ADDR_RE = re.compile(r"^0x[a-fA-F0-9]{40}$")
+SETTLEMENTS_PAGE_SIZE = 20  # M4-2 issue #19 SR-RV-A1: page window for GET /api/settlements
 RP_ID_RE = re.compile(r"^rp_[a-z0-9]+$")
 
 SERVER_START = time.time()  # Track A #8: uptime basis for GET /health
@@ -541,6 +542,38 @@ class Handler(BaseHTTPRequestHandler):
             db = get_db()
             rows = db.execute("SELECT wallet_address, nullifier, verified_at FROM seat_grants WHERE bill_address=?", (bill,)).fetchall()
             return self._json(200, {"grants": {r["wallet_address"]: {"nullifier": r["nullifier"], "verified_at": r["verified_at"]} for r in rows}})
+        if self.path.startswith("/api/settlements"):
+            # M4-2 / issue #19 SR-RV-A1 (t_m4_p01a): canonical query-form read
+            # GET /api/settlements?bill=0x<addr>&page=<n> — auth-free local
+            # read (same posture as /health), paginated (page_size=20).
+            # Malformed page/address -> 400; bill with no rows -> [] (200).
+            qs = self.path.split("?", 1)[1] if "?" in self.path else ""
+            qp = dict(p.split("=", 1) for p in qs.split("&") if "=" in p)
+            bill = qp.get("bill", "").lower()
+            if not ADDR_RE.match(bill):
+                return self._json(400, {"error": "bad bill"})
+            page = qp.get("page", "1")
+            if not re.fullmatch(r"[1-9][0-9]*", page):
+                return self._json(400, {"error": "bad page"})
+            pno = int(page)
+            off = (pno - 1) * SETTLEMENTS_PAGE_SIZE
+            db = get_db()
+            srows = [dict(r) for r in db.execute(
+                "SELECT * FROM settlements WHERE lower(bill_id)=? ORDER BY settlement_id"
+                " LIMIT ? OFFSET ?", (bill, SETTLEMENTS_PAGE_SIZE, off))]
+            erows = [dict(r) for r in db.execute(
+                "SELECT settlement_id, event, tx_hash, log_index, block, seat_id,"
+                " wallet, amount, at_ts, recorded_at FROM settlement_events"
+                " WHERE lower(bill_id)=? ORDER BY block, log_index LIMIT ? OFFSET ?",
+                (bill, SETTLEMENTS_PAGE_SIZE, off))]
+            return self._json(200, {
+                "bill": bill, "page": pno, "page_size": SETTLEMENTS_PAGE_SIZE,
+                "total_settlements": db.execute(
+                    "SELECT COUNT(*) FROM settlements WHERE lower(bill_id)=?", (bill,)).fetchone()[0],
+                "total_events": db.execute(
+                    "SELECT COUNT(*) FROM settlement_events WHERE lower(bill_id)=?", (bill,)).fetchone()[0],
+                "settlements": srows, "events": erows,
+            })
         if self.path.startswith("/settlements/"):
             # SR-003 F12 (t_m4_p01a): per-bill lifecycle readout — summary rows
             # (additive parity cols) + append-only event ledger. Auth-free and
