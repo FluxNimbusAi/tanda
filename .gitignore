@@ -5,3 +5,6 @@ cache/
 *.swo
 __pycache__/
 *.pyc
+
+# stray pre-w10 root copy (Flux housekeeping 2026-11-19): canonical indexer is services/bill_index.py
+bill_index.py
