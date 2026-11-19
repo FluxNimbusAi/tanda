@@ -36,6 +36,15 @@ FACTORIES = [
 FACTORY = FACTORIES[-1]  # kept for self-test back-compat
 WRITE_KEY_FILE = Path("~/.hermes-secrets/index_write_key.txt").expanduser()
 BILLCREATED_TOPIC0 = "0xb6216d646e5d618b749776ebeba03f10245718ba2872d5b57ce0ebac8d3beae9"
+# t_0588553b: single source of truth for the tx-lane 201 INSERT (10 columns).
+# The shipped blob carried VALUES (NULL,?,?,?,?,?,?,...) = 11 values for 10
+# columns vs only 5 bindings -> sqlite prepare error escaped _handle_tx_lane
+# (client saw RemoteDisconnected). self_test() executes THIS exact SQL so the
+# merge gate can never go green without the 201 INSERT preparing cleanly.
+TX_LANE_INSERT_SQL = (
+    "INSERT INTO bill_index (user_op_hash, tx_hash, bill_address, creator, token,"
+    " seat_count, chain_id, status, synthetic, ingest_lane)"
+    " VALUES (NULL,?,?,?,?,?,4801,'success',0,'tx')")
 USEROP_RE = re.compile(r"^0x[0-9a-fA-F]{64}$")
 POLL_INTERVAL, POLL_MAX = 2, 30   # W8: 2s x 30 (~60s ceiling, op-stack 2s blocks)
 RECEIPT_RETRIES = 3               # replica-lag lesson (W6)
@@ -238,9 +247,7 @@ class Handler(BaseHTTPRequestHandler):
         existing = db.execute("SELECT * FROM bill_index WHERE bill_address=?", (d["bill"],)).fetchone()
         if existing:
             return self._json(200, dict(existing))
-        db.execute("""INSERT INTO bill_index (user_op_hash, tx_hash, bill_address, creator, token,
-                        seat_count, chain_id, status, synthetic, ingest_lane)
-                      VALUES (NULL,?,?,?,?,?,?,4801,'success',0,'tx')""",
+        db.execute(TX_LANE_INSERT_SQL,
                    (th, d["bill"], d["creator"], d["token"], d["seatCount"]))
         db.commit()
         return self._json(201, dict(db.execute("SELECT * FROM bill_index WHERE bill_address=?", (d["bill"],)).fetchone()))
@@ -377,7 +384,20 @@ def self_test():
     db.commit()
     row = db.execute("SELECT status FROM bill_index WHERE user_op_hash=?", ("0x" + "ab" * 32,)).fetchone()
     assert row["status"] == "pending"
-    print("SELF_TEST PASS: decode matches DEPLOY_RECEIPT_V2 smoke bill byte-exact; storage OK")
+    # t_0588553b regression: exercise the tx-lane 201 INSERT with the handler's
+    # exact 5 bindings (bill_address is UNIQUE -> fresh random probe bill; the
+    # probe row is deleted so the canonical ledger keeps zero residue).
+    probe_tx, probe_bill = "0x" + os.urandom(32).hex(), "0x" + os.urandom(20).hex()
+    db.execute(TX_LANE_INSERT_SQL, (probe_tx, probe_bill, "selftest", "selftest", 1))
+    p = db.execute("SELECT status, ingest_lane, chain_id, seat_count, synthetic"
+                   " FROM bill_index WHERE tx_hash=?", (probe_tx,)).fetchone()
+    assert p["status"] == "success" and p["ingest_lane"] == "tx" and p["chain_id"] == 4801 \
+        and p["seat_count"] == 1 and p["synthetic"] == 0, dict(p)
+    db.execute("DELETE FROM bill_index WHERE tx_hash=?", (probe_tx,))
+    db.commit()
+    assert db.execute("SELECT COUNT(*) FROM bill_index WHERE tx_hash=?", (probe_tx,)).fetchone()[0] == 0
+    print("SELF_TEST PASS: decode matches DEPLOY_RECEIPT_V2 smoke bill byte-exact; "
+          "storage OK; tx-lane 201 INSERT prepares with 5/5 bindings (probe row cleaned)")
     return d
 
 
