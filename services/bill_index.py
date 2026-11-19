@@ -25,7 +25,10 @@ from pathlib import Path
 # path) kept reading the canonical one. Env override kills the whole class.
 DB_PATH = Path(os.environ.get("BILL_INDEX_DB")
                or Path(__file__).resolve().parents[1] / "bill_index.db")
-RPC_URL = "https://worldchain-sepolia.g.alchemy.com/public"          # 4801
+# W2.5-2: RPC endpoint is env-overridable (house convention mirrors
+# TANDA_NUDGE_RPC_URL) so --scan-once / tests can drive a local fake chain.
+RPC_URL = os.environ.get("BILL_INDEX_RPC_URL",
+                         "https://worldchain-sepolia.g.alchemy.com/public")   # 4801
 USEROP_API = "https://developer.world.org/api/v2/minikit/userop/{h}"
 # W10: three mint eras are decodable (prod forwarder, fast twin, pre-forwarder).
 FACTORIES = [
@@ -66,6 +69,12 @@ TX_LANE_INSERT_SQL = (
 USEROP_RE = re.compile(r"^0x[0-9a-fA-F]{64}$")
 POLL_INTERVAL, POLL_MAX = 2, 30   # W8: 2s x 30 (~60s ceiling, op-stack 2s blocks)
 RECEIPT_RETRIES = 3               # replica-lag lesson (W6)
+# W2.5-2 (t_0222f1e6): reorg-overlap window for the log-scan lane. op-stack
+# sequencer (2s blocks) reorgs are shallow; 12 blocks (~24s) rescanned every
+# pass is the safety margin. Deeper orgs are OUT of scope by design and
+# documented on scan_pass().
+REORG_OVERLAP = 12
+SCAN_RANGE = 2000                  # max blocks per eth_getLogs request (chunked)
 
 HEX64 = re.compile(r"^0x[0-9a-fA-F]{64}$")
 ADDR_RE = re.compile(r"^0x[a-fA-F0-9]{40}$")
@@ -138,9 +147,12 @@ def decode_settlement_log(log):
     return out
 
 
-def _ingest_settlement_logs(db, logs, known, tx_hash, block):
+def _ingest_settlement_logs(db, logs, known, tx_hash, block, block_hash=None):
     """SR-003 F12 parity watcher — SHARED by both ingest lanes (tx POST +
     userop resolve), so the ledger is identical regardless of entry path.
+    W2.5-2: the scan lane drives this SAME function (third path, one truth)
+    and passes the block_hash the log came in on, which is what makes the
+    reorg sweep able to ground-truth a row's position.
     Filter: emitter must be an indexed bill (log address == bill_address) and
     topic0 must be a settlement event. Ledger UNIQUE(tx_hash, log_index) is
     the natural on-chain idempotency key; summary upkeep runs ONLY when the
@@ -156,10 +168,10 @@ def _ingest_settlement_logs(db, logs, known, tx_hash, block):
         log_index = int(li, 16) if isinstance(li, str) else int(li)
         cur = db.execute(
             "INSERT OR IGNORE INTO settlement_events (bill_id, settlement_id,"
-            " event, tx_hash, log_index, block, seat_id, wallet, amount, at_ts)"
-            " VALUES (?,?,?,?,?,?,?,?,?,?)",
+            " event, tx_hash, log_index, block, block_hash, seat_id, wallet, amount, at_ts)"
+            " VALUES (?,?,?,?,?,?,?,?,?,?,?)",
             (l["address"].lower(), d["settlement_id"], d["event"], tx_hash,
-             log_index, block, d.get("seat_id"), d.get("wallet"),
+             log_index, block, block_hash, d.get("seat_id"), d.get("wallet"),
              d.get("amount"), d.get("at_ts")))
         if cur.rowcount != 1:
             continue
@@ -188,6 +200,17 @@ def _ingest_settlement_logs(db, logs, known, tx_hash, block):
             db.execute("UPDATE settlements SET claimed_count=claimed_count+1,"
                        " claimed_amount=claimed_amount+COALESCE(?, 0)"
                        " WHERE bill_id=? AND settlement_id=?", (d.get("amount"), bill, sid))
+            # W2.5-2 gap 3: mirror claimedMask per seat. The ledger row above
+            # already gated on rowcount==1, so this insert only runs for a
+            # NEWLY seen claim — replay never duplicates it. PK (bill,sid,seat)
+            # means a re-claim of the same seat (contract-rejected anyway)
+            # would surface as an anomaly, not a double count.
+            if d.get("seat_id") is not None and d.get("wallet"):
+                db.execute("INSERT OR IGNORE INTO seat_claims (bill_id, settlement_id,"
+                           " seat_id, wallet, amount, tx_hash, log_index, block)"
+                           " VALUES (?,?,?,?,?,?,?,?)",
+                           (bill, sid, d["seat_id"], d["wallet"], d.get("amount"),
+                            tx_hash, log_index, block))
         elif d["event"] == "SettlementRefunded":
             db.execute("UPDATE settlements SET refunded=1"
                        " WHERE bill_id=? AND settlement_id=?", (bill, sid))
@@ -219,6 +242,13 @@ def get_db():
         db.execute("ALTER TABLE bill_index ADD COLUMN synthetic INTEGER NOT NULL DEFAULT 1")
     if "ingest_lane" not in cols:
         db.execute("ALTER TABLE bill_index ADD COLUMN ingest_lane TEXT NOT NULL DEFAULT 'userop'")
+    # W2.5-2 reorg audit: block/block_hash are written ONLY by the scan lane
+    # (and by scan re-ingests). NULL = "position not indexed by us" -> the
+    # sweep NEVER prunes rows it cannot ground-truth (conservative law).
+    if "block" not in cols:
+        db.execute("ALTER TABLE bill_index ADD COLUMN block NUMERIC")
+    if "block_hash" not in cols:
+        db.execute("ALTER TABLE bill_index ADD COLUMN block_hash TEXT")
     # W10 P1.1 ledger — audit correction #2 shape. nonce (single-use RP-signature
     # request nonce) is the true replay key; (rp_id, nullifier) gets a NON-unique
     # index: one human re-joins many bills with the same nullifier per action.
@@ -274,6 +304,7 @@ def get_db():
         tx_hash TEXT NOT NULL,
         log_index NUMERIC NOT NULL,
         block NUMERIC,
+        block_hash TEXT,
         seat_id NUMERIC,
         wallet TEXT,
         amount NUMERIC,
@@ -283,7 +314,254 @@ def get_db():
     )""")
     db.execute("CREATE INDEX IF NOT EXISTS settlement_events_bill_idx"
                " ON settlement_events (bill_id, block, log_index)")
+    # W2.5-2 gap 2: block_hash on the ledger for pre-existing DBs (additive).
+    if "block_hash" not in [r[1] for r in db.execute("PRAGMA table_info(settlement_events)")]:
+        db.execute("ALTER TABLE settlement_events ADD COLUMN block_hash TEXT")
+    # W2.5-2 gap 1: scan-lane checkpoint. One row per key; last_indexed_block
+    # is the head ATTESTED by the most recent completed scan pass. A restart
+    # resumes at last_indexed_block + 1 - REORG_OVERLAP (overlap replay is
+    # idempotent via the ledger's UNIQUE(tx_hash, log_index) + rowcount guard).
+    db.execute("""CREATE TABLE IF NOT EXISTS indexer_state (
+        key TEXT PRIMARY KEY,
+        value TEXT NOT NULL,
+        updated_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%SZ','now'))
+    )""")
+    # W2.5-2 gap 3 (P0.1a): per-seat SeatClaimed state — the indexer mirror of
+    # Settlement.claimedMask (contracts/TandaBillV2.sol:55,354-371). One row
+    # per (bill, settlement, seat) that pulled its payout; written by EVERY
+    # ingest lane from SeatPayoutClaimed, pruned ONLY by the reorg sweep.
+    # claimed_count on the summary stays the fast-path aggregate; this table
+    # is the auditable per-seat truth.
+    db.execute("""CREATE TABLE IF NOT EXISTS seat_claims (
+        bill_id TEXT NOT NULL,
+        settlement_id NUMERIC NOT NULL,
+        seat_id NUMERIC NOT NULL,
+        wallet TEXT NOT NULL,
+        amount NUMERIC,
+        tx_hash TEXT NOT NULL,
+        log_index NUMERIC NOT NULL,
+        block NUMERIC,
+        claimed_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%SZ','now')),
+        PRIMARY KEY (bill_id, settlement_id, seat_id),
+        UNIQUE (tx_hash, log_index)
+    )""")
     return db
+
+
+def _meta_get(db, key, default=None):
+    """Read a checkpoint value; digit-only values surface as int."""
+    row = db.execute("SELECT value FROM indexer_state WHERE key=?", (key,)).fetchone()
+    if row is None:
+        return default
+    v = row["value"] if isinstance(row, sqlite3.Row) else row[0]
+    return int(v) if v.isdigit() else v
+
+
+def _meta_set(db, key, value):
+    db.execute("INSERT INTO indexer_state (key, value, updated_at)"
+               " VALUES (?,?,strftime('%Y-%m-%dT%H:%M:%SZ','now'))"
+               " ON CONFLICT(key) DO UPDATE SET value=excluded.value,"
+               " updated_at=excluded.updated_at", (key, str(value)))
+    db.commit()
+
+
+# ── W2.5-2 scan lane: checkpoint + overlap window + reorg sweep ──────────────
+
+# Bill rows created by block-scan have no userOpHash (EOA deploys land in a
+# plain tx); user_op_hash is NULL for them — SQLite treats NULLs as distinct
+# in the PK index (probe-verified), so many scan rows coexist.
+SCAN_BILL_INSERT_SQL = (
+    "INSERT OR IGNORE INTO bill_index (user_op_hash, tx_hash, bill_address,"
+    " creator, token, seat_count, chain_id, status, synthetic, ingest_lane,"
+    " block, block_hash) VALUES (NULL,?,?,?,?,?,4801,'success',0,'scan',?,?)")
+
+
+def _recompute_settlement(db, bill_id, settlement_id):
+    """Rebuild ONE settlement summary purely from surviving ledger rows.
+    Used by the reorg sweep only; the ingest fast path keeps its incremental
+    deltas. Ledger-first = deterministic: same surviving events always fold
+    to the same summary, regardless of insert order or lane."""
+    rows = db.execute(
+        "SELECT event, tx_hash, log_index, block, amount, at_ts FROM settlement_events"
+        " WHERE bill_id=? AND settlement_id=? ORDER BY block, log_index",
+        (bill_id, settlement_id)).fetchall()
+    if not rows:
+        db.execute("DELETE FROM settlements WHERE bill_id=? AND settlement_id=?",
+                   (bill_id, settlement_id))
+        db.execute("DELETE FROM seat_claims WHERE bill_id=? AND settlement_id=?",
+                   (bill_id, settlement_id))
+        return False
+    init = ex = fully = None
+    refunded = 0
+    claims = []
+    for r in rows:  # ordered scan: last write wins per event leg
+        if r["event"] == "SettlementInitiated":
+            init = r
+        elif r["event"] == "SettlementExecuted":
+            ex = r
+        elif r["event"] == "SettlementFullyConfirmed":
+            fully = r
+        elif r["event"] == "SettlementRefunded":
+            refunded = 1
+        elif r["event"] == "SeatPayoutClaimed":
+            claims.append(r)
+    db.execute(
+        "UPDATE settlements SET tx_hash=?, block=?, initiated_block=?,"
+        " total_amount=?, fully_confirmed_at=?, settled_at=?, refunded=?,"
+        " claimed_count=?, claimed_amount=? WHERE bill_id=? AND settlement_id=?",
+        ((ex or rows[0])["tx_hash"], (ex or rows[0])["block"],
+         init["block"] if init else None,
+         (ex or init)["amount"] if (ex or init) else None,
+         fully["at_ts"] if fully else None,
+         ex["at_ts"] if ex else None, refunded,
+         len(claims), sum((c["amount"] or 0) for c in claims),
+         bill_id, settlement_id))
+    # Per-seat state follows the ledger: a claim row whose ledger twin was
+    # pruned is an orphan by definition and must vanish with it.
+    db.execute(
+        "DELETE FROM seat_claims WHERE bill_id=? AND settlement_id=?"
+        " AND NOT EXISTS (SELECT 1 FROM settlement_events e"
+        " WHERE e.tx_hash=seat_claims.tx_hash AND e.log_index=seat_claims.log_index)",
+        (bill_id, settlement_id))
+    return True
+
+
+def _reorg_sweep(db, head):
+    """Prune ledger rows whose recorded block is no longer canonical within
+    the overlap window [head - REORG_OVERLAP + 1, head]. Ground truth per
+    row: its stored block_hash vs eth_getBlockByNumber. Rows with NULL
+    block_hash were never positioned by the scan lane -> NEVER swept
+    (conservative law; they are receipt-backed). Bill rows orphaned the same
+    way flip to status='reorged' (never deleted: bill_address UNIQUE preserves
+    the audit trail even if a rerolled deploy re-lands beside it).
+    Returns (n_events_pruned, n_bills_reorged)."""
+    lo = max(0, head - REORG_OVERLAP + 1)
+    canon = {}
+
+    def canonical_hash(n):
+        if n not in canon:
+            blk = _rpc("eth_getBlockByNumber", [hex(n), False])
+            canon[n] = (blk or {}).get("hash")
+        return canon[n]
+
+    n_pruned = 0
+    pairs = set()
+    for r in db.execute(
+            "SELECT rowid AS rid, bill_id, settlement_id, block, block_hash"
+            " FROM settlement_events WHERE block>=? AND block<=?"
+            " AND block_hash IS NOT NULL", (lo, head)):
+        if canonical_hash(r["block"]) != r["block_hash"]:
+            db.execute("DELETE FROM settlement_events WHERE rowid=?", (r["rid"],))
+            pairs.add((r["bill_id"], r["settlement_id"]))
+            n_pruned += 1
+    for bill_id, sid in pairs:
+        _recompute_settlement(db, bill_id, sid)
+    n_bills = 0
+    for r in db.execute(
+            "SELECT rowid AS rid, block, block_hash FROM bill_index"
+            " WHERE block>=? AND block<=? AND block_hash IS NOT NULL"
+            " AND status <> 'reorged'", (lo, head)):
+        if canonical_hash(r["block"]) != r["block_hash"]:
+            db.execute("UPDATE bill_index SET status='reorged' WHERE rowid=?", (r["rid"],))
+            n_bills += 1
+    db.commit()
+    return n_pruned, n_bills
+
+
+def scan_pass(db, head=None):
+    """One hardened indexer pass: sweep orphans -> ingest
+    [last_indexed_block + 1 - REORG_OVERLAP .. head] through the shared
+    lane-agnostic ingest -> persist checkpoint. Overlap replay is a no-op by
+    construction (UNIQUE(tx_hash, log_index) + rowcount guard), which is what
+    makes reorg recovery safe: after a sweep the canonical re-mine re-lands
+    the rerolled rows inside the same window. Reorgs DEEPER than
+    REORG_OVERLAP blocks are out of scope by design (op-stack 2s sequencer
+    keeps orgs shallow); surface one via reindex from a chosen START_BLOCK.
+    First-ever pass (no checkpoint): floor at head - REORG_OVERLAP — history
+    stays owned by the request-driven lanes unless BILL_INDEX_START_BLOCK is
+    set for an explicit backfill.
+    Returns a machine-checkable summary dict (printed by --scan-once)."""
+    if head is None:
+        head = int(_rpc("eth_blockNumber", []), 16)
+    last = _meta_get(db, "last_indexed_block")
+    env_start = os.environ.get("BILL_INDEX_START_BLOCK")
+    if last is None:
+        from_block = int(env_start) if env_start else max(0, head - REORG_OVERLAP)
+    else:
+        from_block = max(0, last + 1 - REORG_OVERLAP)
+    pruned, bills_reorged = _reorg_sweep(db, head)
+    known = {r[0].lower() for r in db.execute(
+        "SELECT bill_address FROM bill_index WHERE bill_address IS NOT NULL")}
+    n_events = n_bills = 0
+    factory_set = {f.lower() for f in FACTORIES}
+    lo = from_block
+    while lo <= head:
+        hi = min(lo + SCAN_RANGE - 1, head)
+        logs = _rpc("eth_getLogs", [{"fromBlock": hex(lo), "toBlock": hex(hi),
+                                     "address": sorted(factory_set | known)}])
+        new_bills = False
+        for l in logs:
+            if l["address"].lower() not in factory_set:
+                continue
+            if not l.get("topics") or l["topics"][0].lower() != BILLCREATED_TOPIC0:
+                continue
+            d = decode_billcreated(l)
+            blk = int(l["blockNumber"], 16)
+            cur = db.execute(SCAN_BILL_INSERT_SQL,
+                             (l["transactionHash"], d["bill"].lower(), d["creator"].lower(),
+                              d["token"].lower(), d["seatCount"], blk, l.get("blockHash")))
+            if cur.rowcount == 1:
+                n_bills += 1
+                known.add(d["bill"].lower())
+                new_bills = True
+        # A bill minted in THIS chunk may already settle in this chunk; the
+        # address filter we just queried with could not have known it. Re-query
+        # once with the widened set (bounded: only when a new bill landed).
+        if new_bills:
+            logs = _rpc("eth_getLogs", [{"fromBlock": hex(lo), "toBlock": hex(hi),
+                                         "address": sorted(factory_set | known)}])
+        by_tx = {}
+        for l in logs:
+            if not l.get("topics") or l["topics"][0].lower() not in SETTLEMENT_TOPICS:
+                continue
+            key = (l["transactionHash"], int(l["blockNumber"], 16), l.get("blockHash"))
+            by_tx.setdefault(key, []).append(l)
+        for (tx, blk, bhash) in sorted(by_tx, key=lambda k: (k[1], k[0])):
+            n, _c = _ingest_settlement_logs(db, by_tx[(tx, blk, bhash)], known, tx, blk, bhash)
+            n_events += n
+        _meta_set(db, "last_indexed_block", hi)  # per-chunk: crash resumes at chunk edge
+        db.commit()
+        lo = hi + 1
+    return {"head": head, "from": from_block, "pruned_events": pruned,
+            "bills_reorged": bills_reorged, "events_ingested": n_events,
+            "bills_ingested": n_bills}
+
+
+def watch_loop(stop=None, interval=None, max_passes=None):
+    """Resident scan lane, OFF unless BILL_INDEX_WATCH=1 at service start.
+    One DB pass at a time (get_db per iteration re-reads the checkpoint). A
+    failed pass logs and retries — the sweep/ingest pair is idempotent, so a
+    retry after a half-written chunk cannot double-count."""
+    if interval is None:
+        interval = float(os.environ.get("BILL_INDEX_WATCH_INTERVAL", "5"))
+    passes = 0
+    while True:
+        try:
+            out = scan_pass(get_db())
+            print(f"[watch] {json.dumps(out)}", flush=True)
+        except Exception as e:
+            print(f"[watch] pass failed: {e!r} (retrying)", flush=True)
+        passes += 1
+        if max_passes is not None and passes >= max_passes:
+            return passes
+        if stop is not None:
+            if stop.wait(interval):
+                return passes
+        else:
+            time.sleep(interval)
+
+
+WATCH_STOP = threading.Event()
 
 
 def resolve_userop(db, user_op_hash):
@@ -527,6 +805,8 @@ class Handler(BaseHTTPRequestHandler):
             "seat_grants": db.execute("SELECT COUNT(*) FROM seat_grants").fetchone()[0],
             "verifications": db.execute("SELECT COUNT(*) FROM idkit_verifications").fetchone()[0],
             "settlements": db.execute("SELECT COUNT(*) FROM settlements").fetchone()[0],
+            # W2.5-2: scan-lane checkpoint (None until the first watch pass).
+            "last_indexed_block": _meta_get(db, "last_indexed_block"),
         })
 
     def do_GET(self):
@@ -576,8 +856,9 @@ class Handler(BaseHTTPRequestHandler):
             })
         if self.path.startswith("/settlements/"):
             # SR-003 F12 (t_m4_p01a): per-bill lifecycle readout — summary rows
-            # (additive parity cols) + append-only event ledger. Auth-free and
-            # local-only, same posture as /health.
+            # (additive parity cols) + append-only event ledger. W2.5-2: plus
+            # per-seat SeatClaimed state (P0.1a pull-claim mirror). Auth-free
+            # and local-only, same posture as /health.
             bill = self.path.split("?", 1)[0].split("/")[-1].lower()
             if not ADDR_RE.match(bill):
                 return self._json(400, {"error": "bad bill"})
@@ -586,10 +867,15 @@ class Handler(BaseHTTPRequestHandler):
                 "SELECT * FROM settlements WHERE lower(bill_id)=? ORDER BY settlement_id",
                 (bill,))]
             events = [dict(e) for e in db.execute(
-                "SELECT settlement_id, event, tx_hash, log_index, block, seat_id,"
-                " wallet, amount, at_ts, recorded_at FROM settlement_events"
+                "SELECT settlement_id, event, tx_hash, log_index, block, block_hash,"
+                " seat_id, wallet, amount, at_ts, recorded_at FROM settlement_events"
                 " WHERE bill_id=? ORDER BY block, log_index", (bill,))]
-            return self._json(200, {"bill": bill, "settlements": rows, "events": events})
+            claims = [dict(c) for c in db.execute(
+                "SELECT settlement_id, seat_id, wallet, amount, tx_hash, log_index,"
+                " block, claimed_at FROM seat_claims WHERE bill_id=?"
+                " ORDER BY settlement_id, seat_id", (bill,))]
+            return self._json(200, {"bill": bill, "settlements": rows,
+                                    "events": events, "claims": claims})
         if not self.path.startswith("/bills/by-userop/"):
             return self._json(404, {"error": "not found"})
         h = self.path.split("/")[-1].lower()
@@ -678,15 +964,30 @@ def self_test():
     e = db.execute("SELECT amount, wallet FROM settlement_events WHERE event="
                    "'SeatPayoutClaimed' AND seat_id=2").fetchone()
     assert e["amount"] == 500000 and e["wallet"] == "0x" + "22" * 20, dict(e)
+    # W2.5-2 probes (offline): per-seat SeatClaimed mirror + checkpoint KV.
+    sc = db.execute("SELECT seat_id, wallet FROM seat_claims WHERE bill_id=?"
+                    " ORDER BY seat_id", (pbill,)).fetchall()
+    assert [dict(r) for r in sc] == [{"seat_id": 1, "wallet": "0x" + "11" * 20},
+                                     {"seat_id": 2, "wallet": "0x" + "22" * 20}], [dict(r) for r in sc]
+    assert db.execute("SELECT COUNT(*) FROM seat_claims WHERE bill_id=?",
+                      (pbill,)).fetchone()[0] == 2, "claim replay must not duplicate seats"
+    _meta_set(db, "selftest_probe", "x")
+    assert _meta_get(db, "selftest_probe") == "x"
+    db.execute("DELETE FROM indexer_state WHERE key='selftest_probe'")
+    db.commit()
     db.execute("DELETE FROM settlement_events WHERE bill_id=?", (pbill,))
     db.execute("DELETE FROM settlements WHERE bill_id=?", (pbill,))
+    db.execute("DELETE FROM seat_claims WHERE bill_id=?", (pbill,))
     db.execute("DELETE FROM bill_index WHERE bill_address=?", (pbill,))
     db.commit()
     assert db.execute("SELECT COUNT(*) FROM settlement_events WHERE bill_id=?",
                       (pbill,)).fetchone()[0] == 0
+    assert db.execute("SELECT COUNT(*) FROM seat_claims WHERE bill_id=?",
+                      (pbill,)).fetchone()[0] == 0
     print("SELF_TEST PASS: decode matches DEPLOY_RECEIPT_V2 smoke bill byte-exact; "
           "storage OK; tx-lane 201 INSERT prepares with 5/5 bindings; "
-          "SR-003 F12 lifecycle parity + replay idempotency OK (probe rows cleaned)")
+          "SR-003 F12 lifecycle parity + replay idempotency OK; "
+          "W2.5-2 seat_claims mirror + indexer_state checkpoint OK (probe rows cleaned)")
     return d
 
 
@@ -694,10 +995,18 @@ if __name__ == "__main__":
     import sys
     if "--self-test" in sys.argv:
         self_test()
+    elif "--scan-once" in sys.argv:
+        # W2.5-2: single hardened pass (restart-from-checkpoint entrypoint).
+        # Stdout = exactly one JSON summary line (machine-checked by tests/ops).
+        print(json.dumps(scan_pass(get_db())))
     else:
         get_db()
         PORT = int(__import__("os").environ.get("BILL_INDEX_PORT", "8096"))  # W10: match miniapp BILL_INDEX_URL default; 8091 was drift-bait
         srv = ThreadingHTTPServer(("127.0.0.1", PORT), Handler)
+        if os.environ.get("BILL_INDEX_WATCH") == "1":
+            threading.Thread(target=watch_loop, kwargs={"stop": WATCH_STOP},
+                             daemon=True, name="bill-index-watch").start()
         print(f"bill_index service on http://127.0.0.1:{PORT} "
-              f"(GET /health, POST /bills, GET /bills/by-userop/{'{hash}'})")
+              f"(GET /health, POST /bills, GET /bills/by-userop/{'{hash}'}, "
+              f"watch={'on' if os.environ.get('BILL_INDEX_WATCH') == '1' else 'off'})")
         srv.serve_forever()
