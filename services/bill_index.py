@@ -24,7 +24,7 @@ from pathlib import Path
 # onto a fresh empty sibling DB while consumers (Next /api/seat-grants default
 # path) kept reading the canonical one. Env override kills the whole class.
 DB_PATH = Path(os.environ.get("BILL_INDEX_DB")
-               or Path(__file__).resolve().parent / "bill_index.db")
+               or Path(__file__).resolve().parents[1] / "bill_index.db")
 RPC_URL = "https://worldchain-sepolia.g.alchemy.com/public"          # 4801
 USEROP_API = "https://developer.world.org/api/v2/minikit/userop/{h}"
 # W10: three mint eras are decodable (prod forwarder, fast twin, pre-forwarder).
@@ -92,6 +92,13 @@ def get_db():
         created_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%SZ','now'))
     )""")
     db.execute("CREATE INDEX IF NOT EXISTS bill_index_creator_idx ON bill_index (creator, created_at DESC)")
+    # W10 hygiene: synthetic flag (self-test/smoke residue=1, service-genuine=0)
+    # + ingest lane ('userop' = MiniKit lane, 'tx' = EOA direct per W8 design L40).
+    cols = [r[1] for r in db.execute("PRAGMA table_info(bill_index)")]
+    if "synthetic" not in cols:
+        db.execute("ALTER TABLE bill_index ADD COLUMN synthetic INTEGER NOT NULL DEFAULT 1")
+    if "ingest_lane" not in cols:
+        db.execute("ALTER TABLE bill_index ADD COLUMN ingest_lane TEXT NOT NULL DEFAULT 'userop'")
     # W10 P1.1 ledger — audit correction #2 shape. nonce (single-use RP-signature
     # request nonce) is the true replay key; (rp_id, nullifier) gets a NON-unique
     # index: one human re-joins many bills with the same nullifier per action.
@@ -178,6 +185,8 @@ class Handler(BaseHTTPRequestHandler):
     def do_POST(self):
         if self.path == "/grants":
             return self._handle_grant()
+        if self.path == "/bills/tx":
+            return self._handle_tx_lane()
         if self.path != "/bills":
             return self._json(404, {"error": "not found"})
         n = int(self.headers.get("Content-Length", 0))
@@ -190,7 +199,8 @@ class Handler(BaseHTTPRequestHandler):
             return self._json(400, {"error": "bad user_op_hash"})
         db = get_db()
         # insert pending row; resolve in background thread (202 semantics per W8)
-        db.execute("INSERT OR IGNORE INTO bill_index (user_op_hash, creator, token, chain_id) VALUES (?,?,?,?)",
+        db.execute("""INSERT OR IGNORE INTO bill_index (user_op_hash, creator, token, chain_id,
+                       synthetic, ingest_lane) VALUES (?,?,?,?,0,'userop')""",
                    (h.lower(), body.get("creator", ""), body.get("token", ""), int(body.get("chain_id", 4801))))
         db.commit()
         def _poll(h):
@@ -202,6 +212,38 @@ class Handler(BaseHTTPRequestHandler):
                 db2.commit()
         threading.Thread(target=_poll, args=(h.lower(),), daemon=True).start()
         return self._json(202, {"status": "accepted", "user_op_hash": h.lower()})
+
+    def _handle_tx_lane(self):
+        n = int(self.headers.get("Content-Length", 0))
+        try:
+            body = json.loads(self.rfile.read(n).decode())
+        except Exception:
+            return self._json(400, {"error": "invalid json"})
+        th = body.get("tx_hash", "")
+        if not HEX64.match(th):
+            return self._json(400, {"error": "bad tx_hash"})
+        try:
+            rec = _rpc("eth_getTransactionReceipt", [th])
+        except Exception as e:
+            return self._json(502, {"error": f"rpc: {e}"})
+        if not rec or rec.get("status") not in ("0x1", "0x01"):
+            return self._json(422, {"error": "no receipt or failed tx"})
+        logs = [l for l in rec["logs"]
+                if l["address"].lower() in FACTORIES
+                and l["topics"][0].lower() == BILLCREATED_TOPIC0]
+        if not logs:
+            return self._json(422, {"error": "no BillCreated in receipt"})
+        d = decode_billcreated(logs[0])
+        db = get_db()
+        existing = db.execute("SELECT * FROM bill_index WHERE bill_address=?", (d["bill"],)).fetchone()
+        if existing:
+            return self._json(200, dict(existing))
+        db.execute("""INSERT INTO bill_index (user_op_hash, tx_hash, bill_address, creator, token,
+                        seat_count, chain_id, status, synthetic, ingest_lane)
+                      VALUES (NULL,?,?,?,?,?,?,4801,'success',0,'tx')""",
+                   (th, d["bill"], d["creator"], d["token"], d["seatCount"]))
+        db.commit()
+        return self._json(201, dict(db.execute("SELECT * FROM bill_index WHERE bill_address=?", (d["bill"],)).fetchone()))
 
     def _authed(self):
         got = (self.headers.get("Authorization") or "").removeprefix("Bearer ").strip()
@@ -305,7 +347,7 @@ class Handler(BaseHTTPRequestHandler):
         row = db.execute("SELECT * FROM bill_index WHERE user_op_hash=?", (h,)).fetchone()
         if not row:
             # lazy-resolve on GET (W8: UI reads by hash; poller must run regardless of entry path)
-            db.execute("INSERT OR IGNORE INTO bill_index (user_op_hash) VALUES (?)", (h,))
+            db.execute("INSERT OR IGNORE INTO bill_index (user_op_hash, synthetic, ingest_lane) VALUES (?,0,'userop')", (h,))
             db.commit()
             row = resolve_userop(db, h)
             if not row:
@@ -345,7 +387,7 @@ if __name__ == "__main__":
         self_test()
     else:
         get_db()
-        PORT = int(__import__("os").environ.get("BILL_INDEX_PORT", "8091"))
+        PORT = int(__import__("os").environ.get("BILL_INDEX_PORT", "8096"))  # W10: match miniapp BILL_INDEX_URL default; 8091 was drift-bait
         srv = ThreadingHTTPServer(("127.0.0.1", PORT), Handler)
         print(f"bill_index service on http://127.0.0.1:{PORT} "
               f"(GET /health, POST /bills, GET /bills/by-userop/{'{hash}'})")
