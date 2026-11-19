@@ -8,3 +8,7 @@ libs = ["lib"]
 # production gate (W5 Step-2, 2026-11-13): size+gas arm validated 25/25 on PC + laptop lanes
 optimizer = true
 optimizer_runs = 200
+
+# ADR-0010: Permit2Funding goldens etch the pinned production Permit2 runtime fixture
+# (test/lib/permit2-4801.hex, sha256-pinned in-test). Read-only on that dir only.
+fs_permissions = [{ access = "read", path = "./test/lib" }]
