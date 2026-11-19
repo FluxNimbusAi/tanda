@@ -73,6 +73,7 @@ SIGS = {
     "seats_len": "seats()", "seat_at": "seats(uint256)",
     "expenses_len": "expenses()", "expense_at": "expenses(uint256)",
     "settlements_len": "settlements()", "settlement_at": "settlements(uint256)",
+    "settlement_payouts": "settlementPayouts(uint256)",
     "owner": "owner()", "escrowBalance": "escrowBalance()",
     "SETTLEMENT_WINDOW": "SETTLEMENT_WINDOW()", "MAX_HOLD": "MAX_HOLD()",
 }
@@ -80,6 +81,7 @@ SEL = {
     "seats_len": "0x9c5655d6", "seat_at": "0x3b33c702",
     "expenses_len": "0xe4c5676c", "expense_at": "0xaf4afe0a",
     "settlements_len": "0xd3be603b", "settlement_at": "0x08df7dc8",
+    "settlement_payouts": "0x44bd4071",  # cast sig 2026-11-19
     "owner": "0x8da5cb5b", "escrowBalance": "0xe11e1b0c",
     "SETTLEMENT_WINDOW": "0x3deb6cae", "MAX_HOLD": "0xd40a9c4f",
 }
@@ -125,13 +127,41 @@ def decode_expense(ws):
 
 
 def decode_settlement(ws):
-    """Dynamic struct: head = 9 words (word1 = offset to payouts tail)."""
-    off = ws[1] // 32
+    """Decode the settlements(uint256) auto-getter return (SR-003 F1/F2 fix).
+
+    Solidity's auto-getter OMITS the dynamic `payouts` member (contract
+    comment, TandaBillV2.sol:440-443) — the vector comes from a separate
+    settlementPayouts(id) call (decode_payouts / read_bill). No head offsets,
+    no tail. Two deployed static shapes:
+      7 words  pre-P0.1a: total, settledAt, initiatedAt, expectedMask,
+               confirmedMask, fullyConfirmedAt, refunded   (no claim tracking)
+      8 words  P0.1a era: same + claimedMask after confirmedMask
+    The old decoder's 9-word dynamic head was wrong against live V2 data
+    (settledAt-as-offset -> IndexError/garbage on first settlement; it only
+    ever passed against fakes that shared the bug).
+    """
+    if len(ws) == 8:
+        (total, settled, init, emask, cmask, clmask, fcat, refunded) = ws
+    elif len(ws) == 7:
+        (total, settled, init, emask, cmask, fcat, refunded) = ws
+        clmask = 0  # pre-P0.1a push-era: no claim tracking exists
+    else:
+        raise ValueError(f"settlements(uint256): unexpected {len(ws)}-word "
+                         "head (expected static 7 or 8; dynamic-offset "
+                         "encoding is not what the getter returns)")
+    return {"totalAmount": total, "settledAt": settled, "initiatedAt": init,
+            "expectedMask": emask, "confirmedMask": cmask, "claimedMask": clmask,
+            "fullyConfirmedAt": fcat, "refunded": bool(refunded), "payouts": []}
+
+
+def decode_payouts(ws):
+    """Decode settlementPayouts(uint256) -> uint256[] (single dynamic return:
+    head word = 0x20 offset, then length, then items)."""
+    if not ws:
+        return []
+    off = ws[0] // 32
     n = ws[off]
-    return {"totalAmount": ws[0], "payouts": ws[off + 1: off + 1 + n],
-            "settledAt": ws[2], "initiatedAt": ws[3], "expectedMask": ws[4],
-            "confirmedMask": ws[5], "claimedMask": ws[6],
-            "fullyConfirmedAt": ws[7], "refunded": bool(ws[8])}
+    return list(ws[off + 1: off + 1 + n])
 
 
 def payout_rank(expected_mask: int, seat_id: int) -> int:
@@ -291,8 +321,17 @@ def read_bill(rpc, bill):
                             for i in range(out["exp_count"] - scan, out["exp_count"])]
     out["last_set"] = None
     if out["set_count"]:
-        out["last_set"] = decode_settlement(
-            _words(rpc(bill, calldata(SEL["settlement_at"], out["set_count"] - 1))))
+        sid = out["set_count"] - 1
+        s = decode_settlement(_words(rpc(bill, calldata(SEL["settlement_at"], sid))))
+        # SR-003 F2: getter omits payouts — fetch the vector separately.
+        # Revert-tolerant: pre-W6-V2 deployments lack the explicit accessor;
+        # N3b amount rendering already degrades to 0 for empty payouts.
+        try:
+            s["payouts"] = decode_payouts(
+                _words(rpc(bill, calldata(SEL["settlement_payouts"], sid))))
+        except RpcError:
+            s["payouts"] = []
+        out["last_set"] = s
     return out
 
 
@@ -716,10 +755,12 @@ def self_test():
             return res(w(amt), w(int(OWNER, 16)), w(added), w(1 if settled else 0))
         if sel == SEL["settlement_at"]:
             (total, payouts, settled_at, init_at, emask, cmask, clmask, fcat, refunded) = s
-            head = [w(total), w(9 * 32), w(settled_at), w(init_at), w(emask),
-                    w(cmask), w(clmask), w(fcat), w(1 if refunded else 0)]
-            tail = [w(len(payouts))] + [w(p) for p in payouts]
-            return res(*head, *tail)
+            # SR-003 shape: static 8-word getter, dynamic payouts omitted
+            return res(w(total), w(settled_at), w(init_at), w(emask),
+                       w(cmask), w(clmask), w(fcat), w(1 if refunded else 0))
+        if sel == SEL["settlement_payouts"]:
+            (total, payouts, *_rest) = s
+            return res(w(32), w(len(payouts)), *[w(p) for p in payouts])
         if sel == SEL["SETTLEMENT_WINDOW"]:
             return res(w(3600))
         if sel == SEL["MAX_HOLD"]:

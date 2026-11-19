@@ -58,12 +58,18 @@ def mk_settlement(total=15_000_000, payouts=(10_000_000, 3_750_000, 1_250_000),
 
 
 def enc_settlement(s):
-    """Encode a settlement dict the way the contract ABI does (dynamic struct tail)."""
-    head = [w64(s["totalAmount"]), w64(9 * 32), w64(s["settledAt"]), w64(s["initiatedAt"]),
+    """Encode the settlements(uint256) auto-getter return the way the DEPLOYED
+    ABI does: static 8-word tuple, dynamic payouts OMITTED (SR-003 F1/F2)."""
+    head = [w64(s["totalAmount"]), w64(s["settledAt"]), w64(s["initiatedAt"]),
             w64(s["expectedMask"]), w64(s["confirmedMask"]), w64(s["claimedMask"]),
             w64(s["fullyConfirmedAt"]), w64(1 if s["refunded"] else 0)]
-    tail = [w64(len(s["payouts"]))] + [w64(p) for p in s["payouts"]]
-    return "0x" + "".join(head + tail)
+    return "0x" + "".join(head)
+
+
+def enc_payouts(s):
+    """Encode settlementPayouts(uint256) -> uint256[] (single dynamic return)."""
+    return ("0x" + w64(32) + w64(len(s["payouts"]))
+            + "".join(w64(p) for p in s["payouts"]))
 
 
 def mk_bill_state(seats, s, *, bill=BILL, window=3600, max_hold=72 * 3600,
@@ -127,6 +133,8 @@ class BillSim:
             return "0x" + w64(amt) + w64(int(self.owner, 16)) + w64(added) + w64(1 if settled else 0)
         if sel == ne.SEL["settlement_at"]:
             return enc_settlement(self.settlements[arg])
+        if sel == ne.SEL["settlement_payouts"]:
+            return enc_payouts(self.settlements[arg])
         if sel == ne.SEL["SETTLEMENT_WINDOW"]:
             if self.window is None:
                 raise ne.RpcError("revert (legacy era)")
@@ -259,9 +267,51 @@ class TestHelpers(BaseCase):
         self.assertEqual(ne._addr(ws[0]), WA)
         self.assertEqual(ws[1], 7)
 
-    def test_decode_settlement_dynamic_tail(self):
+    def test_decode_settlement_static_8word(self):
+        # SR-003 F1: P0.1a getter = 8 static words, no dynamic head
         s = mk_settlement(emask=0b1011)
-        self.assertEqual(ne.decode_settlement(ne._words(enc_settlement(s))), s)
+        self.assertEqual(ne.decode_settlement(ne._words(enc_settlement(s))),
+                         {**s, "payouts": []})
+
+    def test_decode_settlement_legacy_7word(self):
+        # SR-003 F1 pre-P0.1a: 7 static words (no claimedMask) -> clmask=0
+        enc = "0x" + "".join(w64(v) for v in
+               (15_000_000, T0 + 5, T0, 0b1011, 0b0011, T0 + 9, 1))
+        self.assertEqual(ne.decode_settlement(ne._words(enc)),
+                         {"totalAmount": 15_000_000, "settledAt": T0 + 5,
+                          "initiatedAt": T0, "expectedMask": 0b1011,
+                          "confirmedMask": 0b0011, "claimedMask": 0,
+                          "fullyConfirmedAt": T0 + 9, "refunded": True,
+                          "payouts": []})
+
+    def test_decode_settlement_rejects_dynamic_head(self):
+        # The old W5-era 9-word dynamic-offset encoding must fail loudly
+        bad = "0x" + "".join(w64(v) for v in
+              (15_000_000, 9 * 32, 0, T0, 0, 0, 0, 0, 0))
+        self.assertRaises(ValueError, ne.decode_settlement, ne._words(bad))
+
+    def test_read_bill_fetches_payouts_vector(self):
+        # SR-003 F2: vector comes from settlementPayouts(id), not the getter
+        s = mk_settlement(settled=T0 + 60, emask=0b111, cmask=0b111,
+                          fcat=T0 + 30)
+        sim = BillSim(seats=[(WA, True), (WB, True), (WC, True)],
+                      settlements=[s])
+        b = ne.read_bill(FakeRpc({BILL: sim}), BILL)
+        self.assertEqual(b["last_set"]["payouts"], list(s["payouts"]))
+
+    def test_read_bill_payouts_revert_tolerant(self):
+        # Deployment without the explicit accessor -> payouts degrade to []
+        s = mk_settlement(settled=T0 + 60)
+        sim = BillSim(seats=[(WA, True)], settlements=[s])
+        orig = sim.reply
+        def reply(data):
+            if data[:10] == ne.SEL["settlement_payouts"]:
+                raise ne.RpcError("accessor missing (legacy deploy)")
+            return orig(data)
+        sim.reply = reply
+        b = ne.read_bill(FakeRpc({BILL: sim}), BILL)
+        self.assertEqual(b["last_set"]["payouts"], [])
+        self.assertEqual(b["last_set"]["totalAmount"], s["totalAmount"])
 
     def test_selector_table_shape_and_corruption_tripwire(self):
         ne.verify_selectors()  # live table must pass
