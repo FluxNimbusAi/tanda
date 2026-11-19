@@ -40,6 +40,20 @@ BILLCREATED_TOPIC0 = "0xb6216d646e5d618b749776ebeba03f10245718ba2872d5b57ce0ebac
 # settlementId, uint256 totalAmount, uint64 settledAt) — cast keccak of the ABI sig;
 # emitted BY THE BILL CONTRACT, so log address == bill_address.
 SETTLEMENT_EXECUTED_TOPIC0 = "0x6e15c64adb1391003365f3c4b622f5e671638baa46af47c046068a9154f37858"
+# SR-003 F12 topic parity (t_m4_p01a): the FULL P0.1a settlement lifecycle, not
+# just the terminal Executed leg. topic0 = cast keccak of the canonical event
+# signature (contracts/TandaBillV2.sol:92-97), cross-checked 2026-11-19 against
+# live 4801 logs on bill 0xbe4326dec14d41383dd195097b125905b209846c (blocks
+# 37277221/37277222/37279405). All six are emitted BY THE BILL CONTRACT.
+SETTLEMENT_TOPICS = {
+    "0x4797782232d6165df4bc18cba44fe5bc490d99327264a9f0f500616709f2eebb": "SettlementInitiated",
+    "0x867c4949e90057f87dd89cb454afd97cbb793f822e5f0be95e4321c79aa5c30a": "SeatConfirmed",
+    "0xa53a3715aacdab54744ae14864b68ab5d8bdf76b6b992e926a2f665d38e40889": "SettlementFullyConfirmed",
+    SETTLEMENT_EXECUTED_TOPIC0: "SettlementExecuted",
+    # P0.1a pull-claim leg: claimSettlement() emits SeatPayoutClaimed per seat.
+    "0x3c62290af710b13d2a5be8d22033b19a3207a05f49798c28b402d4bd484c0dea": "SeatPayoutClaimed",
+    "0xf0ac96da4056bba49f666d0f71d3af8a1a294cabef05ab4ab32c17a82f0b3da7": "SettlementRefunded",
+}
 # t_0588553b: single source of truth for the tx-lane 201 INSERT (10 columns).
 # The shipped blob carried VALUES (NULL,?,?,?,?,?,?,...) = 11 values for 10
 # columns vs only 5 bindings -> sqlite prepare error escaped _handle_tx_lane
@@ -86,6 +100,98 @@ def decode_billcreated(log):
         "token": "0x" + topics[3][-40:],
         "seatCount": int(words[0], 16),
     }
+
+
+def decode_settlement_log(log):
+    """Decode one P0.1a settlement lifecycle log. topic0 must be in
+    SETTLEMENT_TOPICS (bill-contract emitter is checked by the caller).
+    Indexed args live in topics, non-indexed in data — layout per
+    contracts/TandaBillV2.sol:92-97. Returns dict or None (foreign topic)."""
+    topics = log.get("topics") or []
+    if not topics:
+        return None
+    name = SETTLEMENT_TOPICS.get(topics[0].lower())
+    if name is None or len(topics) < 2:
+        return None
+    data = (log.get("data") or "0x")[2:]
+    words = [data[i:i + 64] for i in range(0, len(data), 64)]
+
+    def w(i):
+        return int(words[i], 16) if len(words) > i else None
+
+    out = {"event": name, "settlement_id": int(topics[1], 16)}
+    if name == "SettlementInitiated":            # data: totalAmount, expectedSeats
+        out.update(amount=w(0), expected_seats=w(1))
+    elif name == "SeatConfirmed":                # topics: settlementId, seatId
+        out["seat_id"] = int(topics[2], 16) if len(topics) > 2 else None
+    elif name == "SettlementFullyConfirmed":     # data: uint64 at
+        out["at_ts"] = w(0)
+    elif name == "SettlementExecuted":           # data: totalAmount, uint64 settledAt
+        out.update(amount=w(0), at_ts=w(1))
+    elif name == "SeatPayoutClaimed":            # topics: sid, seatId, wallet; data: amount
+        out.update(seat_id=int(topics[2], 16) if len(topics) > 2 else None,
+                   wallet=("0x" + topics[3][-40:]) if len(topics) > 3 else None,
+                   amount=w(0))
+    elif name == "SettlementRefunded":           # data: amount
+        out["amount"] = w(0)
+    return out
+
+
+def _ingest_settlement_logs(db, logs, known, tx_hash, block):
+    """SR-003 F12 parity watcher — SHARED by both ingest lanes (tx POST +
+    userop resolve), so the ledger is identical regardless of entry path.
+    Filter: emitter must be an indexed bill (log address == bill_address) and
+    topic0 must be a settlement event. Ledger UNIQUE(tx_hash, log_index) is
+    the natural on-chain idempotency key; summary upkeep runs ONLY when the
+    ledger insert actually wrote (rowcount==1) — replaying a POSTed tx can
+    never double-count claims. Returns (n_ledger, n_created) where n_created
+    counts NEWLY inserted settlement summaries."""
+    n_ledger = n_created = 0
+    for idx, l in enumerate(logs):
+        d = decode_settlement_log(l)
+        if d is None or l.get("address", "").lower() not in known:
+            continue
+        li = l.get("logIndex", idx)
+        log_index = int(li, 16) if isinstance(li, str) else int(li)
+        cur = db.execute(
+            "INSERT OR IGNORE INTO settlement_events (bill_id, settlement_id,"
+            " event, tx_hash, log_index, block, seat_id, wallet, amount, at_ts)"
+            " VALUES (?,?,?,?,?,?,?,?,?,?)",
+            (l["address"].lower(), d["settlement_id"], d["event"], tx_hash,
+             log_index, block, d.get("seat_id"), d.get("wallet"),
+             d.get("amount"), d.get("at_ts")))
+        if cur.rowcount != 1:
+            continue
+        n_ledger += 1
+        bill, sid = l["address"].lower(), d["settlement_id"]
+        scur = db.execute("INSERT OR IGNORE INTO settlements (bill_id, settlement_id, tx_hash)"
+                          " VALUES (?,?,?)", (bill, sid, tx_hash))
+        n_created += scur.rowcount
+        if d["event"] == "SettlementExecuted":
+            db.execute("UPDATE settlements SET tx_hash=?, block=?,"
+                       " total_amount=COALESCE(?, total_amount),"
+                       " settled_at=COALESCE(?, settled_at)"
+                       " WHERE bill_id=? AND settlement_id=?",
+                       (tx_hash, block, d.get("amount"), d.get("at_ts"), bill, sid))
+        elif d["event"] == "SettlementInitiated":
+            db.execute("UPDATE settlements SET"
+                       " total_amount=COALESCE(total_amount, ?),"
+                       " initiated_block=COALESCE(initiated_block, ?)"
+                       " WHERE bill_id=? AND settlement_id=?",
+                       (d.get("amount"), block, bill, sid))
+        elif d["event"] == "SettlementFullyConfirmed":
+            db.execute("UPDATE settlements SET"
+                       " fully_confirmed_at=COALESCE(fully_confirmed_at, ?)"
+                       " WHERE bill_id=? AND settlement_id=?", (d.get("at_ts"), bill, sid))
+        elif d["event"] == "SeatPayoutClaimed":
+            db.execute("UPDATE settlements SET claimed_count=claimed_count+1,"
+                       " claimed_amount=claimed_amount+COALESCE(?, 0)"
+                       " WHERE bill_id=? AND settlement_id=?", (d.get("amount"), bill, sid))
+        elif d["event"] == "SettlementRefunded":
+            db.execute("UPDATE settlements SET refunded=1"
+                       " WHERE bill_id=? AND settlement_id=?", (bill, sid))
+    db.commit()
+    return n_ledger, n_created
 
 
 def get_db():
@@ -150,6 +256,32 @@ def get_db():
         confirmed_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%SZ','now')),
         PRIMARY KEY (bill_id, settlement_id)
     )""")
+    # SR-003 F12 parity (t_m4_p01a): lifecycle columns on the summary table
+    # (additive, ALTER-guarded for pre-parity DBs) + append-only event ledger.
+    scols = [r[1] for r in db.execute("PRAGMA table_info(settlements)")]
+    for col, decl in (("initiated_block", "NUMERIC"),
+                      ("fully_confirmed_at", "NUMERIC"),
+                      ("refunded", "INTEGER NOT NULL DEFAULT 0"),
+                      ("claimed_count", "NUMERIC NOT NULL DEFAULT 0"),
+                      ("claimed_amount", "NUMERIC NOT NULL DEFAULT 0")):
+        if col not in scols:
+            db.execute(f"ALTER TABLE settlements ADD COLUMN {col} {decl}")
+    db.execute("""CREATE TABLE IF NOT EXISTS settlement_events (
+        bill_id TEXT NOT NULL,
+        settlement_id NUMERIC NOT NULL,
+        event TEXT NOT NULL,
+        tx_hash TEXT NOT NULL,
+        log_index NUMERIC NOT NULL,
+        block NUMERIC,
+        seat_id NUMERIC,
+        wallet TEXT,
+        amount NUMERIC,
+        at_ts NUMERIC,
+        recorded_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%SZ','now')),
+        UNIQUE (tx_hash, log_index)
+    )""")
+    db.execute("CREATE INDEX IF NOT EXISTS settlement_events_bill_idx"
+               " ON settlement_events (bill_id, block, log_index)")
     return db
 
 
@@ -188,6 +320,16 @@ def resolve_userop(db, user_op_hash):
                 token=?, seat_count=?, status='success' WHERE user_op_hash=?""",
                 (tx_hash, d["bill"], d["creator"], d["token"], d["seatCount"], user_op_hash))
             db.commit()
+            # SR-003 F12 parity (t_m4_p01a): the SAME lifecycle watcher runs on
+            # the userop lane, so ledger contents never depend on entry path.
+            known = {r[0].lower() for r in db.execute(
+                "SELECT bill_address FROM bill_index WHERE bill_address IS NOT NULL")}
+            blk = rec.get("blockNumber")
+            try:
+                _ingest_settlement_logs(db, rec["logs"], known, tx_hash,
+                                        int(blk, 16) if blk else None)
+            except sqlite3.Error:
+                db.rollback()  # bill row committed; parity retried via POST /bills/tx
             return db.execute("SELECT * FROM bill_index WHERE user_op_hash=?", (user_op_hash,)).fetchone()
         if status == "failed":
             db.execute("UPDATE bill_index SET status='failed', failed_at=strftime('%Y-%m-%dT%H:%M:%SZ','now') WHERE user_op_hash=?",
@@ -260,36 +402,25 @@ class Handler(BaseHTTPRequestHandler):
                 and l["topics"][0].lower() == BILLCREATED_TOPIC0]
         db = get_db()
         d = decode_billcreated(logs[0]) if logs else None
-        # SR-KP-A1 watcher: SettlementExecuted logs (emitted by indexed bills)
-        # land in `settlements` in this same handler — INSERT OR IGNORE keyed
-        # by (bill_id, settlement_id) so repeat POSTs are idempotent.
+        # SR-KP-A1 watcher, SR-003 F12 widened (t_m4_p01a): the FULL lifecycle
+        # (all six P0.1a topics) ingests through the shared lane-agnostic
+        # _ingest_settlement_logs; ledger UNIQUE(tx_hash, log_index) makes
+        # repeat POSTs idempotent and the rowcount-guard forbids double count.
         known = {r[0].lower() for r in
                  db.execute("SELECT bill_address FROM bill_index WHERE bill_address IS NOT NULL")}
         if d:
             known.add(d["bill"].lower())
         slogs = [l for l in rec["logs"]
                  if l.get("topics") and len(l["topics"]) > 1
-                 and l["topics"][0].lower() == SETTLEMENT_EXECUTED_TOPIC0
+                 and l["topics"][0].lower() in SETTLEMENT_TOPICS
                  and l["address"].lower() in known]
-        n_settle = 0
         blk = rec.get("blockNumber")
         block = int(blk, 16) if blk else None
-        for l in slogs:
-            data = (l.get("data") or "0x")[2:]
-            words = [data[i:i + 64] for i in range(0, len(data), 64)]
-            try:
-                cur = db.execute(
-                    "INSERT OR IGNORE INTO settlements (bill_id, settlement_id,"
-                    " user_op_hash, tx_hash, block, total_amount, settled_at)"
-                    " VALUES (?,?,?,?,?,?,?)",
-                    (l["address"], int(l["topics"][1], 16), None, th, block,
-                     int(words[0], 16) if words else None,
-                     int(words[1], 16) if len(words) > 1 else None))
-                n_settle += cur.rowcount
-                db.commit()
-            except sqlite3.Error as e:
-                db.rollback()
-                return self._json(503, {"error": f"settlement write failed: {e}"})
+        try:
+            _, n_settle = _ingest_settlement_logs(db, rec["logs"], known, th, block)
+        except sqlite3.Error as e:
+            db.rollback()
+            return self._json(503, {"error": f"settlement write failed: {e}"})
         if not logs and not slogs:
             return self._json(422, {"error": "no BillCreated/SettlementExecuted in receipt"})
         if not d:
@@ -410,6 +541,22 @@ class Handler(BaseHTTPRequestHandler):
             db = get_db()
             rows = db.execute("SELECT wallet_address, nullifier, verified_at FROM seat_grants WHERE bill_address=?", (bill,)).fetchall()
             return self._json(200, {"grants": {r["wallet_address"]: {"nullifier": r["nullifier"], "verified_at": r["verified_at"]} for r in rows}})
+        if self.path.startswith("/settlements/"):
+            # SR-003 F12 (t_m4_p01a): per-bill lifecycle readout — summary rows
+            # (additive parity cols) + append-only event ledger. Auth-free and
+            # local-only, same posture as /health.
+            bill = self.path.split("?", 1)[0].split("/")[-1].lower()
+            if not ADDR_RE.match(bill):
+                return self._json(400, {"error": "bad bill"})
+            db = get_db()
+            rows = [dict(r) for r in db.execute(
+                "SELECT * FROM settlements WHERE lower(bill_id)=? ORDER BY settlement_id",
+                (bill,))]
+            events = [dict(e) for e in db.execute(
+                "SELECT settlement_id, event, tx_hash, log_index, block, seat_id,"
+                " wallet, amount, at_ts, recorded_at FROM settlement_events"
+                " WHERE bill_id=? ORDER BY block, log_index", (bill,))]
+            return self._json(200, {"bill": bill, "settlements": rows, "events": events})
         if not self.path.startswith("/bills/by-userop/"):
             return self._json(404, {"error": "not found"})
         h = self.path.split("/")[-1].lower()
@@ -461,8 +608,52 @@ def self_test():
     db.execute("DELETE FROM bill_index WHERE tx_hash=?", (probe_tx,))
     db.commit()
     assert db.execute("SELECT COUNT(*) FROM bill_index WHERE tx_hash=?", (probe_tx,)).fetchone()[0] == 0
+    # SR-003 F12 parity probe (t_m4_p01a): synthetic full lifecycle (Initiated,
+    # 2x SeatConfirmed, FullyConfirmed, Executed, 2x SeatPayoutClaimed) on a
+    # fresh probe bill, ingested TWICE through the shared watcher to pin the
+    # rowcount-guard: replay must add zero ledger rows and zero summary deltas.
+    pbill, ptx = "0x" + os.urandom(20).hex(), "0x" + os.urandom(32).hex()
+    db.execute("INSERT OR IGNORE INTO bill_index (user_op_hash, bill_address, creator)"
+               " VALUES (?,?,?)", ("0x" + os.urandom(32).hex(), pbill, "selftest"))
+    _w = lambda i: hex(i)[2:].rjust(64, "0")
+    n2t = {v: k for k, v in SETTLEMENT_TOPICS.items()}
+    logs = [
+        {"address": pbill, "topics": [n2t["SettlementInitiated"], "0x7"],
+         "data": "0x" + _w(1500000) + _w(3), "logIndex": "0x0"},
+        {"address": pbill, "topics": [n2t["SeatConfirmed"], "0x7", "0x1"], "logIndex": "0x1"},
+        {"address": pbill, "topics": [n2t["SeatConfirmed"], "0x7", "0x2"], "logIndex": "0x2"},
+        {"address": pbill, "topics": [n2t["SettlementFullyConfirmed"], "0x7"],
+         "data": "0x" + _w(1700000000), "logIndex": "0x3"},
+        {"address": pbill, "topics": [n2t["SeatPayoutClaimed"], "0x7", "0x1", "0x" + "11" * 20],
+         "data": "0x" + _w(500000), "logIndex": "0x4"},
+        {"address": pbill, "topics": [n2t["SettlementExecuted"], "0x7"],
+         "data": "0x" + _w(1500000) + _w(1700000100), "logIndex": "0x5"},
+        {"address": pbill, "topics": [n2t["SeatPayoutClaimed"], "0x7", "0x2", "0x" + "22" * 20],
+         "data": "0x" + _w(500000), "logIndex": "0x6"},
+    ]
+    known_p = {pbill.lower()}
+    got = _ingest_settlement_logs(db, logs, known_p, ptx, 999)
+    assert got == (7, 1), f"parity pass1 expected (7,1), got {got}"
+    got2 = _ingest_settlement_logs(db, logs, known_p, ptx, 999)
+    assert got2 == (0, 0), f"parity replay expected (0,0), got {got2}"
+    s = db.execute("SELECT claimed_count, claimed_amount, refunded, total_amount,"
+                   " fully_confirmed_at, settled_at, initiated_block"
+                   " FROM settlements WHERE bill_id=?", (pbill,)).fetchone()
+    assert s["claimed_count"] == 2 and s["claimed_amount"] == 1000000 \
+        and s["total_amount"] == 1500000 and s["settled_at"] == 1700000100 \
+        and s["fully_confirmed_at"] == 1700000000 and s["initiated_block"] == 999, dict(s)
+    e = db.execute("SELECT amount, wallet FROM settlement_events WHERE event="
+                   "'SeatPayoutClaimed' AND seat_id=2").fetchone()
+    assert e["amount"] == 500000 and e["wallet"] == "0x" + "22" * 20, dict(e)
+    db.execute("DELETE FROM settlement_events WHERE bill_id=?", (pbill,))
+    db.execute("DELETE FROM settlements WHERE bill_id=?", (pbill,))
+    db.execute("DELETE FROM bill_index WHERE bill_address=?", (pbill,))
+    db.commit()
+    assert db.execute("SELECT COUNT(*) FROM settlement_events WHERE bill_id=?",
+                      (pbill,)).fetchone()[0] == 0
     print("SELF_TEST PASS: decode matches DEPLOY_RECEIPT_V2 smoke bill byte-exact; "
-          "storage OK; tx-lane 201 INSERT prepares with 5/5 bindings (probe row cleaned)")
+          "storage OK; tx-lane 201 INSERT prepares with 5/5 bindings; "
+          "SR-003 F12 lifecycle parity + replay idempotency OK (probe rows cleaned)")
     return d
 
 
