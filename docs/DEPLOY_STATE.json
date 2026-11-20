@@ -1,0 +1,15 @@
+{
+  "chain_id": 4801,
+  "network": "World Chain Sepolia",
+  "impl": "0x1Cb98A8Cd9FF8058DD327d505bc80eC73Cca27A5",
+  "factory": "0x70A5dC7Ea69D19618335D89d84a32c2a605c2Ac6",
+  "source_verified": true,
+  "receipt_provenance_commit": "bee7347",
+  "receipt_path": "DEPLOY_RECEIPT_V2.json",
+  "updated": "2026-11-20",
+  "proof_anchors": {
+    "e2e_settlement_tx": "0xae4a589017dca988f299c7dfffbdcf8c64ab3363131c7f3b22e3f911b80fac8a",
+    "contract_loop_bill": "0x2032cc313c5b115e8aaa1ae7615d60aa3a199810",
+    "indexer_head_main": "250aff12ae5a"
+  }
+}
