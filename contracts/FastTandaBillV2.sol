@@ -8,6 +8,13 @@ interface IERC20 {
     function balanceOf(address account) external view returns (uint256);
 }
 
+/// @notice Minimal Permit2 AllowanceTransfer pull surface (ADR-0010; parity with TandaBillV2).
+///         Canonical deployment 0x000000000022D473030F116dDEE9F6B43aC78BA3 — same address on
+///         every chain.
+interface IPermit2Transfer {
+    function transferFrom(address from, address to, uint160 amount, address token) external;
+}
+
 /// @title TandaBillV2 — split-bill expense ledger with short-hold settlement escrow (clonable)
 /// @notice W6 revision of TandaBill (W5, verified @0x8644…b12). Design invariants (kill-pass):
 ///   1. No key custody: no upgrade, no pause, no recovery. Settlement is logic-only.
@@ -227,6 +234,30 @@ contract FastTandaBillV2 {
         require(token.transferFrom(_caller(), address(this), amount), TokenTransferFailed());
         escrowBalance += amount;
         emit EscrowFunded(_caller(), amount);
+    }
+
+    // ─── Permit2 single-tap funding (ADR-0010 · W2.5-1; parity with TandaBillV2) ──
+
+    /// @notice Canonical Uniswap Permit2 — identical CREATE2 address on every chain incl.
+    ///         World Chain Sepolia 4801 (runtime verified live 2026-11-19, 9152 B).
+    address public constant PERMIT2 = 0x000000000022D473030F116dDEE9F6B43aC78BA3;
+
+    /// @notice Amount exceeds Permit2's uint160 allowance domain: the explicit downcast
+    ///         below would silently TRUNCATE instead of reverting (ADR-0010 E5). Guard it.
+    error Permit2AmountTooLarge();
+
+    /// @notice Single-tap escrow funding via Permit2 AllowanceTransfer (MiniKit v2 bundle
+    ///         step 3; ADR-0010). Pulls `amount` of the bill token from the payer's
+    ///         Permit2 allowance to THIS clone — no token-layer approval to the bill needed.
+    ///         payer = _caller() so the factory forwarder path attributes funds to the human
+    ///         wallet (E8); the allowance is keyed [payer][token][clone], preserving per-bill
+    ///         escrow isolation. Legacy fundEscrow() stays byte-intact (both paths coexist).
+    function fundEscrowFromPermit2(uint256 amount) external {
+        address payer = _caller();
+        if (amount > type(uint160).max) revert Permit2AmountTooLarge();
+        IPermit2Transfer(PERMIT2).transferFrom(payer, address(this), uint160(amount), address(token));
+        escrowBalance += amount;
+        emit EscrowFunded(payer, amount);
     }
 
     // ─── Settlement ───────────────────────────────────────────────────────
