@@ -1,0 +1,86 @@
+{
+    "bill": "0x2032cc313c5b115e8aaa1ae7615d60aa3a199810",
+    "page": 1,
+    "page_size": 20,
+    "total_settlements": 1,
+    "total_events": 5,
+    "settlements": [
+        {
+            "bill_id": "0x2032cc313c5b115e8aaa1ae7615d60aa3a199810",
+            "settlement_id": 0,
+            "user_op_hash": null,
+            "tx_hash": "0x43903106a80039dde8889cfb028d43c102c2bd5ef665e55af865f2bb89dcdd37",
+            "block": 37314206,
+            "total_amount": 20000,
+            "settled_at": 1795175836,
+            "confirmed_at": "2026-11-20T01:21:59Z",
+            "initiated_block": 37295146,
+            "fully_confirmed_at": 1795175772,
+            "refunded": 0,
+            "claimed_count": 0,
+            "claimed_amount": 0
+        }
+    ],
+    "events": [
+        {
+            "settlement_id": 0,
+            "event": "SettlementInitiated",
+            "tx_hash": "0x8662fb5c4d597fbcb618af0026872eba9a469445f5951784287fd31b3b7c077f",
+            "log_index": 0,
+            "block": 37295146,
+            "seat_id": null,
+            "wallet": null,
+            "amount": 20000,
+            "at_ts": null,
+            "recorded_at": "2026-11-20T01:21:59Z"
+        },
+        {
+            "settlement_id": 0,
+            "event": "SeatConfirmed",
+            "tx_hash": "0xbbcb0c77517821901ee1b77b1922059d88e13dc7d7c4bf46d51572adaff5c0f6",
+            "log_index": 0,
+            "block": 37314170,
+            "seat_id": 0,
+            "wallet": null,
+            "amount": null,
+            "at_ts": null,
+            "recorded_at": "2026-11-20T11:56:05Z"
+        },
+        {
+            "settlement_id": 0,
+            "event": "SeatConfirmed",
+            "tx_hash": "0xb7b9642780f241036a2434bccd7fd41ed2f7795d56934ddbf94689589beda768",
+            "log_index": 0,
+            "block": 37314174,
+            "seat_id": 1,
+            "wallet": null,
+            "amount": null,
+            "at_ts": null,
+            "recorded_at": "2026-11-20T11:56:16Z"
+        },
+        {
+            "settlement_id": 0,
+            "event": "SettlementFullyConfirmed",
+            "tx_hash": "0xb7b9642780f241036a2434bccd7fd41ed2f7795d56934ddbf94689589beda768",
+            "log_index": 1,
+            "block": 37314174,
+            "seat_id": null,
+            "wallet": null,
+            "amount": null,
+            "at_ts": 1795175772,
+            "recorded_at": "2026-11-20T11:56:16Z"
+        },
+        {
+            "settlement_id": 0,
+            "event": "SettlementExecuted",
+            "tx_hash": "0x43903106a80039dde8889cfb028d43c102c2bd5ef665e55af865f2bb89dcdd37",
+            "log_index": 2,
+            "block": 37314206,
+            "seat_id": null,
+            "wallet": null,
+            "amount": 20000,
+            "at_ts": 1795175836,
+            "recorded_at": "2026-11-20T11:57:18Z"
+        }
+    ]
+}

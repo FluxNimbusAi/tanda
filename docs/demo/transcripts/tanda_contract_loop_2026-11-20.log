@@ -1,0 +1,55 @@
+STEP: preflight (chain identity + pinned impl, read-only)
+PASS: preflight.rpc.pair.agrees-4801 [2/2 providers 4801]
+PASS: preflight.factory.impl==fast-pinned [0x52d2b14c5f312a1547097df9c266b2047595efc7]
+PASS: state.bill==0x2032cc.. [0x2032cc313c5b115e8aaa1ae7615d60aa3a199810]
+PASS: state.phases1-6.done [['create', 'expense', 'fund', 'initiate']]
+PASS: window.testnet-pace [SETTLEMENT_WINDOW=60s]
+STEP: 6-evidence re-decode of mined initiate receipt (fast topic table)
+PASS: event.SettlementInitiated.onchain [['SettlementInitiated']]
+PASS: initiate.args [{'a0': 0, 'd0': 20000, 'd1': 2}]
+STEP: 7 settlements(0) via FAST 7-tuple ABI (decoder-mismatch fix verified)
+PASS: decode.fast-7-tuple [mask=3 conf=0 fully=0]
+PASS: state.payouts==split [(10000, 10000)]
+PASS: state.escrow-reserved [initiate reserved 20000 (bill USDC held until push)]
+PASS: state.bill-usdc==expense
+COUNTERS-BEFORE (resume re-anchor): {"bills_indexed": 19, "bills_resolved": 3, "seat_grants": 13, "verifications": 20, "settlements": 2}
+STEP: 6b dust seatB (gas for external-wallet confirm leg)
+PASS: dust.seatB [880000000000 wei]
+STEP: 8a confirmSettlement(0) by owner seat
+PASS: confirm.seat0
+STEP: 8b confirmSettlement(0) by seatB (external wallet)
+PASS: confirm.seat1-by-external-wallet
+PASS: event.SeatConfirmed.leg [['SeatConfirmed', 'SettlementFullyConfirmed']]
+PASS: event.SettlementFullyConfirmed.leg [second confirm flips the mask]
+PASS: state.fullyConfirmedAt [fullyConfirmedAt=1795175772]
+STEP: 9 wait window (60s +2 margin; fully_at=1795175772)
+STEP: 9b executeSettlement(0)
+PASS: execute.settledAt [settledAt=1795175836]
+PASS: execute.refunded==False
+PASS: event.SettlementExecuted [['SettlementExecuted']]
+STEP: 10 [pre-P0.1a] push-settlement verification (fast twin has NO pull-claim)
+PASS: fast-twin.claimSettlement-ABSENT [eth_call reverts (no selector on implementation) — pull-claim parity does NOT hold on fast path (pre-P0.1a flag)]
+PASS: fast-twin.claimablePayout-ABSENT [eth_call reverts (no selector on implementation) — pull-claim parity does NOT hold on fast path (pre-P0.1a flag)]
+PASS: usdc.seatB-push-delta [0 -> 10000 (+10000)]
+PASS: usdc.owner-push-delta [4579991 -> 4589991 (+10000; expense was already escrowed pre-probe)]
+PASS: usdc.bill-drained
+STEP: 11 indexer POSTs + /settlements/<bill> + /api/settlements?bill= + counters
+PASS: index.posts.accepted [{'initiate': 200, 'confirm_owner': 200, 'confirm_seat': 200, 'execute': 200}]
+PASS: index.posts.idempotent-replay [re-POST of already-ingested initiate adds 0 new ledger rows (rowcount-gate proof on resume)]
+POST-RECORDED (evidence; scan-lane may race manual POSTs): {"initiate": {"http": 200, "recorded": 0}, "confirm_owner": {"http": 200, "recorded": 0}, "confirm_seat": {"http": 200, "recorded": 0}, "execute": {"http": 200, "recorded": 0}}
+PASS: index.ledger.fast-parity.5-legs [['SeatConfirmed', 'SeatConfirmed', 'SettlementExecuted', 'SettlementFullyConfirmed', 'SettlementInitiated']]
+PASS: index.ledger.SeatConfirmed.seat_ids [[0, 1]]
+PASS: index.summary.row
+PASS: index.summary.total_amount [20000]
+PASS: index.summary.settled_at==chain [1795175836 vs 1795175836]
+PASS: index.summary.fully_confirmed_at==chain [1795175772 vs 1795175772]
+PASS: index.summary.claimed_count==0 [pre-P0.1a] [fast twin pushes at execute; ledger cannot mirror a pull that does not exist]
+PASS: index.summary.refunded==0
+PASS: index.no-seat-claim-rows [pre-P0.1a] [seat_claims empty on fast path]
+PASS: index.api-query-form.200 [http 200, total_events=5, total_settlements=1]
+PASS: index.api-query-form.settled_at
+COUNTERS-AFTER:  {"bills_indexed": 19, "bills_resolved": 3, "seat_grants": 13, "verifications": 20, "settlements": 2}
+PASS: counter.settlements+0 (row pre-existing from phase 6) [delta=0 — settlement row was created by the initiate leg in run4; resume adds legs, not rows]
+PASS: counter.bills+0 (row pre-existing) [{'bills_indexed': 0, 'bills_resolved': 0, 'seat_grants': 0, 'verifications': 0, 'settlements': 0}]
+PASS: counter.app-lanes-untouched [seat_grants/verifications deltas 0]
+EXIT=0

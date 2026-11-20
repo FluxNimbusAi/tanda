@@ -6,6 +6,19 @@ On-chain split-bill settlement circles for verified humans. One World ID = one s
 
 **Why:** split-bills are a recurring, non-terminal ritual (the daily hook). Personhood-as-seat is the moat: identity is the collateral that off-chain trust circles lack. ROSCA pots are deferred until collateral + compliance mechanics are designed — see `docs/killpass-adjudication.md`.
 
+## Demo — the full contract loop, proven live on World Chain Sepolia
+
+![TandaBill contract-loop proof run](docs/demo/contract-loop.gif)
+
+Frames: [1](docs/demo/contract-loop_01.png) · [2](docs/demo/contract-loop_02.png) · [3](docs/demo/contract-loop_03.png)
+
+A real proof run, not a mock: `initiate → confirm (both seats) → execute → indexer read-back` against the
+deployed fast-twin contract on World Chain Sepolia (`chainId 4801`), bill `0x2032cc313c5b115e8aaa1ae7615d60aa3a199810` —
+**41/41 assertions PASS**, settlement `settledAt=1795175836`, masks 3/3, escrow drained. The raw transcript,
+structured receipt, and live indexer read-back are committed beside the frames; the GIF is a viewport scroll of
+the raw log (nothing added or removed) and the renderer ships for reproduction. Full chain-of-custody:
+[`docs/demo/PROVENANCE.md`](docs/demo/PROVENANCE.md) (source card `t_74cde67e`, run 266, 2026-11-20).
+
 ## Architecture
 - `contracts/TandaBill.sol` — expense ledger + equal-share settlement escrow (short hold, non-custodial copy must match code).
 - MiniKit app shell — seat registration via World ID integration, bill creation, share settlement.
