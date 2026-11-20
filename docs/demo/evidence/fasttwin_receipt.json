@@ -1,0 +1,425 @@
+{
+ "card": "t_74cde67e",
+ "lane": "python/eth_account RPC direct (no cast on host)",
+ "twin": "FastTandaBillV2 (impl 0x52d2b14c5f312a1547097df9c266b2047595EFC7)",
+ "abi_label": "pre-P0.1a: settlements()=7-tuple+refunded-bool, NO claimedMask; payouts PUSHED at executeSettlement \u2014 pull-claim parity does NOT hold on the fast path (Xixi card 2 material)",
+ "chain": 4801,
+ "no_mainnet": true,
+ "indexer_via": "http://127.0.0.1:8096 (loopback)",
+ "bill_clone": "0x2032cc313c5b115e8aaa1ae7615d60aa3a199810",
+ "seatB": "0xA462682762816aE238e1aD9795CdCEBa809f44E2",
+ "signer": "0x78dC32F6a4edF80c538A75e1F7664505B1969E7A",
+ "expense_units": "20000",
+ "payouts": [
+  "10000",
+  "10000"
+ ],
+ "settlement_window_s": "60",
+ "settlement_final": {
+  "totalAmount": 20000,
+  "settledAt": 1795175836,
+  "initiatedAt": 1795137716,
+  "expectedMask": 3,
+  "confirmedMask": 3,
+  "fullyConfirmedAt": 1795175772,
+  "refunded": false
+ },
+ "usdc_deltas_raw": {
+  "signer_push": "10000",
+  "seatB_push": "10000"
+ },
+ "txs": {
+  "create": {
+   "tx_hash": "0x65dee5ac905d2840f5ac224c30b7d64edce57dcb8b10690115e65f653721ae52",
+   "block": 37294699,
+   "gas_used": "279395",
+   "events": [
+    "SeatAdded",
+    "SeatAdded",
+    "BillCreated"
+   ]
+  },
+  "add_expense": {
+   "tx_hash": "0x4abd49bd455066eb37bf69f3ac8b7ddce8955d6e01db23700545628e6b732725",
+   "block": 37295141,
+   "gas_used": "97739",
+   "events": [
+    "ExpenseAdded"
+   ]
+  },
+  "approve": {
+   "tx_hash": "0xa0fc88b0db63971a9f85d9a0f46be3f65da171d34897150c50c1400d47607433",
+   "block": 37295143,
+   "gas_used": "55425",
+   "events": []
+  },
+  "fund": {
+   "tx_hash": "0xf6c79acf0ed56b3a021ebdc77ab96ffc7410089f3acf7e8271d83e3c0efbe8fd",
+   "block": 37295144,
+   "gas_used": "96952",
+   "events": [
+    "EscrowFunded"
+   ]
+  },
+  "initiate": {
+   "tx_hash": "0x8662fb5c4d597fbcb618af0026872eba9a469445f5951784287fd31b3b7c077f",
+   "block": 37295146,
+   "gas_used": "213874",
+   "events": [
+    "SettlementInitiated"
+   ]
+  },
+  "dust": {
+   "tx_hash": "0xfa39e0c27cc16893136e4135df1c3a95d1a9def305655d9e15994e596029a009",
+   "block": 37314163,
+   "gas_used": "21000",
+   "events": []
+  },
+  "confirm_owner": {
+   "tx_hash": "0xbbcb0c77517821901ee1b77b1922059d88e13dc7d7c4bf46d51572adaff5c0f6",
+   "block": 37314170,
+   "gas_used": "65954",
+   "events": [
+    "SeatConfirmed"
+   ]
+  },
+  "confirm_seat": {
+   "tx_hash": "0xb7b9642780f241036a2434bccd7fd41ed2f7795d56934ddbf94689589beda768",
+   "block": 37314174,
+   "gas_used": "70448",
+   "events": [
+    "SeatConfirmed",
+    "SettlementFullyConfirmed"
+   ]
+  },
+  "execute": {
+   "tx_hash": "0x43903106a80039dde8889cfb028d43c102c2bd5ef665e55af865f2bb89dcdd37",
+   "block": 37314206,
+   "gas_used": "105689",
+   "events": [
+    "SettlementExecuted"
+   ]
+  }
+ },
+ "counters_before": {
+  "bills_indexed": 19,
+  "bills_resolved": 3,
+  "seat_grants": 13,
+  "verifications": 20,
+  "settlements": 2
+ },
+ "counters_after": {
+  "bills_indexed": 19,
+  "bills_resolved": 3,
+  "seat_grants": 13,
+  "verifications": 20,
+  "settlements": 2
+ },
+ "counter_deltas": {
+  "bills_indexed": 0,
+  "bills_resolved": 0,
+  "seat_grants": 0,
+  "verifications": 0,
+  "settlements": 0
+ },
+ "counter_note": "resume semantics: bills/settlements rows were created by run4 phases 1-6, so resume deltas are 0 and the +1s live in the run4 leg; this run proves idempotent replay (no double count) and completes the 5-leg ledger",
+ "indexer_ledger_events": [
+  {
+   "settlement_id": 0,
+   "event": "SettlementInitiated",
+   "tx_hash": "0x8662fb5c4d597fbcb618af0026872eba9a469445f5951784287fd31b3b7c077f",
+   "log_index": 0,
+   "block": 37295146,
+   "block_hash": "0xe865384ce2c0dc0ee3c8f679aa5b6748117424e567a3dcccc2effefbf8735d96",
+   "seat_id": null,
+   "wallet": null,
+   "amount": 20000,
+   "at_ts": null,
+   "recorded_at": "2026-11-20T01:21:59Z"
+  },
+  {
+   "settlement_id": 0,
+   "event": "SeatConfirmed",
+   "tx_hash": "0xbbcb0c77517821901ee1b77b1922059d88e13dc7d7c4bf46d51572adaff5c0f6",
+   "log_index": 0,
+   "block": 37314170,
+   "block_hash": "0xfa70201907c03b25d6e6341f23008768da026f5cbc9fe5e0e3a6870192cbd442",
+   "seat_id": 0,
+   "wallet": null,
+   "amount": null,
+   "at_ts": null,
+   "recorded_at": "2026-11-20T11:56:05Z"
+  },
+  {
+   "settlement_id": 0,
+   "event": "SeatConfirmed",
+   "tx_hash": "0xb7b9642780f241036a2434bccd7fd41ed2f7795d56934ddbf94689589beda768",
+   "log_index": 0,
+   "block": 37314174,
+   "block_hash": "0x04334719194162f62bd69d03ee76b34791974b1633281198f681c2b694261296",
+   "seat_id": 1,
+   "wallet": null,
+   "amount": null,
+   "at_ts": null,
+   "recorded_at": "2026-11-20T11:56:16Z"
+  },
+  {
+   "settlement_id": 0,
+   "event": "SettlementFullyConfirmed",
+   "tx_hash": "0xb7b9642780f241036a2434bccd7fd41ed2f7795d56934ddbf94689589beda768",
+   "log_index": 1,
+   "block": 37314174,
+   "block_hash": "0x04334719194162f62bd69d03ee76b34791974b1633281198f681c2b694261296",
+   "seat_id": null,
+   "wallet": null,
+   "amount": null,
+   "at_ts": 1795175772,
+   "recorded_at": "2026-11-20T11:56:16Z"
+  },
+  {
+   "settlement_id": 0,
+   "event": "SettlementExecuted",
+   "tx_hash": "0x43903106a80039dde8889cfb028d43c102c2bd5ef665e55af865f2bb89dcdd37",
+   "log_index": 2,
+   "block": 37314206,
+   "block_hash": null,
+   "seat_id": null,
+   "wallet": null,
+   "amount": 20000,
+   "at_ts": 1795175836,
+   "recorded_at": "2026-11-20T11:57:18Z"
+  }
+ ],
+ "indexer_api_query": {
+  "total_settlements": 1,
+  "total_events": 5
+ },
+ "tx_lane_posts": {
+  "initiate": {
+   "http": 200,
+   "recorded": 0
+  },
+  "confirm_owner": {
+   "http": 200,
+   "recorded": 0
+  },
+  "confirm_seat": {
+   "http": 200,
+   "recorded": 0
+  },
+  "execute": {
+   "http": 200,
+   "recorded": 0
+  }
+ },
+ "assertions": [
+  {
+   "assertion": "preflight.rpc.pair.agrees-4801",
+   "result": "PASS",
+   "detail": "2/2 providers 4801"
+  },
+  {
+   "assertion": "preflight.factory.impl==fast-pinned",
+   "result": "PASS",
+   "detail": "0x52d2b14c5f312a1547097df9c266b2047595efc7"
+  },
+  {
+   "assertion": "state.bill==0x2032cc..",
+   "result": "PASS",
+   "detail": "0x2032cc313c5b115e8aaa1ae7615d60aa3a199810"
+  },
+  {
+   "assertion": "state.phases1-6.done",
+   "result": "PASS",
+   "detail": "['create', 'expense', 'fund', 'initiate']"
+  },
+  {
+   "assertion": "window.testnet-pace",
+   "result": "PASS",
+   "detail": "SETTLEMENT_WINDOW=60s"
+  },
+  {
+   "assertion": "event.SettlementInitiated.onchain",
+   "result": "PASS",
+   "detail": "['SettlementInitiated']"
+  },
+  {
+   "assertion": "initiate.args",
+   "result": "PASS",
+   "detail": "{'a0': 0, 'd0': 20000, 'd1': 2}"
+  },
+  {
+   "assertion": "decode.fast-7-tuple",
+   "result": "PASS",
+   "detail": "mask=3 conf=0 fully=0"
+  },
+  {
+   "assertion": "state.payouts==split",
+   "result": "PASS",
+   "detail": "(10000, 10000)"
+  },
+  {
+   "assertion": "state.escrow-reserved",
+   "result": "PASS",
+   "detail": "initiate reserved 20000 (bill USDC held until push)"
+  },
+  {
+   "assertion": "state.bill-usdc==expense",
+   "result": "PASS",
+   "detail": ""
+  },
+  {
+   "assertion": "dust.seatB",
+   "result": "PASS",
+   "detail": "880000000000 wei"
+  },
+  {
+   "assertion": "confirm.seat0",
+   "result": "PASS",
+   "detail": ""
+  },
+  {
+   "assertion": "confirm.seat1-by-external-wallet",
+   "result": "PASS",
+   "detail": ""
+  },
+  {
+   "assertion": "event.SeatConfirmed.leg",
+   "result": "PASS",
+   "detail": "['SeatConfirmed', 'SettlementFullyConfirmed']"
+  },
+  {
+   "assertion": "event.SettlementFullyConfirmed.leg",
+   "result": "PASS",
+   "detail": "second confirm flips the mask"
+  },
+  {
+   "assertion": "state.fullyConfirmedAt",
+   "result": "PASS",
+   "detail": "fullyConfirmedAt=1795175772"
+  },
+  {
+   "assertion": "execute.settledAt",
+   "result": "PASS",
+   "detail": "settledAt=1795175836"
+  },
+  {
+   "assertion": "execute.refunded==False",
+   "result": "PASS",
+   "detail": ""
+  },
+  {
+   "assertion": "event.SettlementExecuted",
+   "result": "PASS",
+   "detail": "['SettlementExecuted']"
+  },
+  {
+   "assertion": "fast-twin.claimSettlement-ABSENT",
+   "result": "PASS",
+   "detail": "eth_call reverts (no selector on implementation) \u2014 pull-claim parity does NOT hold on fast path (pre-P0.1a flag)"
+  },
+  {
+   "assertion": "fast-twin.claimablePayout-ABSENT",
+   "result": "PASS",
+   "detail": "eth_call reverts (no selector on implementation) \u2014 pull-claim parity does NOT hold on fast path (pre-P0.1a flag)"
+  },
+  {
+   "assertion": "usdc.seatB-push-delta",
+   "result": "PASS",
+   "detail": "0 -> 10000 (+10000)"
+  },
+  {
+   "assertion": "usdc.owner-push-delta",
+   "result": "PASS",
+   "detail": "4579991 -> 4589991 (+10000; expense was already escrowed pre-probe)"
+  },
+  {
+   "assertion": "usdc.bill-drained",
+   "result": "PASS",
+   "detail": ""
+  },
+  {
+   "assertion": "index.posts.accepted",
+   "result": "PASS",
+   "detail": "{'initiate': 200, 'confirm_owner': 200, 'confirm_seat': 200, 'execute': 200}"
+  },
+  {
+   "assertion": "index.posts.idempotent-replay",
+   "result": "PASS",
+   "detail": "re-POST of already-ingested initiate adds 0 new ledger rows (rowcount-gate proof on resume)"
+  },
+  {
+   "assertion": "index.ledger.fast-parity.5-legs",
+   "result": "PASS",
+   "detail": "['SeatConfirmed', 'SeatConfirmed', 'SettlementExecuted', 'SettlementFullyConfirmed', 'SettlementInitiated']"
+  },
+  {
+   "assertion": "index.ledger.SeatConfirmed.seat_ids",
+   "result": "PASS",
+   "detail": "[0, 1]"
+  },
+  {
+   "assertion": "index.summary.row",
+   "result": "PASS",
+   "detail": ""
+  },
+  {
+   "assertion": "index.summary.total_amount",
+   "result": "PASS",
+   "detail": "20000"
+  },
+  {
+   "assertion": "index.summary.settled_at==chain",
+   "result": "PASS",
+   "detail": "1795175836 vs 1795175836"
+  },
+  {
+   "assertion": "index.summary.fully_confirmed_at==chain",
+   "result": "PASS",
+   "detail": "1795175772 vs 1795175772"
+  },
+  {
+   "assertion": "index.summary.claimed_count==0 [pre-P0.1a]",
+   "result": "PASS",
+   "detail": "fast twin pushes at execute; ledger cannot mirror a pull that does not exist"
+  },
+  {
+   "assertion": "index.summary.refunded==0",
+   "result": "PASS",
+   "detail": ""
+  },
+  {
+   "assertion": "index.no-seat-claim-rows [pre-P0.1a]",
+   "result": "PASS",
+   "detail": "seat_claims empty on fast path"
+  },
+  {
+   "assertion": "index.api-query-form.200",
+   "result": "PASS",
+   "detail": "http 200, total_events=5, total_settlements=1"
+  },
+  {
+   "assertion": "index.api-query-form.settled_at",
+   "result": "PASS",
+   "detail": ""
+  },
+  {
+   "assertion": "counter.settlements+0 (row pre-existing from phase 6)",
+   "result": "PASS",
+   "detail": "delta=0 \u2014 settlement row was created by the initiate leg in run4; resume adds legs, not rows"
+  },
+  {
+   "assertion": "counter.bills+0 (row pre-existing)",
+   "result": "PASS",
+   "detail": "{'bills_indexed': 0, 'bills_resolved': 0, 'seat_grants': 0, 'verifications': 0, 'settlements': 0}"
+  },
+  {
+   "assertion": "counter.app-lanes-untouched",
+   "result": "PASS",
+   "detail": "seat_grants/verifications deltas 0"
+  }
+ ],
+ "result": "GREEN",
+ "state_file": "C:\\Users\\dbvis\\.hermes-secrets\\contract_loop_proof_state.json",
+ "created_utc": "2026-11-20T11:57:18Z"
+}
