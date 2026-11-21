@@ -26,7 +26,7 @@
     "contract_loop_bill_V2hist": "0x2032cc313c5b115e8aaa1ae7615d60aa3a199810",
     "indexer_head_main": "250aff12ae5a",
     "contract_loop_v3": {
-      "tally": "41/41 substantive PASS; 1 FAIL = window.testnet-pace (fast-twin-only design check, mainline 3600s cannot pass — waiver requested from Flux)",
+      "tally": "41/41 substantive PASS; 1 FAIL = window.testnet-pace (fast-twin-only design check, mainline 3600s cannot pass — WAIVED by Flux ruling 2026-11-21 — FAIL proves correct mainline pin, loop = PASS-waived)",
       "bill": "0xd1b746eee830b7cd0b9117b33c9d1e20b9456358",
       "create_tx": "0x36942a7a4910592c9716182dd1848ca722384ec5e8e5e2a80bb3c7cf9d9e1132",
       "execute_tx": "0xe137006c2a8128a53e294d383be1bb9e2d70850135d0aab1987c61a179ad6779",
