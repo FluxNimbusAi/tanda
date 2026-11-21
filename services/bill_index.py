@@ -812,6 +812,17 @@ class Handler(BaseHTTPRequestHandler):
     def do_GET(self):
         if self.path == "/health":
             return self._handle_health()
+        if self.path.startswith("/api/grants"):
+            # M4-1a (t_3aed711f, Flux GO 2026-11-20): auth-free bill-scoped
+            # grants READ view - same SR-RV-A1 posture as /api/settlements.
+            # The keyed /grants lane (write + authenticated read) is untouched.
+            qs = self.path.split("?", 1)[1] if "?" in self.path else ""
+            bill = dict(p.split("=", 1) for p in qs.split("&") if "=" in p).get("bill", "").lower()
+            if not ADDR_RE.match(bill):
+                return self._json(400, {"error": "bad bill"})
+            db = get_db()
+            rows = db.execute("SELECT wallet_address, nullifier, verified_at FROM seat_grants WHERE bill_address=?", (bill,)).fetchall()
+            return self._json(200, {"grants": {r["wallet_address"]: {"nullifier": r["nullifier"], "verified_at": r["verified_at"]} for r in rows}})
         if self.path.startswith("/grants"):
             if not self._authed():
                 return self._json(401, {"error": "bad write key"})
