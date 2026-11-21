@@ -34,6 +34,7 @@ USEROP_API = "https://developer.world.org/api/v2/minikit/userop/{h}"
 FACTORIES = [
     "0x96B6Ebc35aD760561d26a6C57d5b3F491B524332".lower(),  # canonical prod
     "0x65Ba0bB4959c2b6121d9e4Da822452aEEC6e61e6".lower(),  # fast rehearsal twin
+    "0x010872d47bd7bb001037577a15d090556bfd24c3".lower(),  # V3 hardened main (SafeERC20 #32 + CEI golden #33), 4801 block 37375560
     "0x70A5dC7Ea69D19618335D89d84a32c2a605c2Ac6".lower(),  # pre-forwarder (legacy bills)
 ]
 FACTORY = FACTORIES[-1]  # kept for self-test back-compat
