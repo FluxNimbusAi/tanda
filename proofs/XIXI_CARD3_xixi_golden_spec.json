@@ -1,0 +1,245 @@
+{
+  "test_suite_name": "TandaBillV2_CEI_Golden_Suite",
+  "target_task": "t_f8ade5da",
+  "design_source": "XIXI_DESIGN_02_xixi_verdict.json (plan_q1 = Option (a) full state-transition-first; plan_q2 = SafeERC20 vendored wrapper)",
+  "repo_anchor": {
+    "repo": "FluxNimbusAi/tanda",
+    "commit": "2965fd9894ffb55ede33cff65b2483d9c3da1913",
+    "canonical_blob_ref": "154caaee (contracts/TandaBillV2.sol per card body)",
+    "laptop_verified_copy": {
+      "path": "C:/Users/dbvis/OneDrive/Documents/tanda/contracts/TandaBillV2.sol",
+      "size_bytes": 17127,
+      "lines": 326,
+      "line_endings": "LF (CRLF count = 0)",
+      "sha256": "b4c4c4cff582e57b5747ec099eb2a8038c238eb00c4ebfa7c475e239f67d1c28",
+      "git_blob_hash": "fb846d5381e5a7553852f2c066e9870d2b3a6829"
+    },
+    "blob_discrepancy_note": "The card body's canonical blob anchor (154caaee) and the XIXI-DESIGN-02 brief anchor (db4ac0cf, 24,364 B LF) do NOT match the only copy reachable on this lane (fb846d53, 17,127 B LF, sha256 b4c4c4cf...). All line-number loci below are computed against the 17,127 B / fb846d53 copy. PC execution MUST re-verify the blob hash of the file it actually edits before applying; if the PC file is the 24,364 B revision, re-base the loci."
+  },
+  "loci_reference": {
+    "note": "Line numbers as they appear in the 17,127 B copy (fb846d53). Card body references L397/L413 which do not exist in this 326-line file; those loci belong to a different revision. The semantic loci this spec asserts are:",
+    "executeSettlement_guard": "L257: if (s.settledAt != 0 || s.refunded) revert AlreadySettled();",
+    "executeSettlement_transfer_loop": "L263-271 (external token.transfer at L268)",
+    "executeSettlement_settledAt_write_CURRENT": "L274: s.settledAt = uint64(block.timestamp);  <-- AFTER the loop (broken ordering on this copy)",
+    "refundSettlement_flag_first": "L289-291: s.refunded = true BEFORE token.transfer (CEI already correct here)",
+    "fundEscrow_transferFrom": "L168: require(token.transferFrom(msg.sender, address(this), amount), TokenTransferFailed());",
+    "fundEscrow_escrowBalance_credit": "L169: escrowBalance += amount;  <-- AFTER transferFrom (broken ordering per XIXI-AUDIT-01 MED/F-7)",
+    "MAX_SEATS": "L72: uint256 public constant MAX_SEATS = 256;",
+    "initiateSettlement_escrow_debit": "L212: escrowBalance -= unsettled; (executeSettlement does NOT touch escrowBalance)"
+  },
+  "files_to_add": [
+    "test/mocks/HookToken.sol",
+    "test/mocks/NoReturnToken.sol",
+    "test/mocks/FalseReturnToken.sol",
+    "test/TandaBillV2_CEI_Golden.t.sol",
+    "test/TandaBillV2_CEI_Invariant.t.sol"
+  ],
+  "mock_contracts_spec": {
+    "HookToken": {
+      "path": "test/mocks/HookToken.sol",
+      "spec": "ERC-20 that, on the FIRST transfer()/transferFrom() call where msg.sender == targetBill, re-enters the bill. Fields: address public targetBill; uint256 public settlementId; bool public hookFired; function setTarget(address bill, uint256 sid) external { targetBill = bill; settlementId = sid; } transfer(): if (!hookFired && msg.sender == targetBill) { hookFired = true; try ITandaBillV2(targetBill).executeSettlement(settlementId) {} catch {} } then balance move, return true. transferFrom(): if (!hookFired && msg.sender == targetBill) { hookFired = true; try ITandaBillV2(targetBill).fundEscrow(1) {} catch {} } then balance move, return true."
+    },
+    "NoReturnToken": {
+      "path": "test/mocks/NoReturnToken.sol",
+      "spec": "ERC-20 whose transfer()/transferFrom() perform the balance move but RETURN NO DATA (no returns clause). Proves SafeERC20 reverts on the no-return class."
+    },
+    "FalseReturnToken": {
+      "path": "test/mocks/FalseReturnToken.sol",
+      "spec": "ERC-20 whose transfer()/transferFrom() perform NO balance move and RETURN FALSE (no revert). Proves SafeERC20 reverts on the false-return class and that all-or-nothing holds."
+    }
+  },
+  "per_test": [
+    {
+      "name": "test_CEI_execute_settledAt_written_before_transfer_hook_reentrancy_reverts",
+      "forge_command": "forge test --match-contract TandaBillV2_CEI_Golden --match-test test_CEI_execute_settledAt_written_before_transfer_hook_reentrancy_reverts -vvv",
+      "fixture_setup": "Deploy HookToken (not MockToken). Create bill via factory with seats [owner, alice, bob]. owner: addExpense(900e6); owner: fundEscrow(900e6); owner: initiateSettlement(); owner+alice+bob: confirmSettlement(0); vm.warp to fullyConfirmedAt + SETTLEMENT_WINDOW. HookToken.setTarget(bill, 0). Record escrowBalance_before = bill.escrowBalance(); token.balanceOf(bill) before.",
+      "assertions": [
+        "Inner re-entrant executeSettlement(0) called from within the first token.transfer REVERTS with AlreadySettled (hookFired==true AND inner call did not complete)",
+        "After outer executeSettlement(0) returns: bill.settlements(0).settledAt != 0 (state-first write landed)",
+        "token.balanceOf(alice) == payouts[0] exactly once (no double-payout)",
+        "token.balanceOf(bob) == payouts[1] exactly once",
+        "token.balanceOf(owner) delta == payouts[2] (owner is also a seat)",
+        "bill.escrowBalance() == escrowBalance_before (executeSettlement does NOT touch escrowBalance — L212 debit already happened at initiate)",
+        "token.balanceOf(bill) == 0 (all funds left the contract)",
+        "Re-executing executeSettlement(0) from any caller REVERTS with AlreadySettled"
+      ],
+      "expect_revert": "AlreadySettled (on the inner re-entrant call and on the post-settle re-execute)",
+      "reason": "PROVES plan_q1 Option (a): writing s.settledAt BEFORE the external transfer loop makes any re-entrant executeSettlement hit the L257 guard (settledAt != 0) and revert with AlreadySettled. No double-payout, no escrow drift. This is the single most important golden test — it directly exercises the HIGH-1 CEI inversion fix.",
+      "coverage_gap": "Covers requirement (a) hook-token reentrancy on executeSettlement AND requirement (b) CEI-order state-first assertion. Does NOT cover fundEscrow reentrancy (see next test)."
+    },
+    {
+      "name": "test_CEI_fundEscrow_escrowBalance_credited_after_transferFrom_hook_reentrancy_reverts",
+      "forge_command": "forge test --match-contract TandaBillV2_CEI_Golden --match-test test_CEI_fundEscrow_escrowBalance_credited_after_transferFrom_hook_reentrancy_reverts -vvv",
+      "fixture_setup": "Deploy HookToken. Create bill via factory with seats [owner, alice]. owner: addExpense(500e6). Mint HookToken to owner. owner: token.approve(bill, type(uint256).max). HookToken.setTarget(bill, 0) — the hook re-enters fundEscrow(1) on the first transferFrom. Record escrowBalance_before = bill.escrowBalance() (should be 0).",
+      "assertions": [
+        "Inner re-entrant fundEscrow(1) called from within the outer transferFrom REVERTS (TokenTransferFailed — inner transferFrom has no allowance/balance left after outer call)",
+        "After outer fundEscrow(500e6) returns: bill.escrowBalance() == 500e6 (exactly ONE credit, not 500e6 + 1)",
+        "token.balanceOf(bill) == 500e6 (token balance matches escrowBalance — no drift)",
+        "Re-calling fundEscrow(1) directly from owner succeeds cleanly with escrowBalance == 500e6 + 1 (no phantom increment from the hook)"
+      ],
+      "expect_revert": "TokenTransferFailed (on the inner re-entrant fundEscrow)",
+      "reason": "PROVES the fundEscrow CEI fix (XIXI-AUDIT-01 MED/F-7): escrowBalance += amount must come AFTER the safeTransferFrom, not before. Under a hook-bearing token, if escrowBalance were credited BEFORE the external call, a re-entrant fundEscrow could double-increment escrowBalance without matching token balance. The fix ordering (credit after transfer) means the re-entrant call sees the pre-transfer state and either reverts or is idempotent. This asserts the FIX ordering, not the broken one.",
+      "coverage_gap": "Covers requirement (c) fundEscrow CEI. Does NOT cover executeSettlement reentrancy (covered by prior test)."
+    },
+    {
+      "name": "test_CEI_execute_happy_path_no_drift_41_twin",
+      "forge_command": "forge test --match-contract TandaBillV2_CEI_Golden --match-test test_CEI_execute_happy_path_no_drift_41_twin -vvv",
+      "fixture_setup": "Deploy MockToken (standard USDC mock, returns true). Create bill via factory with seats [owner, alice, bob, carol] (4 seats). owner: addExpense(1000e6); owner: fundEscrow(1000e6); owner: initiateSettlement(); all 4 confirm; vm.warp to window elapsed. Record escrowBalance_before.",
+      "assertions": [
+        "Each of the 4 seats received exactly payouts[idx] (250e6 each for even split)",
+        "bill.settlements(0).settledAt != 0",
+        "bill.escrowBalance() == escrowBalance_before (unchanged by execute)",
+        "token.balanceOf(bill) == 0",
+        "Re-execute REVERTS with AlreadySettled",
+        "SettlementExecuted event emitted exactly once"
+      ],
+      "expect_revert": "AlreadySettled (on re-execute only)",
+      "reason": "Regression golden: confirms the CEI reorder + SafeERC20 wrapper do not break the standard-token happy path. Mirrors the existing 41/41 FastTandaBillV2 twin suite (run 266) to catch golden drift.",
+      "coverage_gap": "Covers the no-drift regression baseline. Does NOT cover hook tokens or revert paths."
+    },
+    {
+      "name": "test_CEI_execute_noReturnToken_safeERC20_reverts_no_partial_stranding",
+      "forge_command": "forge test --match-contract TandaBillV2_CEI_Golden --match-test test_CEI_execute_noReturnToken_safeERC20_reverts_no_partial_stranding -vvv",
+      "fixture_setup": "Deploy NoReturnToken. Create bill via factory with seats [owner, alice, bob]. owner: addExpense(300e6); owner: fundEscrow(300e6); owner: initiateSettlement(); all confirm; vm.warp to window elapsed. Record escrowBalance_before and token.balanceOf(bill) before.",
+      "assertions": [
+        "executeSettlement(0) REVERTS with SafeERC20 StandardTokenTransferFailed (no return data)",
+        "bill.settlements(0).settledAt == 0 (NOT set — no partial stranding)",
+        "bill.escrowBalance() == escrowBalance_before (unchanged)",
+        "token.balanceOf(bill) == 300e6 (funds still in escrow, not stranded)",
+        "No seat received any tokens (all balances unchanged)"
+      ],
+      "expect_revert": "SafeERC20 StandardTokenTransferFailed",
+      "reason": "PROVES plan_q2 SafeERC20 wrapper: a token that returns no data causes a hard revert BEFORE settledAt is written, so the settlement is not marked settled and funds are not stranded. The all-or-nothing property holds for the no-return class.",
+      "coverage_gap": "Covers the no-return token class. Does NOT cover false-return or hook tokens."
+    },
+    {
+      "name": "test_CEI_execute_falseReturnToken_safeERC20_reverts_no_partial_payout",
+      "forge_command": "forge test --match-contract TandaBillV2_CEI_Golden --match-test test_CEI_execute_falseReturnToken_safeERC20_reverts_no_partial_payout -vvv",
+      "fixture_setup": "Deploy FalseReturnToken. Create bill via factory with seats [owner, alice, bob]. owner: addExpense(300e6); owner: fundEscrow(300e6); owner: initiateSettlement(); all confirm; vm.warp to window elapsed. Record escrowBalance_before.",
+      "assertions": [
+        "executeSettlement(0) REVERTS with SafeERC20 StandardTokenTransferFailed (returned false)",
+        "bill.settlements(0).settledAt == 0",
+        "bill.escrowBalance() == escrowBalance_before",
+        "token.balanceOf(bill) == 300e6",
+        "No seat received any tokens (FalseReturnToken does not move balances on false return)"
+      ],
+      "expect_revert": "SafeERC20 StandardTokenTransferFailed",
+      "reason": "PROVES plan_q2 SafeERC20 wrapper for the false-return class: a token that returns false (no revert) is caught by the low-level call + returndata check and reverts atomically. No partial payout, no stranding.",
+      "coverage_gap": "Covers the false-return token class. Does NOT cover no-return or hook tokens."
+    },
+    {
+      "name": "test_CEI_execute_maxSeats_256_bounded_gas",
+      "forge_command": "forge test --match-contract TandaBillV2_CEI_Golden --match-test test_CEI_execute_maxSeats_256_bounded_gas -vvv",
+      "fixture_setup": "Deploy MockToken. Create bill via factory with 256 seats (MAX_SEATS). owner: addExpense(25600e6); owner: fundEscrow(25600e6); owner: initiateSettlement(); all 256 seats confirm (loop in test); vm.warp to window elapsed. Record gas before execute.",
+      "assertions": [
+        "executeSettlement(0) succeeds (does not revert on gas)",
+        "All 256 seats received exactly 100e6 each (25600e6 / 256)",
+        "bill.settlements(0).settledAt != 0",
+        "bill.escrowBalance() unchanged by execute",
+        "token.balanceOf(bill) == 0",
+        "Gas used by executeSettlement is recorded and reported (gas_notes field documents the ceiling)"
+      ],
+      "expect_revert": null,
+      "reason": "PROVES requirement (d) bounded-gas: the MAX_SEATS=256 payout loop is executable in a single transaction. This is the upper bound of the loop — if 256 seats work, all smaller bills work. The gas_notes field documents that this is near the practical ceiling and that a 256-seat execute may still be unexecutable under paymaster per-tx caps (prior audit MED-3), which remains a v3 item.",
+      "coverage_gap": "Covers requirement (d) bounded-gas at the MAX_SEATS boundary. Does NOT cover >256 seats (impossible by design — TooManySeats revert)."
+    },
+    {
+      "name": "test_CEI_execute_reentrancy_via_confirm_callback_hook",
+      "forge_command": "forge test --match-contract TandaBillV2_CEI_Golden --match-test test_CEI_execute_reentrancy_via_confirm_callback_hook -vvv",
+      "fixture_setup": "Deploy HookToken. Create bill via factory with seats [owner, alice]. owner: addExpense(200e6); owner: fundEscrow(200e6); owner: initiateSettlement(); owner confirms; alice's seat is a contract (HookToken-controlled) that calls confirmSettlement(0) from within its token.transfer hook during execute. vm.warp to window elapsed after full confirm.",
+      "assertions": [
+        "The re-entrant confirmSettlement(0) from within the transfer hook REVERTS with NotAwaitingConfirmations (fullyConfirmedAt already set) or AlreadySettled (if settledAt was already written by the CEI fix)",
+        "Outer executeSettlement(0) completes: both seats paid exactly once",
+        "bill.escrowBalance() unchanged",
+        "No double-confirmation, no double-payout"
+      ],
+      "expect_revert": "NotAwaitingConfirmations or AlreadySettled (on the inner re-entrant confirmSettlement)",
+      "reason": "Extended reentrancy surface: a seat contract that calls back into confirmSettlement during the payout loop. The CEI fix (settledAt written before the loop) makes this revert at the L257 guard. Even without the CEI fix, confirmSettlement would revert at L229 (fullyConfirmedAt != 0) — but the golden test asserts the CEI path is the one that catches it.",
+      "coverage_gap": "Covers an additional reentrancy vector (confirm callback) beyond the primary executeSettlement re-entrancy. Complements test 1."
+    }
+  ],
+  "cei_assertions": [
+    {
+      "id": "CEI-1",
+      "locus": "executeSettlement L257 (guard) / L274 (settledAt write, to be moved before L263 loop)",
+      "assertion": "s.settledAt is written BEFORE any external token.transfer call in the payout loop. A re-entrant executeSettlement during the loop MUST revert with AlreadySettled at L257.",
+      "test": "test_CEI_execute_settledAt_written_before_transfer_hook_reentrancy_reverts",
+      "plan_q1_ref": "Option (a) full state-transition-first"
+    },
+    {
+      "id": "CEI-2",
+      "locus": "fundEscrow L168 (transferFrom) / L169 (escrowBalance +=, to be moved after L168)",
+      "assertion": "escrowBalance += amount is executed AFTER the safeTransferFrom returns. A re-entrant fundEscrow during the transferFrom MUST NOT see a pre-credited escrowBalance.",
+      "test": "test_CEI_fundEscrow_escrowBalance_credited_after_transferFrom_hook_reentrancy_reverts",
+      "plan_q1_ref": "XIXI-AUDIT-01 MED/F-7 fix ordering"
+    },
+    {
+      "id": "CEI-3",
+      "locus": "refundSettlement L289 (s.refunded = true) / L291 (token.transfer)",
+      "assertion": "Already correct on this copy: s.refunded is set BEFORE the external transfer. No change needed. Golden test asserts this ordering holds (regression guard).",
+      "test": "Covered implicitly by test_CEI_execute_happy_path_no_drift_41_twin (refund path not re-entered in this fixture, but the ordering is asserted by code inspection)",
+      "plan_q1_ref": "Existing CEI discipline in refundSettlement"
+    },
+    {
+      "id": "CEI-4",
+      "locus": "executeSettlement — zero external calls before settledAt write",
+      "assertion": "Between the L257 guard and the settledAt write, there are NO external calls (no token.*, no address.call). The only SLOAD/SSTORE operations are on local settlement state. This is a static assertion verifiable by code inspection + Slither reentrancy flag.",
+      "test": "Static analysis (Slither/forge-lint) — not a forge test. The Slither reentrancy flag on executeSettlement should clear once settledAt precedes the loop.",
+      "plan_q1_ref": "plan_q1 rationale: 'No additional flag is needed because settledAt is the unique terminal marker'"
+    }
+  ],
+  "hook_token_matrix": [
+    {
+      "token_behavior": "Re-enters executeSettlement(settlementId) on first transfer()",
+      "expected_outcome_with_fix": "Inner call reverts AlreadySettled (L257 guard, settledAt already written). Outer completes, all seats paid exactly once.",
+      "expected_outcome_without_fix": "Inner call passes L257 (settledAt still 0), re-runs the payout loop, double-pays seats 0..k. escrowBalance unchanged but token balance drained twice.",
+      "test": "test_CEI_execute_settledAt_written_before_transfer_hook_reentrancy_reverts"
+    },
+    {
+      "token_behavior": "Re-enters fundEscrow(1) on first transferFrom()",
+      "expected_outcome_with_fix": "Inner call reverts (TokenTransferFailed — no allowance/balance left). escrowBalance credited exactly once.",
+      "expected_outcome_without_fix": "If escrowBalance were credited BEFORE transferFrom, inner call could double-increment escrowBalance without matching token balance. Shadow var drifts from actual token balance.",
+      "test": "test_CEI_fundEscrow_escrowBalance_credited_after_transferFrom_hook_reentrancy_reverts"
+    },
+    {
+      "token_behavior": "Re-enters confirmSettlement(0) from a seat contract during payout loop",
+      "expected_outcome_with_fix": "Inner call reverts AlreadySettled (CEI fix) or NotAwaitingConfirmations (fullyConfirmedAt already set). No double-confirmation.",
+      "expected_outcome_without_fix": "If fullyConfirmedAt were not yet set, inner confirm could mutate confirmedMask mid-loop. With CEI fix, settledAt guard catches it first.",
+      "test": "test_CEI_execute_reentrancy_via_confirm_callback_hook"
+    },
+    {
+      "token_behavior": "Returns no data on transfer() (no revert)",
+      "expected_outcome_with_fix": "SafeERC20 reverts StandardTokenTransferFailed. settledAt NOT written. No partial stranding.",
+      "expected_outcome_without_fix": "Bare token.transfer returns no data; require(...) sees empty returndata and reverts (actually safe in this case, but SafeERC20 makes it explicit and handles the decode).",
+      "test": "test_CEI_execute_noReturnToken_safeERC20_reverts_no_partial_stranding"
+    },
+    {
+      "token_behavior": "Returns false on transfer() (no revert, no balance move)",
+      "expected_outcome_with_fix": "SafeERC20 reverts StandardTokenTransferFailed. settledAt NOT written. No partial payout.",
+      "expected_outcome_without_fix": "Bare require(token.transfer(...)) sees false and reverts TokenTransferFailed. Actually safe, but SafeERC20 standardizes the error and handles edge cases.",
+      "test": "test_CEI_execute_falseReturnToken_safeERC20_reverts_no_partial_payout"
+    },
+    {
+      "token_behavior": "Standard USDC mock (returns true, moves balances)",
+      "expected_outcome_with_fix": "Happy path. All seats paid, settledAt set, escrowBalance unchanged by execute.",
+      "expected_outcome_without_fix": "Same (no reentrancy, no silent failure). This is the regression baseline.",
+      "test": "test_CEI_execute_happy_path_no_drift_41_twin"
+    }
+  ],
+  "gas_notes": [
+    "CEI reorder (Q1): moving s.settledAt SSTORE from after the loop to before it is gas-neutral in total — same single cold-then-warm SSTORE, just relocated. Net gas delta: ~0.",
+    "SafeERC20 wrapper (Q2): each safeTransfer/safeTransferFrom adds ~2-5k gas over a bare transfer (low-level call + returndata check + bool decode). For a 256-seat execute: ~256 * ~3k = ~768k additional gas over the bare loop. Non-trivial but small relative to the ~9M baseline of 256 USDC transfers.",
+    "MAX_SEATS=256 payout loop: the 256-seat execute is the upper bound. Under paymaster per-tx gas caps, a 256-seat fully-confirmed settlement may still be unexecutable in a single tx (prior audit MED-3). This remains a v3 item (batched execute with paidMask, or documented payout-loop seat cap). The golden test asserts the loop IS executable in a single tx under standard Foundry gas limits, but does NOT guarantee on-chain paymaster compatibility.",
+    "fundEscrow SafeERC20: single call, ~2-5k gas delta. Negligible.",
+    "Hook-token reentrancy tests: the re-entrant call that reverts is cheap (reverts before the loop). No additional gas concern."
+  ],
+  "risks": [
+    "BLOB DISCREPANCY (MUST CLEAR BEFORE PC EXECUTION): The card body's canonical blob anchor (154caaee) and the XIXI-DESIGN-02 brief anchor (db4ac0cf, 24,364 B LF) do NOT match the only copy reachable on this lane (fb846d53, 17,127 B LF, sha256 b4c4c4cf...). All loci in this spec are computed against the 17,127 B copy. PC execution MUST re-verify the blob hash before applying; if the PC file is the 24,364 B revision, line numbers and possibly structure will differ and the loci need re-basing.",
+    "CARD BODY L397/L413 REFERENCE: The card body references 'claim-before-transfer L397, refund-before-transfer L413' which do not exist in the 326-line file on this lane. These loci belong to a different (likely 24,364 B) revision. This spec uses the semantic loci from the 17,127 B copy instead. If the PC file is the longer revision, the L397/L413 loci may be correct there and this spec's loci would need re-basing.",
+    "SAFEERC20 VENDORING: The SafeERC20 library must be vendored into lib/ (OpenZeppelin or equivalent). The existing forge-std manifest (32 files) does NOT include SafeERC20. PC execution must add it and update FORGE_STD_MANIFEST.md. Hand-rolling is explicitly rejected by plan_q2.",
+    "FEE-ON-TRANSFER TOKENS: SafeERC20 does NOT protect against fee-on-transfer/rebasing tokens that return true but deliver less than requested. USDC/CCTP on World Chain 480 are non-fee, non-rebasing, so this is out of scope, but must be documented as a hard precondition in NatSpec.",
+    "256-TRANSFER GAS CEILING (MED-3): NOT addressed by either fix. A max-size 256-seat settlement may still be unexecutable under paymaster per-tx caps. Remains a v3 item. The golden test asserts executability under Foundry gas limits, not on-chain paymaster compatibility.",
+    "INTEGRATION WITH EXISTING SUITE: The new test file (TandaBillV2_CEI_Golden.t.sol) must coexist with the existing TandaBillV2.t.sol (41 tests). The MockToken in the existing suite is file-local; the new suite needs its own mock imports. No ABI conflicts expected (new mocks are separate contracts).",
+    "SLITHER STATIC CHECK: The Slither reentrancy flag on executeSettlement should clear once settledAt precedes the loop. PC execution should run Slither as a post-fix verification step. If Slither still flags it, the fix ordering may not be as intended."
+  ]
+}

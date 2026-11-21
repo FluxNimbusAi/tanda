@@ -1,0 +1,12 @@
+{
+  "deployed_utc": "2026-11-21T22:02:26Z",
+  "chain_id": 4801,
+  "impl": "0xd0cc3595679a36b64c860568217b623605980e6a",
+  "factory": "0x010872d47bd7bb001037577a15d090556bfd24c3",
+  "tx_impl": "0x61f0876e715ddf1802c56a8de731741a309bc2027e11cfb4636a36bbea29b243",
+  "tx_factory": "0x5eced1cf1c860bbd1a4a6b431afb4ace667f8495305c6f2ffe65e5d29029062f",
+  "source_main_sha": "0e3966dc9ba5f3f9c71107684645b7586826b50e",
+  "contract_blob": "SafeERC20Minimal-hardened (51de25aee + 0e3966dc9 era main)",
+  "usdc": "0x66145f38cBAC35Ca6F1Dfb4914dF98F1614aeA88",
+  "signer_verified": "0x78dC32F6a4edF80c538A75e1F7664505B1969E7A"
+}
