@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
+import {SafeERC20Minimal} from "./SafeERC20Minimal.sol";
+
 /// @notice Minimal ERC-20 interface (USDC on World Chain).
 interface IERC20 {
     function transfer(address to, uint256 amount) external returns (bool);
@@ -239,7 +241,8 @@ contract TandaBillV2 {
     }
 
     function fundEscrow(uint256 amount) external {
-        require(token.transferFrom(_caller(), address(this), amount), TokenTransferFailed());
+        // HIGH-2 (XIXI-DESIGN-02): hardened pull - no-return-data tokens no longer DoS funding.
+        SafeERC20Minimal.safeTransferFrom(address(token), _caller(), address(this), amount);
         escrowBalance += amount;
         emit EscrowFunded(_caller(), amount);
     }
@@ -395,7 +398,8 @@ contract TandaBillV2 {
 
         uint256 amount = _payoutAt(s, seatId);
         s.claimedMask |= bit; // CEI: flag before external call; a failed transfer reverts the flag too → claim stays retryable
-        require(token.transfer(seats[seatId].wallet, amount), TokenTransferFailed());
+        // HIGH-2 (XIXI-DESIGN-02): hardened payout - empty-returndata tokens succeed, false/explicit revert surfaces typed.
+        SafeERC20Minimal.safeTransfer(address(token), seats[seatId].wallet, amount);
         // forge-lint: disable-next-line(reentrancy-events)
         emit SeatPayoutClaimed(settlementId, seatId, seats[seatId].wallet, amount);
     }
@@ -412,7 +416,7 @@ contract TandaBillV2 {
         require(s.fullyConfirmedAt == 0 && block.timestamp >= uint256(s.initiatedAt) + MAX_HOLD, RefundNotAvailable());
         s.refunded = true;
         // CEI: flag set before external call
-        require(token.transfer(owner, s.totalAmount), TokenTransferFailed());
+        SafeERC20Minimal.safeTransfer(address(token), owner, s.totalAmount); // HIGH-2 hardened (XIXI-DESIGN-02)
         emit SettlementRefunded(settlementId, s.totalAmount);
     }
 
