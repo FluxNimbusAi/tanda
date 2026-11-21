@@ -2,6 +2,7 @@
 pragma solidity ^0.8.24;
 
 import {TandaBillV2, IERC20} from "../contracts/TandaBillV2.sol";
+import {SafeERC20Minimal} from "../contracts/SafeERC20Minimal.sol";
 import {TandaBillFactory} from "../contracts/TandaBillFactory.sol";
 import {Test} from "forge-std/Test.sol";
 
@@ -880,7 +881,7 @@ contract TandaBillV2Test is Test {
         assertEq(bt.balanceOf(owner), 1_000_000e6 - 300e6 + 100e6);
         assertEq(bt.balanceOf(bob),   1_000_000e6 + 100e6);
 
-        vm.expectRevert(bytes("receiver blocked"));
+        vm.expectRevert(abi.encodeWithSelector(SafeERC20Minimal.SafeERC20Failed.selector, address(bt), abi.encodeWithSignature("Error(string)", "receiver blocked"))); // HIGH-2: raw revert now typed-wrapped, behavior identical
         _claimAs(alice, bill, 0);
         // CEI: failed transfer rolls back the claim bit — retryable, not burned.
         assertEq((_s(bill, 0).claimedMask & (uint256(1) << 1)), 0);
