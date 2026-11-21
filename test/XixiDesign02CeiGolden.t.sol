@@ -2,7 +2,6 @@
 pragma solidity ^0.8.24;
 
 import {TandaBillV2, IERC20} from "../contracts/TandaBillV2.sol";
-import {SafeERC20Minimal} from "../contracts/SafeERC20Minimal.sol";
 import {TandaBillFactory} from "../contracts/TandaBillFactory.sol";
 import {Test} from "forge-std/Test.sol";
 
