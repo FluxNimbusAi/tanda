@@ -6,7 +6,7 @@ then Flux validates on recompute. Never chat-wake Xixi; never intake; self-repor
 | # | Card | Class | Inputs (repo-side, zero network) | Deliverable | Est. her sessions |
 |---|------|-------|----------------------------------|-------------|-------------------|
 | 1 | XIXI-DESIGN-02 — CEI reordering + token-stranding guard designs | adversarial design | FluxNimbusAi/tanda docs/bridge/XIXI_DESIGN_02_BRIEF_20261121.md (sha256 adc7e5924466ed58fc786e17e28d20d7e1a1e30c5fda07da0cb5c0442e5c9bb6) | JSON verdict {decision/rationale/diff_sketch/test_plan per Q} | IN QUEUE (Harley) |
-| 2 | MED-3 256-transfer gas cap — batched-execute vs MAX_SEATS cap design | adversarial design | tanda contracts/TandaBillV2.sol execute() payout loop @ main; her own card-1 receipt (24,556 B dea341e2...5a3b9e) | JSON: two-option cost model (gas/seat, worst-case block gas), doc-acceptable-MVP verdict, patch sketch | 1 |
+| 2 | MED-3 256-transfer gas cap — batched-execute vs MAX_SEATS cap design | adversarial design | BRIEF PINNED: docs/bridge/XIXI_MED_03_BRIEF_20261121.md (sha256 f735b2efdfba12533efbd21c61456081009af78eb514fa098d7b620660311a00, 4538 B LF) — supersedes the table inputs column; her own XIXI-AUDIT-01 receipt (24,556 B dea341e2...5a3b9e) still required | JSON: q1 residual single-tx ceiling audit, q2 batched-helper vs MAX_SEATS cap cost table, q3 MED-3 disposition accept/mitigate/fix-now (fold P0.1a pull-claim already shipped) | 1 |
 | 3 | Roster-freedom / event-ordering MEDs full disposition | deep audit | same receipt lines; ADR-0001..0010 index (tanda#23) | JSON per-MED: accept/mitigate/fix-now with rationale | 1 |
 | 4 | #5226 defect-locus second opinion (RESERVED — do not start before probe data) | contested adjudication | probe_5226_results_ON/OFF JSON + thread datapoints (sauris 11-13/11-16) | JSON: model-side vs reader-side locus call with reasoning chain | 0.5 |
 | 5 | Indexer-hardening pre-flight kill-pass | design pre-review | services/bill_index.py @ cdb6b4fae36d; overlap-guard + last_indexed_block spec (t_0222f1e6 notes) | JSON: defect classes in proposed re-poll logic BEFORE cloud lanes execute | 1 |
@@ -16,6 +16,6 @@ then Flux validates on recompute. Never chat-wake Xixi; never intake; self-repor
 
 RULES OF ENGAGEMENT
 - Head-of-queue only; card body must be self-contained (repo anchors + deliverable shape) or Harley rejects at serialization.
-- Card-2 brief already satisfies this; cards 2-8 briefs are Nimbus-authored on demand (10-min each, cloud-cheap) BEFORE Harley pulls.
+- Card-2 brief is PINNED on main (sha256 f735b2efdfba12533efbd21c61456081009af78eb514fa098d7b620660311a00, 4538 B LF) as of 11-21; cards 3-8 briefs are Nimbus-authored on demand (10-min each, cloud-cheap) BEFORE Harley pulls each, head+1 only.
 - Cost ledger: each card ≈ a 10-30k-token cloud job done for $0.5 savings at Flash rates; queue depth is the point.
 - Slot 4 stays BLOCKED until probe lands — marking it reserved prevents a misfire.
