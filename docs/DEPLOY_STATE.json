@@ -1,15 +1,30 @@
 {
   "chain_id": 4801,
   "network": "World Chain Sepolia",
-  "impl": "0x1Cb98A8Cd9FF8058DD327d505bc80eC73Cca27A5",
-  "factory": "0x70A5dC7Ea69D19618335D89d84a32c2a605c2Ac6",
+  "impl": "0xd0cc3595679a36b64c860568217b623605980e6a",
+  "factory": "0x010872d47bd7bb001037577a15d090556bfd24c3",
   "source_verified": true,
-  "receipt_provenance_commit": "bee7347",
-  "receipt_path": "DEPLOY_RECEIPT_V2.json",
-  "updated": "2026-11-20",
+  "source_main_sha": "0e3966dc9ba5f3f9c71107684645b7586826b50e",
+  "receipt_provenance_commit": "d247922ac",
+  "receipt_path": "proofs/DEPLOY_RECEIPT_V3_HARDENED_20261121.json",
+  "updated": "2026-11-21",
+  "lineage": {
+    "impl_runtime_keccak": "0x3683cfe0de28d6e06e53f74b6879789a81a6286a0ea1d69b1997880999eba0d8",
+    "impl_runtime_bytes": 9817,
+    "clean_build_match": "git archive 0e3966dc9 | forge build -> zero-diff vs on-chain (Nimbus, 2x independent)",
+    "factory": "artifact-normalized match after 2 linked-ctor windows (impl baked at offsets 144/351)",
+    "explorer_impl": "sepolia.worldscan.org Pass - Verified (guid iu4cv1wxvljev5xsjuufrkqsrdvxejl1mfz7gpcidf9ggrr6np)",
+    "explorer_factory": "sepolia.worldscan.org Pass - Verified (guid 8yfs3y5ckiwqicziig6rawhccbc9azmrigbekwd23ewwpdxxhy)"
+  },
+  "supersedes": {
+    "impl": "0x1Cb98A8Cd9FF8058DD327d505bc80eC73Cca27A5",
+    "factory": "0x70A5dC7Ea69D19618335D89d84a32c2a605c2Ac6",
+    "status": "V2 pre-hardening lineage; historical anchors below"
+  },
   "proof_anchors": {
-    "e2e_settlement_tx": "0xae4a589017dca988f299c7dfffbdcf8c64ab3363131c7f3b22e3f911b80fac8a",
-    "contract_loop_bill": "0x2032cc313c5b115e8aaa1ae7615d60aa3a199810",
-    "indexer_head_main": "250aff12ae5a"
+    "e2e_settlement_tx_V2hist": "0xae4a589017dca988f299c7dfffbdcf8c64ab3363131c7f3b22e3f911b80fac8a",
+    "contract_loop_bill_V2hist": "0x2032cc313c5b115e8aaa1ae7615d60aa3a199810",
+    "indexer_head_main": "250aff12ae5a",
+    "contract_loop_v3": "PENDING — mainline SETTLEMENT_WINDOW=3600s wait in-flight; see proofs/V3_LOOP_RUN_20261121.log"
   }
 }
