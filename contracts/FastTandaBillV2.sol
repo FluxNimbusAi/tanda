@@ -38,7 +38,10 @@ interface IPermit2Transfer {
 library SafeERC20Minimal {
     function safeTransfer(IERC20 token, address to, uint256 value) internal {
         (bool success, bytes memory data) = address(token).call(abi.encodeWithSelector(token.transfer.selector, to, value));
-        require(success && (data.length == 0 || abi.decode(data, (bool))), "SafeERC20: failed transfer");
+        // Adjudicated law (XIXI-CARD-4 shape_b): empty returndata is NOT success at settlement
+        // sites — strict bool required. OZ's lenient branch opens the stranding window; it is
+        // intentionally NOT replicated here. Goldens law tests/test_goldens_shape_b.py enforces this.
+        require(success && data.length == 32 && abi.decode(data, (bool)), "SafeERC20: strict-bool transfer required");
     }
 }
 
