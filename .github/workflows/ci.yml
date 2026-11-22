@@ -50,3 +50,19 @@ jobs:
       - name: Nudge engine offline self-test
         run: python services/nudge_engine.py --self-test
 
+
+  provenance:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Worktree-guard + --no-verify disclosure check
+        run: |
+          set -e
+          if git ls-files | grep -q '^\.worktrees/'; then
+            echo "::error::commit from a worktree path without Provenance-Exempt trailer"; exit 1
+          fi
+          msgs=$(git log -n 20 --format='%B')
+          if echo "$msgs" | grep -qi 'no-verify' && ! echo "$msgs" | grep -q 'Provenance-Exempt'; then
+            echo "::error::undisclosed --no-verify: hook bypass must be disclosed in trailer"; exit 1
+          fi
