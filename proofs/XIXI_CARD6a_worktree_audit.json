@@ -1,0 +1,27 @@
+{
+  "card": "XIXI-CARD-6a",
+  "pin": "0e3966dc (docs-only commits since do not move contract pin; audit blobs @ main 909e3d9c)",
+  "method": "static-source audit of first-party repo files via GitHub REST (laptop lane; no live RPC)",
+  "class": "worktree-commit (6955f050 class)",
+  "auditor": "Harley (laptop byte-verify lane; executed because :13305 worker empty-timed-out on a non-git local folder)",
+  "findings": [
+    {
+      "file": "tools/git-hooks/precommit-worktree-guard.sh",
+      "line": 1,
+      "class": "worktree-commit-guard",
+      "severity": "LOW",
+      "fix": "Guard EXISTS: rejects staging under .worktrees/ (6955f050 class). Install step documented: cp to .git/hooks/pre-commit + chmod. Gap: hook is manual-install; CI does not enforce it.",
+      "evidence": "grep git diff --cached --name-only | grep '^\\.worktrees/'"
+    },
+    {
+      "file": "tools/git-hooks/precommit-worktree-guard.sh",
+      "line": 9,
+      "class": "worktree-commit-guard-bypass",
+      "severity": "MEDIUM",
+      "fix": "Allowlisted bypass exists: `git commit --no-verify` with disclose-in-commit-body. Acceptable (auditable) but bodies not CI-enforced — recommend a CI provenance check that rejects commits tagged no-verify without disclosure.",
+      "evidence": "explicit --no-verify escape documented"
+    }
+  ],
+  "go_no_go": "GO (guard present; two follow-ups: CI-enforce hook install; consider CI provenance check for --no-verify disclosures)",
+  "note": "Local OneDrive/Documents/tanda is NOT a git checkout (master, 0 commits, all untracked) — that is why the :13305 worker empty-timed-out; audits must run against GitHub blobs, not the local folder."
+}
