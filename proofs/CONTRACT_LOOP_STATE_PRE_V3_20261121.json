@@ -1,0 +1,180 @@
+{
+ "chain_id": 4801,
+ "txs": {
+  "create": {
+   "tx_hash": "0x65dee5ac905d2840f5ac224c30b7d64edce57dcb8b10690115e65f653721ae52",
+   "block": 37294699,
+   "gas_used": 279395,
+   "events": [
+    {
+     "event": "SeatAdded",
+     "address": "0x2032cc313c5b115e8aaa1ae7615d60aa3a199810",
+     "log_index": 0,
+     "args": {
+      "a0": 0,
+      "a1": "0x78dc32f6a4edf80c538a75e1f7664505b1969e7a",
+      "d0": 1795136822
+     }
+    },
+    {
+     "event": "SeatAdded",
+     "address": "0x2032cc313c5b115e8aaa1ae7615d60aa3a199810",
+     "log_index": 1,
+     "args": {
+      "a0": 1,
+      "a1": "0xa462682762816ae238e1ad9795cdceba809f44e2",
+      "d0": 1795136822
+     }
+    },
+    {
+     "event": "BillCreated",
+     "address": "0x65ba0bb4959c2b6121d9e4da822452aeec6e61e6",
+     "log_index": 3,
+     "args": {
+      "a0": "0x2032cc313c5b115e8aaa1ae7615d60aa3a199810",
+      "a1": "0x78dc32f6a4edf80c538a75e1f7664505b1969e7a",
+      "a2": "0x66145f38cbac35ca6f1dfb4914df98f1614aea88",
+      "d0": 2
+     }
+    }
+   ]
+  },
+  "add_expense": {
+   "tx_hash": "0x4abd49bd455066eb37bf69f3ac8b7ddce8955d6e01db23700545628e6b732725",
+   "block": 37295141,
+   "gas_used": 97739,
+   "events": [
+    {
+     "event": "ExpenseAdded",
+     "address": "0x2032cc313c5b115e8aaa1ae7615d60aa3a199810",
+     "log_index": 0,
+     "args": {
+      "a0": 0,
+      "a1": "0x78dc32f6a4edf80c538a75e1f7664505b1969e7a",
+      "d0": 20000
+     }
+    }
+   ]
+  },
+  "approve": {
+   "tx_hash": "0xa0fc88b0db63971a9f85d9a0f46be3f65da171d34897150c50c1400d47607433",
+   "block": 37295143,
+   "gas_used": 55425,
+   "events": []
+  },
+  "fund": {
+   "tx_hash": "0xf6c79acf0ed56b3a021ebdc77ab96ffc7410089f3acf7e8271d83e3c0efbe8fd",
+   "block": 37295144,
+   "gas_used": 96952,
+   "events": [
+    {
+     "event": "EscrowFunded",
+     "address": "0x2032cc313c5b115e8aaa1ae7615d60aa3a199810",
+     "log_index": 1,
+     "args": {
+      "a0": "0x78dc32f6a4edf80c538a75e1f7664505b1969e7a",
+      "d0": 20000
+     }
+    }
+   ]
+  },
+  "initiate": {
+   "tx_hash": "0x8662fb5c4d597fbcb618af0026872eba9a469445f5951784287fd31b3b7c077f",
+   "block": 37295146,
+   "gas_used": 213874,
+   "events": [
+    {
+     "event": "SettlementInitiated",
+     "address": "0x2032cc313c5b115e8aaa1ae7615d60aa3a199810",
+     "log_index": 0,
+     "args": {
+      "a0": 0,
+      "d0": 20000,
+      "d1": 2
+     }
+    }
+   ]
+  },
+  "dust": {
+   "tx_hash": "0xfa39e0c27cc16893136e4135df1c3a95d1a9def305655d9e15994e596029a009",
+   "block": 37314163,
+   "gas_used": 21000,
+   "events": []
+  },
+  "confirm_owner": {
+   "tx_hash": "0xbbcb0c77517821901ee1b77b1922059d88e13dc7d7c4bf46d51572adaff5c0f6",
+   "block": 37314170,
+   "gas_used": 65954,
+   "events": [
+    {
+     "event": "SeatConfirmed",
+     "address": "0x2032cc313c5b115e8aaa1ae7615d60aa3a199810",
+     "log_index": 0,
+     "args": {
+      "a0": 0,
+      "a1": 0
+     }
+    }
+   ]
+  },
+  "confirm_seat": {
+   "tx_hash": "0xb7b9642780f241036a2434bccd7fd41ed2f7795d56934ddbf94689589beda768",
+   "block": 37314174,
+   "gas_used": 70448,
+   "events": [
+    {
+     "event": "SeatConfirmed",
+     "address": "0x2032cc313c5b115e8aaa1ae7615d60aa3a199810",
+     "log_index": 0,
+     "args": {
+      "a0": 0,
+      "a1": 1
+     }
+    },
+    {
+     "event": "SettlementFullyConfirmed",
+     "address": "0x2032cc313c5b115e8aaa1ae7615d60aa3a199810",
+     "log_index": 1,
+     "args": {
+      "a0": 0,
+      "d0": 1795175772
+     }
+    }
+   ]
+  },
+  "execute": {
+   "tx_hash": "0x43903106a80039dde8889cfb028d43c102c2bd5ef665e55af865f2bb89dcdd37",
+   "block": 37314206,
+   "gas_used": 105689,
+   "events": [
+    {
+     "event": "SettlementExecuted",
+     "address": "0x2032cc313c5b115e8aaa1ae7615d60aa3a199810",
+     "log_index": 2,
+     "args": {
+      "a0": 0,
+      "d0": 20000,
+      "d1": 1795175836
+     }
+    }
+   ]
+  }
+ },
+ "phases_done": [
+  "create",
+  "expense",
+  "fund",
+  "initiate",
+  "confirm_seat",
+  "execute",
+  "confirmed_owner",
+  "executed",
+  "push_verified",
+  "verified"
+ ],
+ "bill": "0x2032cc313c5b115e8aaa1ae7615d60aa3a199810",
+ "updated_utc": "2026-11-20T11:57:18Z",
+ "twin": "FastTandaBillV2",
+ "abi_label": "pre-P0.1a (no claimedMask / no pull-claim on fast path)",
+ "verified_utc": "2026-11-20T11:57:18Z"
+}
