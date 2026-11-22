@@ -35,5 +35,14 @@
       "phases": "create>expense>fund>initiate>confirm>execute>claim_owner>claim_seat>indexer_verified",
       "log": "proofs/V3_LOOP_RUN_20261121.log"
     }
+  },
+  "receipt_grade": {
+    "path": "proofs/DEPLOY_RECEIPT_V3_HARDENED_20261121.json",
+    "bytes": 628,
+    "norm_bytes": 617,
+    "sha256_LF": "5fa1a37b17b23daae2efa63b9230b3de8acf68b77de4f208ccfdd5d4eb5f9e2e",
+    "graded_by": "nimbus",
+    "graded_utc": "2026-11-22T01:34Z",
+    "grade": "PASS - payload fields cross-checked vs DEPLOY_STATE lineage (impl/factory/source_main_sha 0e3966dc match; tx hashes recorded)"
   }
 }
