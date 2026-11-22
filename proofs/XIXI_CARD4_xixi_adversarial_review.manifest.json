@@ -1,0 +1,42 @@
+{
+  "card": "XIXI-CARD-4",
+  "profile": "xixi",
+  "engine": "local Qwen3.8-27B-UD-Q4_K_XL via lemonade :13305",
+  "task": "Adversarial review of SafeERC20Minimal patch shape (PR #32 MERGED, main 0e3966dc) BEFORE goldens",
+  "reviewed_at": "2026-11-21",
+  "payload": {
+    "file": "bridge/XIXI_CARD4_xixi_adversarial_review.json",
+    "sha256_utf8_lf": "914e0d269f160980eb8437b4006744c5b3543990fc8cd4a7b77d111fb3f99ee6",
+    "bytes": 16722,
+    "encoding": "UTF-8, LF line endings"
+  },
+  "inputs": {
+    "primary_blob": {
+      "git_sha": "2eb989d669fd7a0c0469ec410f65bec2ff798660",
+      "sha256_utf8_lf": "6ea3a1dc430848b524fe6ac0e9706ed44589b531083bfd45fedfe26303db6e0a",
+      "bytes": 26490
+    },
+    "wrapper_blob": {
+      "git_sha": "9412232a18bf40a9f3dc961cef80ce1abf6a7c6a",
+      "sha256_utf8_lf": "7e08fc51e49bef1173ac60b4d08a9c4f28b129427ed10c315a4b6c8ea8e8e1d8",
+      "bytes": 2532
+    },
+    "main_head": "0e3966dc9ba5f3f9c71107684645b7586826b50e",
+    "pr32_merged_at": "2026-11-21T21:29:05Z",
+    "q2_verdict_receipt": "101c14f5a36445e8f10c9bc571b4ca0a140e85922c8e949a8a63c7c0396ffbf7"
+  },
+  "overall_verdict": {
+    "shape_a_bool_true": "PASS — all three wrapped sites correct for standard USDC.",
+    "shape_b_no_data": "MODIFY — the wrapper's empty-returndata acceptance is a deliberate, documented fix for the no-return DoS class, but combined with the CEI flag-before-call ordering at claimSettlement (L400) and refundSettlement (L417) it REINTRODUCES a silent-stranding surface: a token that returns no data on a FAILED transfer is accepted as success, the flag stays set, and the payout/refund is stranded with no retry. This is the single most important finding for goldens.",
+    "shape_c_fee_on_transfer": "MODIFY — accepted-by-design for World-Chain USDC (non-fee); must be a documented hard precondition + golden. Not closed by the wrapper at any site.",
+    "shape_d_hook_reentry": "PASS — CEI correctly closes the reentrancy window at all three wrapped sites (flag written before the external call; re-entrant call hits the terminal guard). NO new reentrancy window vs plain require at any site. The ONE pre-existing reentrancy window (fundEscrow/Permit2 credit-after-transfer, my Q2 F-7) is carried forward, not newly opened.",
+    "new_reentrancy_windows_vs_plain_require": "NONE. Every wrapped site writes its terminal guard (claimedMask / refunded / settledAt) BEFORE the external call, so the wrapper introduces no new reentrancy surface. The fundEscrow and Permit2 escrowBalance-credit-after-transfer ordering is pre-existing (identical under plain require) and is the only open reentrancy item — it must be fixed by reordering, not by the wrapper."
+  },
+  "top_findings": [
+    "shape_b (empty-returndata-on-failure) is a NEW silent-stranding surface at claimSettlement + refundSettlement: the CEI flag is set before the call, but the wrapper accepts empty data as success, so a failed transfer strands the payout/refund with no retry. Highest-severity finding.",
+    "NO new reentrancy window vs plain require at any wrapped site — CEI (flag-before-call) closes the window at claimSettlement + refundSettlement.",
+    "PRE-EXISTING reentrancy window carried forward (not newly opened): fundEscrow L246 + Permit2 L270 credit escrowBalance AFTER the external call (my Q2 F-7). Must be fixed by reordering, not by the wrapper.",
+    "FastTandaBillV2 twin NOT updated by PR #32 — still bare require(token.transfer...); the 41/41 twin suite does not exercise the wrapper.",
+    "Wrapper is a REDUCED vendor (two ops, empty-returndata-accepting), a deliberate ratified divergence from OZ SafeERC20 that trades the no-return DoS class for the empty-failure stranding class."
+  ]
+}
