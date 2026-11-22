@@ -32,11 +32,19 @@ class InputTypeError(ValueError):
     """Raised when no numeric userOpHash exists in the response (the 11-20 defect)."""
 
 
-def extract_user_op_hash(resp: dict) -> str:
+def extract_user_op_hash(resp) -> str:
+    """Accepts MiniKit-style dicts OR a bare hash string (A7-class call shapes)."""
     """Map a verify/action response to its numeric userOpHash, or raise InputTypeError.
 
     Never falls back to proof-envelope fields — that conflation IS the defect.
     """
+    if isinstance(resp, str):
+        resp = {"userOpHash": resp}  # bare-hash convenience: the tap arg class
+    elif not isinstance(resp, dict):
+        raise InputTypeError(
+            f"expected dict or str, got {type(resp).__name__} — no receipt shape "
+            "to resolve (t_w10fix loud-fail contract)."
+        )
     candidates = (
         ("data.userOpHash", resp.get("data", {}).get("userOpHash") if isinstance(resp.get("data"), dict) else None),
         ("userOpHash", resp.get("userOpHash")),
