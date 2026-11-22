@@ -51,18 +51,32 @@ jobs:
         run: python services/nudge_engine.py --self-test
 
 
+  # Provenance leg (Flux ruling 2026-11-22; t_flux_c4 draft hardened by
+  # t_flux_c2). Rejects commits touching .worktrees/ paths unless the same
+  # commit carries a non-empty Provenance-Exempt trailer (6955f050 class),
+  # and flags undisclosed --no-verify mentions in commit messages.
+  # Draft gaps fixed: depth-1 checkout saw only the tip; concatenated-message
+  # greps let one commit's trailer launder another's; exemption was unhandled.
+  # Full logic + golden matrix: tools/ci_provenance_gate.py.
   provenance:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
+        with:
+          # The gate scans the exact event range; default depth-1 could only
+          # ever see the tip. Repo is small (~1.2 MB .git), full fetch is cheap.
+          fetch-depth: 0
 
-      - name: Worktree-guard + --no-verify disclosure check
-        run: |
-          set -e
-          if git ls-files | grep -q '^\.worktrees/'; then
-            echo "::error::commit from a worktree path without Provenance-Exempt trailer"; exit 1
-          fi
-          msgs=$(git log -n 20 --format='%B')
-          if echo "$msgs" | grep -qi 'no-verify' && ! echo "$msgs" | grep -q 'Provenance-Exempt'; then
-            echo "::error::undisclosed --no-verify: hook bypass must be disclosed in trailer"; exit 1
-          fi
+      - name: Set up Python (pinned 3.12)
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Gate self-test (golden matrix)
+        run: python tools/ci_provenance_gate.py --self-test
+
+      - name: Provenance gate (worktree guard + --no-verify disclosure)
+        env:
+          GATE_BASE: ${{ github.event_name == 'pull_request' && github.event.pull_request.base.sha || github.event.before }}
+          GATE_HEAD: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+        run: python tools/ci_provenance_gate.py
