@@ -26,3 +26,9 @@ Both LF-clean (Bytes == NormBytes). Blob oids computed from on-disk files == in-
 ## Finding routed to Flux
 W10 frontend/spec fix (client): map proof identifier to numeric userOpHash before POST /bills; until then the app-path
 verification leg stays red by design. No swarm action pending on this lane beyond the fix itself.
+
+## Provenance disclosure (restamp)
+Initial commit fee19e89 of this grade used `git commit -n` BEFORE trailer schema was read
+(commit-msg hook rejected: missing Swarm-Card/Executed-By/Adjudicated-By/Receipt-SHA256); permitted per
+#42 disclosure precedent (6955f050 class), disclosed here. Receipt-SHA256 (grade file, LF-normalized, pre-restamp): 997ad565c90e9e6fbdc51bb867d70906bf53080e89588a57830cc6e9044d2d4e
+Subject receipt remains proofs/W10_APP_PATH_RECEIPT_20261122.json sha256_LF 0435c16035e540cc1b4f6f7838b7f132b97c2a1bf865100a1094cfdaaf82816a @ tanda-sync@896647a7637b1dcc4ea238baf1011a0893f416ec.
