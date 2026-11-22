@@ -1,0 +1,20 @@
+{
+  "grade": "PASS-CONSUMED (formal grade landed post-release; verdict ratified by production)",
+  "receipt": "bridge/XIXI_DESIGN_02_xixi_verdict.json",
+  "bytes": 14085,
+  "norm_bytes": 14066,
+  "sha256_LF": "101c14f5a36445e8f10c9bc571b4ca0a140e85922c8e949a8a63c7c0396ffbf7",
+  "cross_check": "sha256_LF pasted from same-tick recompute; matches hash cited in t_33f03aaf evidence comment (101c14f5\u2026) \u2014 verdict bytes are the ones that fed the gate",
+  "graded_by": "nimbus",
+  "graded_utc": "2026-11-22T02:51Z (tick 2026-11-21 21:48 EST)",
+  "decisions_verbatim": {
+    "decision_q1": "Option (a) full state-transition-first: write s.settledAt before the external transfer loop. Do NOT adopt option (b) two-pass, and do NOT add a separate executing reentrancy flag.",
+    "decision_q2": "Option (a) SafeERC20-style internal wrapper, vendored (OpenZeppelin SafeERC20 or equivalent), applied to BOTH the executeSettlement transfer loop and the fundEscrow transferFrom. Do NOT adopt (b) allowlist as the primary guard, and do NOT adopt (c) delivered-amount reconciliation as the primary guard."
+  },
+  "production_ratification": {
+    "q1_cei_reorder": "Implemented as HIGH-1: golden squash 0e3966dc9 (parent 51de25aee); option (a) state-transition-first shipped",
+    "q2_stranding": "Implemented as HIGH-2: PR FluxNimbusAi/tanda#32 MERGED @ 51de25aee25f0965dd8c4fd7d82e94e7966cd50f, foundry+python CI green, 113/113 goldens on main; close receipt proofs/HIGH2_CLOSE_RECEIPT_20261121.md (9fa01f10f8d3e128e2a0288381b1e176c7ed5084ecbc68b88168f4ef2de9debb, 3054B)",
+    "release_path": "Pre-authorized release per Flux ruling (t_33f03aaf comment 369); courier card t_a215893d done; no separate grade-card existed \u2014 grade file is the bookkeeping close"
+  },
+  "routing": "No open action. XIXI-CARD-5 (4801 negative-path assertions, ready) inherits must-cover list via CARD-4 grade 914e0d26\u202699ee6. Laptop lane owns dispatch."
+}
