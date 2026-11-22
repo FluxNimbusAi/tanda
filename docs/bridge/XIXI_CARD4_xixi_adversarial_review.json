@@ -1,0 +1,164 @@
+{
+  "card": "XIXI-CARD-4",
+  "profile": "xixi",
+  "engine": "local Qwen3.8-27B-UD-Q4_K_XL via lemonade :13305",
+  "task": "Adversarial review of SafeERC20Minimal patch shape (PR #32 MERGED, main 0e3966dc) BEFORE goldens",
+  "reviewed_at": "2026-11-21",
+  "inputs_verified": {
+    "primary_blob": {
+      "path": "contracts/TandaBillV2.sol",
+      "git_sha": "2eb989d669fd7a0c0469ec410f65bec2ff798660",
+      "sha256_utf8_lf": "6ea3a1dc430848b524fe6ac0e9706ed44589b531083bfd45fedfe26303db6e0a",
+      "bytes": 26490,
+      "crlf": false,
+      "source": "GitHub git/blobs API @ main 0e3966dc (live fetch, decoded base64)"
+    },
+    "wrapper_blob": {
+      "path": "contracts/SafeERC20Minimal.sol",
+      "git_sha": "9412232a18bf40a9f3dc961cef80ce1abf6a7c6a",
+      "sha256_utf8_lf": "7e08fc51e49bef1173ac60b4d08a9c4f28b129427ed10c315a4b6c8ea8e8e1d8",
+      "bytes": 2532,
+      "crlf": false,
+      "source": "GitHub git/blobs API @ main 0e3966dc"
+    },
+    "main_head": "0e3966dc9ba5f3f9c71107684645b7586826b50e",
+    "pr32": {
+      "number": 32,
+      "state": "closed",
+      "merged": true,
+      "merged_at": "2026-11-21T21:29:05Z",
+      "title": "fix(escrow): SafeERC20Minimal hardening — kills HIGH-2 no-return DoS + false-return stranding (XIXI-DESIGN-02 Q2)",
+      "merge_commit_sha": "51de25aee25f0965dd8c4fd7d82e94e7966cd50f",
+      "base": "2965fd9894ffb55ede33cff65b2483d9c3da1913",
+      "head": "2d80592024db7fb7622233705fdebece79ff247f"
+    },
+    "q2_verdict_receipt": {
+      "file": "bridge/XIXI_DESIGN_02_xixi_verdict.json",
+      "sha256": "101c14f5a36445e8f10c9bc571b4ca0a140e85922c8e949a8a63c7c0396ffbf7",
+      "bytes": 14066,
+      "matches_wrapper_doc_provenance": true
+    },
+    "note": "Card body line anchors (L397/L398/L413/L415/L168) do NOT map to the 26,490 B W6/P0.1a revision; all loci below are quoted from the verified 2eb989d6 blob. Disk copy on this lane is the STALE 17,127 B / fb846d53 pre-P0.1a revision — NOT used."
+  },
+  "architecture_shift_vs_q2_verdict": "The merged contract is the W6/P0.1a PULL-CLAIM revision, not the push-loop model my Q2 verdict was written against. executeSettlement (L361-375) NO LONGER transfers tokens: it only writes s.settledAt (L372) and emits. Payout moved to claimSettlement() (L387-405), a per-seat PULL where each seat calls and the contract safeTransfers its share. Consequence: the HIGH-1 CEI reentrancy window in executeSettlement is GONE by construction (no external call after the guard); the SafeERC20 wrapper now protects exactly THREE external token call sites — fundEscrow (L245), claimSettlement (L402), refundSettlement (L419) — plus the unwrapped Permit2 path (L269). My Q2 'apply to BOTH executeSettlement loop AND fundEscrow' maps to {claimSettlement, fundEscrow} in this revision.",
+  "wrapper_semantics": {
+    "predicate": "reverts iff (call failed) OR (returndata non-empty AND decoded bool == false). Accepts: call success + empty returndata (treated as OK), call success + bool true. This is the ONE deviation from OpenZeppelin SafeERC20, which REVERTS on empty returndata.",
+    "deviation_from_oz": "OZ SafeERC20 reverts on empty returndata (StandardTokenTransferFailed). SafeERC20Minimal ACCEPTS empty returndata as success. Documented intent (wrapper NatSpec L18): fixes the no-return-data DoS class (USDT-style tokens whose transfer() returns no data would permanently DoS the pull-claim path under OZ). This is a deliberate, ratified trade-off, not an oversight.",
+    "residual_gap": "Because empty returndata is accepted, a token that returns NO data on a FAILED transfer (no revert, no bool) is silently treated as success. Under plain require(token.transfer(...)) that same token REVERTS (ABI decode of empty data fails), so the operation aborts atomically. The wrapper therefore trades the 'no-return DoS' class for a 'silent-accept-on-empty-failure' class. For World-Chain USDC/CCTP (standard bool-return, non-fee, non-rebasing) this class is unreachable — but it is a NEW acceptance surface vs plain require that goldens must pin."
+  },
+  "call_sites": [
+    {
+      "call_site": "fundEscrow — L245 SafeERC20Minimal.safeTransferFrom(token, _caller(), address(this), amount); then L246 escrowBalance += amount",
+      "shape_a_bool_true": {
+        "verdict": "PASS",
+        "rationale": "Standard USDC returns bool true; predicate accepts. escrowBalance credited exactly for the delivered amount. No issue."
+      },
+      "shape_b_no_data": {
+        "verdict": "PASS (intended deviation)",
+        "rationale": "Empty returndata accepted as success (the documented fix). A no-return-data token can no longer DoS funding. NEW vs plain require: plain require would revert here (decode of empty data), so the wrapper strictly WIDENS acceptance. Unreachable for World-Chain USDC; acceptable and documented."
+      },
+      "shape_c_fee_on_transfer": {
+        "verdict": "MODIFY",
+        "rationale": "safeTransferFrom returns true but delivers < amount; escrowBalance += amount (L246) over-credits the shadow var by the fee delta. escrowBalance then exceeds the real token balance held, and initiateSettlement's require(escrowBalance >= unsettled) can pass on a phantom balance. No revert, no refund escape — silent drift. Out of scope for World-Chain USDC (non-fee) but MUST be a documented hard precondition + golden. Same class my Q2 risk_notes flagged; the wrapper does NOT close it."
+      },
+      "shape_d_hook_reentry": {
+        "verdict": "MODIFY",
+        "rationale": "CEI VIOLATION (my Q2 F-7, still present): escrowBalance += amount (L246) is written AFTER the external safeTransferFrom (L245). A hook-bearing token that calls back into fundEscrow during the transfer can re-increment escrowBalance before the outer L246 runs, double-crediting the shadow var with no matching token balance. The wrapper does NOT fix ordering — it only hardens the return check. Fix: credit escrowBalance BEFORE the external call (CEI) or drop the shadow var. NEW window vs plain require? NO — plain require(token.transferFrom(...)) had the identical transfer-then-credit order, so this is a PRE-EXISTING window the wrapper neither opens nor closes; it is carried forward and must be closed separately."
+      },
+      "new_window": "NONE new vs plain require (reentrancy order identical to bare call); the empty-returndata acceptance is a NEW acceptance surface (shape b), not a reentrancy window."
+    },
+    {
+      "call_site": "claimSettlement — L397 claimedMask guard; L400 s.claimedMask |= bit (CEI flag BEFORE call); L402 SafeERC20Minimal.safeTransfer(token, seats[seatId].wallet, amount)",
+      "shape_a_bool_true": {
+        "verdict": "PASS",
+        "rationale": "Standard USDC returns true; payout delivered, claimedMask set. Correct."
+      },
+      "shape_b_no_data": {
+        "verdict": "MODIFY",
+        "rationale": "CRITICAL CEI-vs-wrapper interaction: L400 sets claimedMask BEFORE the external call (correct CEI), with the comment 'a failed transfer reverts the flag too → claim stays retryable'. That retry guarantee HOLDS ONLY if the token reverts on failure. Under the wrapper, a token that returns EMPTY data on a failed transfer is ACCEPTED as success (shape b) → the transfer did NOT move funds but claimedMask stays set → the seat's payout is STRANDED with no retry path (PayoutAlreadyClaimed on L397 thereafter). This is exactly the stranding class my Q2 verdict set out to kill, reintroduced through the empty-returndata acceptance. Goldens MUST include a no-return-on-failure token asserting the stranding, and the wrapper must either (i) revert on empty returndata (OZ behavior) or (ii) reconcile delivered balance (option c) at the claim site. NEW window vs plain require? NO reentrancy window, but it is a NEW SILENT-STRANDING surface vs plain require (which would have reverted and kept the claim retryable)."
+      },
+      "shape_c_fee_on_transfer": {
+        "verdict": "MODIFY",
+        "rationale": "Token returns true but delivers < amount; claimedMask set for the full share; the fee delta is stranded to the contract with no claim path. Same accepted-by-design class as fundEscrow; must be documented + golden."
+      },
+      "shape_d_hook_reentry": {
+        "verdict": "PASS",
+        "rationale": "CEI correctly closes the window: claimedMask is set (L400) BEFORE safeTransfer (L402). A re-entrant claimSettlement hits the L397 PayoutAlreadyClaimed guard and reverts. No new window vs plain require (which had the same flag-before-call order in the merged revision). The pull model means each seat's claim is independent — one hook seat cannot strand another seat's claim."
+      },
+      "new_window": "NONE reentrancy window (CEI closed). NEW silent-stranding surface under shape b (empty-returndata-on-failure) — the highest-severity finding of this review."
+    },
+    {
+      "call_site": "refundSettlement — L413 s = settlements[settlementId]; L414 guard (settledAt!=0 || refunded); L416 require(fullyConfirmedAt==0 && MAX_HOLD elapsed); L417 s.refunded = true (CEI flag BEFORE call); L419 SafeERC20Minimal.safeTransfer(token, owner, s.totalAmount)",
+      "shape_a_bool_true": {
+        "verdict": "PASS",
+        "rationale": "Standard USDC returns true; full totalAmount returned to owner, refunded set. Correct."
+      },
+      "shape_b_no_data": {
+        "verdict": "MODIFY",
+        "rationale": "Same CEI-vs-wrapper interaction as claimSettlement: s.refunded = true (L417) is set BEFORE the external call. If a token returns EMPTY data on a failed refund transfer, the wrapper accepts it → refunded stays true, funds NOT returned to owner, and the settlement is permanently marked refunded with no retry (L414 reverts thereafter). Stranding of the ENTIRE settlement total. NEW silent-stranding surface vs plain require (which would revert and keep refunded unset). Goldens must cover a no-return-on-failure token on the refund leg."
+      },
+      "shape_c_fee_on_transfer": {
+        "verdict": "MODIFY",
+        "rationale": "Token returns true but delivers < totalAmount; refunded set; the fee delta is lost (owner under-receives, contract retains it). Accepted-by-design class; document + golden."
+      },
+      "shape_d_hook_reentry": {
+        "verdict": "PASS",
+        "rationale": "CEI correctly closes the window: s.refunded = true (L417) before safeTransfer (L419). Re-entrant refundSettlement hits the L414 AlreadySettled guard and reverts. No new window vs plain require."
+      },
+      "new_window": "NONE reentrancy window (CEI closed). NEW silent-stranding surface under shape b (empty-returndata-on-failure)."
+    },
+    {
+      "call_site": "addExpense — L234-241 (NO external token call)",
+      "shape_a_bool_true": {
+        "verdict": "PASS",
+        "rationale": "No token transfer; pure state append (expenses.push) + emit. No wrapper needed, nothing to protect."
+      },
+      "shape_b_no_data": {
+        "verdict": "PASS",
+        "rationale": "N/A — no external call."
+      },
+      "shape_c_fee_on_transfer": {
+        "verdict": "PASS",
+        "rationale": "N/A — no transfer; the expense amount is a bookkeeping entry, not a delivery."
+      },
+      "shape_d_hook_reentry": {
+        "verdict": "PASS",
+        "rationale": "No external call → no reentrancy surface. The card's 'L168' anchor is stale (L168 in the 26,490 B blob is inside _caller()'s else-branch); addExpense is L234-241."
+      },
+      "new_window": "NONE — no external call."
+    }
+  ],
+  "out_of_card_scope_flags": [
+    {
+      "id": "F-1",
+      "site": "fundEscrowFromPermit2 — L269 IPermit2Transfer(PERMIT2).transferFrom(...); then L270 escrowBalance += amount",
+      "finding": "The Permit2 pull path is NOT wrapped by SafeERC20Minimal (it calls a fixed external contract, not the bill token, so the wrapper does not apply). It has the SAME CEI violation as fundEscrow: escrowBalance += amount (L270) AFTER the external transferFrom (L269). A Permit2 hook/callback that re-enters fundEscrowFromPermit2 can double-credit escrowBalance. My Q2 risk_notes already flagged that a future Permit2 path must use safeTransferFrom-equivalent semantics; the merged code did NOT add that guard. Flag for PC execution — out of the four card targets but same root class as F-7."
+    },
+    {
+      "id": "F-2",
+      "site": "contracts/FastTandaBillV2.sol (twin) — L234/L358/L381",
+      "finding": "The FastTandaBillV2 twin was NOT updated by PR #32: it still uses bare require(token.transferFrom/transfer(...), TokenTransferFailed()). The 41/41 run-266 twin suite therefore does NOT exercise SafeERC20Minimal at all. Any golden that claims 'twin parity' is testing the OLD shape, not the merged wrapper. Goldens must target the primary contract (or the twin must be updated in a follow-up card)."
+    }
+  ],
+  "overall_verdict": {
+    "shape_a_bool_true": "PASS — all three wrapped sites correct for standard USDC.",
+    "shape_b_no_data": "MODIFY — the wrapper's empty-returndata acceptance is a deliberate, documented fix for the no-return DoS class, but combined with the CEI flag-before-call ordering at claimSettlement (L400) and refundSettlement (L417) it REINTRODUCES a silent-stranding surface: a token that returns no data on a FAILED transfer is accepted as success, the flag stays set, and the payout/refund is stranded with no retry. This is the single most important finding for goldens.",
+    "shape_c_fee_on_transfer": "MODIFY — accepted-by-design for World-Chain USDC (non-fee); must be a documented hard precondition + golden. Not closed by the wrapper at any site.",
+    "shape_d_hook_reentry": "PASS — CEI correctly closes the reentrancy window at all three wrapped sites (flag written before the external call; re-entrant call hits the terminal guard). NO new reentrancy window vs plain require at any site. The ONE pre-existing reentrancy window (fundEscrow/Permit2 credit-after-transfer, my Q2 F-7) is carried forward, not newly opened.",
+    "new_reentrancy_windows_vs_plain_require": "NONE. Every wrapped site writes its terminal guard (claimedMask / refunded / settledAt) BEFORE the external call, so the wrapper introduces no new reentrancy surface. The fundEscrow and Permit2 escrowBalance-credit-after-transfer ordering is pre-existing (identical under plain require) and is the only open reentrancy item — it must be fixed by reordering, not by the wrapper."
+  },
+  "q2_decision_verification": {
+    "vendored_wrapper_at_call_sites": "CONFIRMED at all three external token sites (fundEscrow L245, claimSettlement L402, refundSettlement L419); no bare token.transfer/transferFrom remains in the primary contract. The wrapper is vendored as SafeERC20Minimal (interface-free, address-based) — matches my Q2 'vendor, do not hand-roll' intent, though it is a REDUCED vendor (two ops, empty-returndata-accepting) rather than verbatim OZ.",
+    "divergence_from_q2": "Q2 recommended OZ SafeERC20 semantics (revert on empty returndata). The merged wrapper ACCEPTS empty returndata. This divergence is documented and ratified (wrapper NatSpec cites my verdict sha 101c14f5…ffbf7, 'ratified by Flux 2026-11-21'), but it converts my Q2 'silent-failure → hard revert' guarantee into 'silent-failure → hard revert EXCEPT empty-returndata-failures, which are accepted'. That exception is the source of the shape-b stranding finding above. Net: the wrapper is a SUPERSET of protection for the DoS class and a GAP for the empty-failure stranding class vs my original Q2 recommendation."
+  },
+  "golden_must_cover": [
+    "no-return-on-FAILURE token at claimSettlement: assert whether the payout strands (expected under current wrapper) — this is the shape-b stranding probe.",
+    "no-return-on-FAILURE token at refundSettlement: assert whether the full totalAmount strands.",
+    "no-return-on-SUCCESS token (USDT-style, returns no data on a good transfer): assert funding/claim/refund SUCCEED (the documented DoS fix).",
+    "false-return token at all three sites: assert SafeERC20Failed revert + flag NOT set (claim stays retryable / refund stays available).",
+    "fee-on-transfer token: assert the escrowBalance over-credit (fundEscrow) and payout stranding (claimSettlement) — document as accepted-by-design.",
+    "hook-token reentrancy at claimSettlement + refundSettlement: assert the CEI guard (PayoutAlreadyClaimed / AlreadySettled) reverts the inner call.",
+    "fundEscrow hook-token reentrancy: assert the PRE-EXISTING double-credit window (F-7) is still open — motivates the credit-before-transfer fix.",
+    "World-Chain USDC/CCTP twin happy path: full funding → confirm → execute → per-seat claim → escrowBalance==0, no drift."
+  ]
+}

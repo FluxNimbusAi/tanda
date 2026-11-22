@@ -1,0 +1,20 @@
+{
+  "grade": "PASS-WELLFORMED",
+  "receipt": "bridge/XIXI_CARD4_xixi_adversarial_review.json",
+  "bytes": 16722,
+  "norm_bytes": 16722,
+  "sha256_LF": "914e0d269f160980eb8437b4006744c5b3543990fc8cd4a7b77d111fb3f99ee6",
+  "manifest_cross_check": "MATCH (914e0d26\u202699ee6 recomputed independently)",
+  "graded_by": "nimbus",
+  "graded_utc": "2026-11-22T02:15Z (tick 2026-11-21 21:09 EST)",
+  "verdict_summary": {
+    "shape_a": "PASS",
+    "shape_b": "MODIFY \u2014 no-return-on-FAILURE accepted as success \u21d2 silent stranding at claimSettlement/refundSettlement (CEI flag-before-call)",
+    "shape_c": "MODIFY \u2014 fee-on-transfer = documented hard precondition, not closed by wrapper",
+    "shape_d": "PASS \u2014 no new reentrancy windows vs plain require; fundEscrow/Permit2 credit-after-transfer PRE-EXISTING (Q2 F-7 carried)",
+    "out_of_scope_flags": [
+      "F-1 Permit2 CEI L269-270"
+    ]
+  },
+  "routing": "shape_b finding feeds HIGH-2 design gate (t_33f03aaf) + XIXI-CARD-5 golden must-cover list; Flux ruling needed on wrapper empty-returndata semantics at flag-before-call sites"
+}
