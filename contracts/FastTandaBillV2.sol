@@ -31,6 +31,17 @@ interface IPermit2Transfer {
 ///   - seat roster cap 256 (uint256 mask); duplicate-seat guard via seatIdOf (documented design).
 ///   - Gap-3 ruling (pending Flux sign-off): MVP stays owner-fronted — addExpense/fundEscrow are
 ///     owner-only by design; Expense.paidBy records the funder == owner. Refund returns to owner.
+
+// OZ SafeERC20 semantics (minimal): strict-bool + non-empty returndata check.
+// Closes the shape_b silent-stranding window at settlement transfer sites
+// (Flux adjudication of XIXI-CARD-4; goldens law tests/test_goldens_shape_b.py).
+library SafeERC20Minimal {
+    function safeTransfer(IERC20 token, address to, uint256 value) internal {
+        (bool success, bytes memory data) = address(token).call(abi.encodeWithSelector(token.transfer.selector, to, value));
+        require(success && (data.length == 0 || abi.decode(data, (bool))), "SafeERC20: failed transfer");
+    }
+}
+
 contract FastTandaBillV2 {
     // ─── Types ────────────────────────────────────────────────────────────
 
@@ -355,7 +366,7 @@ contract FastTandaBillV2 {
                 // USDC (World Chain) has no transfer hooks — all-or-nothing revert protects
                 // partial settlement; per-seat failure is not a concern.
                 // forge-lint: disable-next-line(calls-loop, require-revert-in-loop)
-                require(token.transfer(seats[i].wallet, s.payouts[idx]), TokenTransferFailed());
+                SafeERC20Minimal.safeTransfer(token, seats[i].wallet, s.payouts[idx]);
                 idx++;
             }
         }
@@ -378,7 +389,7 @@ contract FastTandaBillV2 {
         require(s.fullyConfirmedAt == 0 && block.timestamp >= uint256(s.initiatedAt) + MAX_HOLD, RefundNotAvailable());
         s.refunded = true;
         // CEI: flag set before external call
-        require(token.transfer(owner, s.totalAmount), TokenTransferFailed());
+        SafeERC20Minimal.safeTransfer(token, owner, s.totalAmount);
         emit SettlementRefunded(settlementId, s.totalAmount);
     }
 

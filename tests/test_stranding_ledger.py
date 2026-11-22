@@ -29,9 +29,10 @@ class TestStrandingIngest(unittest.TestCase):
     def test_strict_bool_contract_documented_in_code(self):
         src = open(Path(__file__).resolve().parents[1] / "contracts" / "FastTandaBillV2.sol",
                    encoding="utf-8").read()
-        # F-2 confirmed on disk: bare require(token.transfer...) sites exist; SafeERC20Minimal absent.
-        # The goldens law stands until the twin is wrapped or divergence is explicitly covered.
-        self.assertGreater(src.count("token.transfer("), 0)
+        # F-2 closed @ engine tick C7: SafeERC20Minimal present and zero bare
+        # require(token.transfer...) sites remain. Law asserts the fixed state.
+        self.assertIn("SafeERC20Minimal", src)
+        self.assertEqual(src.count("require(token.transfer("), 0)
 
 if __name__ == "__main__":
     unittest.main()
