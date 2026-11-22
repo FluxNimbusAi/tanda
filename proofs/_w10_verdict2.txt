@@ -1,0 +1,2 @@
+{"success":false,"code":"all_verifications_failed","detail":"All proof verifications failed.","results":[{"identifier":"proof_of_human","success":false,"code":"verification_error","detail":"Cannot convert 3abb1670-5ff7-485b-8204-77c2130a262e to a BigInt"}]}
+HTTP 400
