@@ -1,0 +1,50 @@
+{
+ "card": "CARD-5(a) \u2014 PC-lane negative-path assertions (Flux option-a ruling 2026-11-22)",
+ "executed_at": "2026-11-22T05:1xZ",
+ "executed_by": "nimbus@PC",
+ "chain": "worldchain-sepolia-4801 + forge-local",
+ "bill": "0xd1b746eee830b7cd0b9117b33c9d1e20b9456358",
+ "factory": "0x010872d47bd7bb001037577a15d090556bfd24c3",
+ "impl": "0xd0cc3595679a36b64c860568217b623605980e6a",
+ "anchor": "keccak256(runtime) local==deployed byte-exact, 0x3683cfe0de28d6e06e53f74b6879789a81a6286a0ea1d69b197880999eba0d8",
+ "assertions": [
+  {
+   "id": "A-doubleclaim",
+   "path": "live eth_call claimSettlement(0) from claimed seat 0x78dc32f6\u2026969e7a",
+   "expected": "PayoutAlreadyClaimed",
+   "actual": "0xa71ab0b2",
+   "result": "PASS"
+  },
+  {
+   "id": "B-refund-post-settle",
+   "path": "live eth_call refundSettlement(0) from owner",
+   "expected": "AlreadySettled",
+   "actual": "0x560ff900",
+   "result": "PASS"
+  },
+  {
+   "id": "C-zero-seat",
+   "path": "live eth_call factory.createBill(USDC,[])",
+   "expected": "NoSeats",
+   "actual": "0x0ef905e4",
+   "result": "PASS",
+   "sanity": "1-seat create returns bill 0x721b3d32\u2026 \u2713"
+  },
+  {
+   "id": "D-reentrancy-hook",
+   "path": "forge XixiDesign02CeiGolden test_reentrant_claim_inner_reverts_outer_completes_single_pay",
+   "expected": "inner-revert outer-complete single-pay",
+   "actual": "PASS @1,707,018 gas",
+   "result": "PASS",
+   "tie": "local==deployed keccak anchor"
+  },
+  {
+   "id": "E-claim-gates",
+   "path": "forge test_pull_claim_gatesBeforeExecuteAndAfterRefund + revertsNotAnExpectedSeat + revertsPayoutAlreadyClaimed",
+   "expected": "all revert correctly",
+   "actual": "3/3 PASS",
+   "result": "PASS"
+  }
+ ],
+ "summary": "5/5 PASS; live-state probes used zero gas/zero signing (eth_call from-spoof, read-only RPC)"
+}
