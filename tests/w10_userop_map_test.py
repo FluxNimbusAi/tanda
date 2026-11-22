@@ -54,5 +54,19 @@ class TestMapping(unittest.TestCase):
         self.assertEqual(extract_user_op_hash({"userOpHash": h}), h)
 
 
+def test_bare_string_hash_accepted(self):
+        self.assertEqual(extract_user_op_hash("0x" + "ab" * 32), "0x" + "ab" * 32)
+
+    def test_bare_string_uuid_rejected(self):
+        with self.assertRaises(InputTypeError):
+            extract_user_op_hash("3abb1670-5ff7-485b-8204-77c2130a262e")
+
+    def test_wrong_type_fails_loud_not_attributeerror(self):
+        # Flux A7 reproduction: str was the crash class; None/int must share the gate.
+        for bad in (None, 42, ["0x" + "ab" * 32]):
+            with self.assertRaises(InputTypeError):
+                extract_user_op_hash(bad)
+
+
 if __name__ == "__main__":
     unittest.main()
