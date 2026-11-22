@@ -1,0 +1,124 @@
+{
+  "card": "m4_p01a",
+  "swarm_card": "t_fb2fd986",
+  "attempt": 3,
+  "ts_utc": "2026-11-19T19:30:00Z",
+  "verdict": "COMPLETE — M4-2 P0.1a pull-claim + SR-003 indexer event-topic parity shipped, CI-green, merged, deployed on live :8096, lifecycle proven on-chain",
+  "issue": {
+    "miniapp": "FluxNimbusAi/tanda-miniapp#19 (closed via PR #22 Closes)",
+    "indexer": "FluxNimbusAi/tanda PR #21"
+  },
+  "merged": {
+    "tanda": {
+      "pr": 21,
+      "squash_main_sha": "d9a59f0bd823b8133d5761987b38a948f883024d",
+      "final_head_sha": "02a861d3343e7b7735bba46e40d0cf7e05b99b61",
+      "receipt_sha256_LF_diff_origin_main_to_head": "39ee0315c2bd5666c4856634bbeb795aae4dd5c00b59d114d45dc25eb11051b7",
+      "ci_at_exact_head": {
+        "foundry": "success",
+        "python": "success"
+      },
+      "local_gates": "105/105 unittest OK (final tree), bill_index --self-test (7,1)->(0,0) idempotency",
+      "adversarial_review": "https://github.com/FluxNimbusAi/tanda/pull/21#issuecomment-7019776233"
+    },
+    "tanda-miniapp": {
+      "pr": 22,
+      "squash_main_sha": "4cbd09fb6ec4767baa60848d0b535f451835601b",
+      "final_head_sha": "39662bb8996913d3d1aacdd193a0693fe280dd1e",
+      "receipt_sha256_LF_diff_origin_main_to_head": "e861e53b78567d920b1f52eb99d010b57bea6b8ddf64cc447016a55e0faeae39",
+      "ci_at_exact_head": {
+        "web": "success"
+      },
+      "local_gates": "tsc --noEmit clean; vitest 12 files/103 tests OK (5 new)",
+      "adversarial_review": "https://github.com/FluxNimbusAi/tanda-miniapp/pull/22#issuecomment-7019778120"
+    }
+  },
+  "endpoint_contract_decided": {
+    "path": "GET /api/settlements?bill=0x<addr>&page=<n>",
+    "auth": "free local read (posture = /health)",
+    "page_size": 20,
+    "errors": "400 on malformed bill (0x+40 hex) or page (int>=1)",
+    "empty": "bill with no rows -> settlements:[] events:[] @200 (never error)",
+    "totals": [
+      "total_settlements",
+      "total_events"
+    ],
+    "orders": {
+      "settlements": "settlement_id",
+      "events": "(block, log_index)"
+    },
+    "miniapp_layer": "auth-free proxy onto indexer (BILL_INDEX_URL env, default http://127.0.0.1:8096); degradation -> [] rows indexed:false; chosen over seat-grants SQLite-direct for M4-1 hosted lane + single-writer truth + public-repo path hygiene"
+  },
+  "deployed_service": {
+    "pid": 8808,
+    "tree": "d9a59f0bd823b8133d5761987b38a948f883024d (post-merge main, A1 watcher + SR-003 decode + parity + query endpoint)",
+    "db": "C:/Users/dbvis/agent-bench/tanda-sync/bill_index.db (canonical, single writer)",
+    "old_pid": "9132 (stale fix/sr003 tree, killed)"
+  },
+  "live_4801_parity_proof": {
+    "bill": "0xbe4326dec14d41383dd195097b125905b209846c",
+    "txs_backfilled_via_POST_bills_tx": [
+      {
+        "tx": "0x5fd7322b62f6b7bc93e2460e47deabff1fa35cbea9e603f3a3ba8718fdd3a9f9",
+        "block": 37277221,
+        "recorded": "SettlementInitiated",
+        "settlements_recorded": 1
+      },
+      {
+        "tx": "0x612664c79f17f420ac671654b4227670f724c75933596211c0910ef249a86b81",
+        "block": 37277222,
+        "recorded": "SeatConfirmed + SettlementFullyConfirmed",
+        "note": "upkeep 0 new summary rows (same settlement id)"
+      },
+      {
+        "tx": "0xae4a589017dca988f299c7dfffbdcf8c64ab3363131c7f3b22e3f911b80fac8a",
+        "block": 37279405,
+        "recorded": "SettlementExecuted",
+        "settlement_row": {
+          "total_amount": 20000,
+          "settled_at": 1795106234
+        }
+      }
+    ],
+    "events_ledger": [
+      [
+        "SettlementInitiated",
+        37277221,
+        0
+      ],
+      [
+        "SeatConfirmed",
+        37277222,
+        0
+      ],
+      [
+        "SettlementFullyConfirmed",
+        37277222,
+        1
+      ],
+      [
+        "SettlementExecuted",
+        37279405,
+        1
+      ]
+    ],
+    "health_snapshot": {
+      "bills_indexed": 18,
+      "bills_resolved": 2,
+      "seat_grants": 13,
+      "verifications": 20,
+      "settlements": 1
+    },
+    "reconcile": "/health.settlements == SELECT COUNT(*) settlements (1); feed total_events == SELECT COUNT(*) settlement_events (4) — twin-fork law satisfied",
+    "ac_probes_live": {
+      "bad_bill": 400,
+      "bad_page": 400,
+      "empty_bill": "200 [] []",
+      "path_form_alias": "200 1 row 4 events"
+    }
+  },
+  "pull_claim_status": "SeatPayoutClaimed: ZERO on-chain to date (pull-claims pending by design); claimSettlement coverage proven offline: 6-topic byte pins (cast keccak cross-checked vs live logs), decode shape, rowcount-guarded claim upkeep, self_test double-ingest (7,1)->(0,0). Live claim leg = follow-on when seats run claimSettlement on 4801.",
+  "rpc_constraint": "public 4801 eth_getLogs window cap 100 blocks — backfill used 2-block windows + POST /bills/tx receipts (no getLogs needed at service level)",
+  "hygiene_backlog_flag": "pre-existing C:\\\\Users literal in tanda-miniapp src/app/api/seat-grants/route.ts (W10) — untouched here, routed to Flux for showroom sweep card; orphan nested worktree .worktrees/p14a-settlement-contract has MAX_PATH node_modules (blocks git add -A on that clone)",
+  "receipt_normbytes_anchor": "sha256 over LF-normalized bytes of this file"
+}
