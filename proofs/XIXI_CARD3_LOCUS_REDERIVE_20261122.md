@@ -16,3 +16,8 @@ PayoutAlreadyClaimed (L397). Suite fixtures must target claimSettlement, not an 
 longer exists.
 
 Executable grading pending: forge golden suite run against canonical (next tick or Xixi card via Harley).
+
+
+EXECUTABLE GRADING (Flux, PC, 2026-11-22): golden suite test/XixiDesign02CeiGolden.t.sol
+(contract CeiReentrancyGoldenTest) run against canonical @ main: [PASS] test_reentrant_claim_inner_reverts_outer_completes_single_pay (gas 1,707,018). The golden suite's
+re-base requirement is now satisfied on PC; CARD3 = PASS on executable leg, loci re-derived above.
