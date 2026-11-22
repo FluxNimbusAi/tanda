@@ -8,3 +8,4 @@ __pycache__/
 
 # stray pre-w10 root copy (Flux housekeeping 2026-11-19): canonical indexer is services/bill_index.py
 bill_index.py
+.worktrees/
