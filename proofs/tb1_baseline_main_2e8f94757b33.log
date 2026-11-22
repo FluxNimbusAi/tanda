@@ -1,0 +1,148 @@
+test_a_complete_nested_pair_still_closes_normally (terminal.serve.test_skipped_closer.EndToEnd.test_a_complete_nested_pair_still_closes_normally) ... C:\Users\dbvis\AppData\Local\hermes\profiles\nimbus\cache\scratch\tbmain\terminal\serve\frontend.py:1040: DeprecationWarning: 'maxsplit' is passed as positional argument
+  name = re.split(r"[\s<>]", opener.lstrip(), 1)[0]
+ok
+test_batch_route_without_a_schema (terminal.serve.test_skipped_closer.EndToEnd.test_batch_route_without_a_schema) ... FAIL
+test_one_wrapper_two_calls_after_a_skipped_closer (terminal.serve.test_skipped_closer.EndToEnd.test_one_wrapper_two_calls_after_a_skipped_closer) ... FAIL
+test_skipped_closer_and_next_declared_parameter (terminal.serve.test_skipped_closer.EndToEnd.test_skipped_closer_and_next_declared_parameter) ... FAIL
+test_declared_opener_ends_the_value (terminal.serve.test_skipped_closer.ParserLevel.test_declared_opener_ends_the_value) ... ERROR
+test_no_schema_means_no_declared_rule (terminal.serve.test_skipped_closer.ParserLevel.test_no_schema_means_no_declared_rule) ... ERROR
+test_streaming_holds_a_split_boundary_tag (terminal.serve.test_skipped_closer.ParserLevel.test_streaming_holds_a_split_boundary_tag) ... FAIL
+test_the_issue_three_cases (terminal.serve.test_skipped_closer.ParserLevel.test_the_issue_three_cases) ... FAIL
+test_the_old_rule_stays_for_quoted_calls (terminal.serve.test_skipped_closer.ParserLevel.test_the_old_rule_stays_for_quoted_calls) ... ERROR
+test_deltas_decode_to_the_final_call_at_every_split (terminal.serve.test_skipped_closer.Streaming.test_deltas_decode_to_the_final_call_at_every_split) ... FAIL
+
+======================================================================
+ERROR: test_declared_opener_ends_the_value (terminal.serve.test_skipped_closer.ParserLevel.test_declared_opener_ends_the_value)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\dbvis\AppData\Local\hermes\profiles\nimbus\cache\scratch\tbmain\terminal\serve\test_skipped_closer.py", line 49, in test_declared_opener_ends_the_value
+    e = param_end(t, final=True, name="new_string", declared={"path", "old_string", "new_string"})
+TypeError: param_end() got an unexpected keyword argument 'declared'
+
+======================================================================
+ERROR: test_no_schema_means_no_declared_rule (terminal.serve.test_skipped_closer.ParserLevel.test_no_schema_means_no_declared_rule)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\dbvis\AppData\Local\hermes\profiles\nimbus\cache\scratch\tbmain\terminal\serve\test_skipped_closer.py", line 44, in test_no_schema_means_no_declared_rule
+    e = param_end(t, final=True, name="new_string", declared=None)
+TypeError: param_end() got an unexpected keyword argument 'declared'
+
+======================================================================
+ERROR: test_the_old_rule_stays_for_quoted_calls (terminal.serve.test_skipped_closer.ParserLevel.test_the_old_rule_stays_for_quoted_calls)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\dbvis\AppData\Local\hermes\profiles\nimbus\cache\scratch\tbmain\terminal\serve\test_skipped_closer.py", line 38, in test_the_old_rule_stays_for_quoted_calls
+    e = param_end(t, final=True, name="new_string", skipped=False)
+TypeError: param_end() got an unexpected keyword argument 'skipped'
+
+======================================================================
+FAIL: test_batch_route_without_a_schema (terminal.serve.test_skipped_closer.EndToEnd.test_batch_route_without_a_schema)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\dbvis\AppData\Local\hermes\profiles\nimbus\cache\scratch\tbmain\terminal\serve\test_skipped_closer.py", line 97, in test_batch_route_without_a_schema
+    self.assertEqual(call.arguments["new_string"], "<parameter=limit>25</parameter>\n<parameter=old_string>x</parameter>")
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: '<parameter=limit>25' != '<parameter=limit>25</parameter>\n<parameter=old_string>x</parameter>'
+- <parameter=limit>25
++ <parameter=limit>25</parameter>
+?                    ++++++++++++
++ <parameter=old_string>x</parameter>
+
+
+======================================================================
+FAIL: test_one_wrapper_two_calls_after_a_skipped_closer (terminal.serve.test_skipped_closer.EndToEnd.test_one_wrapper_two_calls_after_a_skipped_closer)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\dbvis\AppData\Local\hermes\profiles\nimbus\cache\scratch\tbmain\terminal\serve\test_skipped_closer.py", line 83, in test_one_wrapper_two_calls_after_a_skipped_closer
+    self.assertEqual(parse_all(text, [EDIT, BASH]),
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                     [("edit_file", {"new_string": "<parameter=limit>25</parameter>"}),
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                      ("bash", {"command": "ls"})])
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Lists differ: [('ed[27 chars]parameter=limit>25'}), ('bash', {'command': 'ls'})] != [('ed[27 chars]parameter=limit>25</parameter>'}), ('bash', {'command': 'ls'})]
+
+First differing element 0:
+('edit_file', {'new_string': '<parameter=limit>25'})
+('edit_file', {'new_string': '<parameter=limit>25</parameter>'})
+
+- [('edit_file', {'new_string': '<parameter=limit>25'}),
++ [('edit_file', {'new_string': '<parameter=limit>25</parameter>'}),
+?                                                   ++++++++++++
+
+   ('bash', {'command': 'ls'})]
+
+======================================================================
+FAIL: test_skipped_closer_and_next_declared_parameter (terminal.serve.test_skipped_closer.EndToEnd.test_skipped_closer_and_next_declared_parameter)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\dbvis\AppData\Local\hermes\profiles\nimbus\cache\scratch\tbmain\terminal\serve\test_skipped_closer.py", line 75, in test_skipped_closer_and_next_declared_parameter
+    self.assertEqual(parse_all(text, [EDIT]),
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+                     [("edit_file", {"path": "docs/tools.md",
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                                     "new_string": "line one\n<parameter=limit>25</parameter>\nline three",
+                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                                     "old_string": "old"})])
+                                     ^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Lists differ: [('ed[72 chars]limit>25</parameter>\nline three\n<parameter=old_string>old'})] != [('ed[72 chars]limit>25</parameter>\nline three', 'old_string': 'old'})]
+
+First differing element 0:
+('edi[70 chars]=limit>25</parameter>\nline three\n<parameter=old_string>old'})
+('edi[70 chars]=limit>25</parameter>\nline three', 'old_string': 'old'})
+
+  [('edit_file',
++   {'new_string': 'line one\n<parameter=limit>25</parameter>\nline three',
++    'old_string': 'old',
+-   {'new_string': 'line one\n'
+-                  '<parameter=limit>25</parameter>\n'
+-                  'line three\n'
+-                  '<parameter=old_string>old',
+     'path': 'docs/tools.md'})]
+
+======================================================================
+FAIL: test_streaming_holds_a_split_boundary_tag (terminal.serve.test_skipped_closer.ParserLevel.test_streaming_holds_a_split_boundary_tag)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\dbvis\AppData\Local\hermes\profiles\nimbus\cache\scratch\tbmain\terminal\serve\test_skipped_closer.py", line 59, in test_streaming_holds_a_split_boundary_tag
+    self.assertEqual(e, -2)
+    ~~~~~~~~~~~~~~~~^^^^^^^
+AssertionError: -1 != -2
+
+======================================================================
+FAIL: test_the_issue_three_cases (terminal.serve.test_skipped_closer.ParserLevel.test_the_issue_three_cases)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\dbvis\AppData\Local\hermes\profiles\nimbus\cache\scratch\tbmain\terminal\serve\test_skipped_closer.py", line 33, in test_the_issue_three_cases
+    self.assertEqual(t[:e], want)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+AssertionError: '<parameter=limit>25' != '<parameter=limit>25</parameter>\n'
+- <parameter=limit>25
++ <parameter=limit>25</parameter>
+?                    ++++++++++++
++ 
+
+
+======================================================================
+FAIL: test_deltas_decode_to_the_final_call_at_every_split (terminal.serve.test_skipped_closer.Streaming.test_deltas_decode_to_the_final_call_at_every_split)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\dbvis\AppData\Local\hermes\profiles\nimbus\cache\scratch\tbmain\terminal\serve\test_skipped_closer.py", line 123, in test_deltas_decode_to_the_final_call_at_every_split
+    self.assertEqual(finals, [("edit_file", self.EXPECT[0]), ("bash", self.EXPECT[1])], f"size {size}")
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Lists differ: [('ed[27 chars]parameter=limit>25'}), ('bash', {'command': 'ls'})] != [('ed[27 chars]parameter=limit>25</parameter>'}), ('bash', {'command': 'ls'})]
+
+First differing element 0:
+('edit_file', {'new_string': '<parameter=limit>25'})
+('edit_file', {'new_string': '<parameter=limit>25</parameter>'})
+
+- [('edit_file', {'new_string': '<parameter=limit>25'}),
++ [('edit_file', {'new_string': '<parameter=limit>25</parameter>'}),
+?                                                   ++++++++++++
+
+   ('bash', {'command': 'ls'})] : size 1
+
+----------------------------------------------------------------------
+Ran 10 tests in 0.007s
+
+FAILED (failures=6, errors=3)
