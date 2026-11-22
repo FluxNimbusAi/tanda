@@ -1,0 +1,1 @@
+{"error":"Verification failed","detail":"{\"success\":false,\"code\":\"all_verifications_failed\",\"detail\":\"All proof verifications failed.\",\"results\":[{\"identifier\":\"proof_of_human\",\"success\":false,\"code\":\"verification_failed\",\"detail\":\"execution reverted (unknown custom error)\"}]}"}
