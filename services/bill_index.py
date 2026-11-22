@@ -85,11 +85,27 @@ RP_ID_RE = re.compile(r"^rp_[a-z0-9]+$")
 SERVER_START = time.time()  # Track A #8: uptime basis for GET /health
 
 
+def _vault_resolve(path):
+    """t_fd9ad195 (post t_flux_c3): read a ~/.hermes-secrets file; if it is a
+    VAULT-MOVED stub, resolve the secret via vault_resolve.py (encrypted Hermes
+    vault, handle parsed from the stub). Never prints values."""
+    txt = open(os.path.expanduser(str(path)), encoding="utf-8").read()
+    if not txt.startswith("VAULT-MOVED"):
+        return txt
+    import re as _re, subprocess as _sp, sys as _sys
+    m = _re.search(r"handle:\s*(vault_[0-9a-f]+)", txt)
+    if not m:
+        raise RuntimeError("VAULT-MOVED stub without handle: " + str(path))
+    _res = os.path.join(os.path.expanduser("~"), ".hermes-secrets", "vault_resolve.py")
+    return _sp.run([_sys.executable, _res, m.group(1)],
+                   capture_output=True, check=True).stdout.decode("utf-8")
+
+
 def _write_key():
     """Bearer for POST /grants. Env wins; else the vaulted runtime-generated key.
     Never inline the literal: the host sanitizer rewrites secret-LOOKING strings."""
     return (os.environ.get("INDEX_WRITE_KEY")
-            or WRITE_KEY_FILE.read_text().strip())
+            or _vault_resolve(WRITE_KEY_FILE).strip())
 
 
 def _rpc(method, params):

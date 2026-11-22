@@ -47,7 +47,6 @@ DB_PATH = Path(os.environ.get("TANDA_NUDGE_DB")
                or Path(__file__).resolve().parent / "bill_index.db")
 RPC_URL = os.environ.get("TANDA_NUDGE_RPC_URL", "https://worldchain-sepolia.g.alchemy.com/public")
 NOTIFY_BASE_URL = os.environ.get("NOTIFY_BASE_URL", "http://127.0.0.1:3112")
-NOTIFY_INTERNAL_KEY_FILE = Path("~/.hermes-secrets/notify_internal_key.txt").expanduser()
 
 RPC_TIMEOUT = 10          # per eth_call
 NOTIFY_TIMEOUT = 9        # spec §7: dispatcher's 9 s AbortController equivalent
@@ -502,8 +501,9 @@ def internal_key():
     v = os.environ.get("NOTIFY_INTERNAL_KEY")
     if v:
         return v.strip()
-    if NOTIFY_INTERNAL_KEY_FILE.exists():
-        return NOTIFY_INTERNAL_KEY_FILE.read_text().strip()
+    # t_fd9ad195: notify_internal_key.txt NEVER existed in ~/.hermes-secrets and
+    # was never vaulted (t_flux_c3 ledger) — pre-existing dangling ref dropped.
+    # Env NOTIFY_INTERNAL_KEY is the only source (module docstring: "env only").
     return None
 
 
