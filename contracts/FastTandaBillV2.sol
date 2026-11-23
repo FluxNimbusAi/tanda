@@ -1,6 +1,12 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
+// Funding-path pull helper: canonical V2-twin semantics (HIGH-2 — no-return-data tokens
+// must not DoS funding; explicit false surfaces as typed SafeERC20Failed). Aliased: this
+// file's inline SafeERC20Minimal is the stricter shape_b PAYOUT library and stays in charge
+// of settlement sites (Flux adjudication XIXI-CARD-4) — funding follows the V2 twin pull.
+import {SafeERC20Minimal as SafeERC20Funding} from "./SafeERC20Minimal.sol";
+
 /// @notice Minimal ERC-20 interface (USDC on World Chain).
 interface IERC20 {
     function transfer(address to, uint256 amount) external returns (bool);
@@ -245,7 +251,9 @@ contract FastTandaBillV2 {
     }
 
     function fundEscrow(uint256 amount) external {
-        require(token.transferFrom(_caller(), address(this), amount), TokenTransferFailed());
+        // HIGH-2 (XIXI-DESIGN-02, twin closure of TandaBillV2.sol:245): hardened pull —
+        // no-return-data tokens no longer DoS funding; false-return reverts typed.
+        SafeERC20Funding.safeTransferFrom(address(token), _caller(), address(this), amount);
         escrowBalance += amount;
         emit EscrowFunded(_caller(), amount);
     }
