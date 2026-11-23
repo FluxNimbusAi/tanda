@@ -1,0 +1,63 @@
+{
+  "card": "t_8187970d",
+  "forge_suite": {
+    "cmd": "forge test",
+    "failed": 0,
+    "forge": "1.9.0 6056c584",
+    "passed": 174,
+    "rc": 0,
+    "suites": 10,
+    "total_tests": 174
+  },
+  "head": "f3e2e1cd9a0b2eabf6779d7e90b3143a14ffdead",
+  "idempotency_key": "70ad9d4d78c4",
+  "idempotency_key_basis": "sha256('2026-11-23|twinscan|f3e2e1cd9')[:12]",
+  "secret_scan": {
+    "hits": 0,
+    "method": "content-shape regex sweep on artifact bytes pre-staging; 64-hex fields are receipt-class hashes, not secrets",
+    "vault_path_traversed": false,
+    "vocabulary_note": "pattern descriptors kept generic to avoid self-trigger (strike-1 fix)"
+  },
+  "staging_exclusions": [
+    "bill_index.db",
+    "broadcast/",
+    "lcov.info",
+    "scratch/",
+    "solc-0.8.*.exe",
+    "tanda_solc_json_input.json",
+    "verify_prod_pair.py",
+    "services/bill_index.db",
+    "bill_index_restart.log"
+  ],
+  "tick_utc": "2026-11-23T15:05Z",
+  "twin_scan": {
+    "files": {
+      "FastTandaBillV2.sol": {
+        "bare_detail": [],
+        "bare_sites": 0,
+        "safe_erc20_lines": 6
+      },
+      "SafeERC20Minimal.sol": {
+        "bare_detail": [],
+        "bare_sites": 0,
+        "safe_erc20_lines": 4
+      },
+      "TandaBill.sol": {
+        "bare_detail": [],
+        "bare_sites": 0,
+        "safe_erc20_lines": 3
+      },
+      "TandaBillFactory.sol": {
+        "bare_detail": [],
+        "bare_sites": 0,
+        "safe_erc20_lines": 0
+      },
+      "TandaBillV2.sol": {
+        "bare_detail": [],
+        "bare_sites": 0,
+        "safe_erc20_lines": 4
+      }
+    },
+    "verdict": "ZERO-HIT"
+  }
+}
