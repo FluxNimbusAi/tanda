@@ -1,0 +1,35 @@
+{
+  "card": "t_6dd92ed1",
+  "tick": "2026-11-23T05:4x-05:00",
+  "repo": "tanda-sync main f03e0e896885a7eebc633ce381fd8592e1b4d9db",
+  "family": "B5 security sweep / receipt-landing gate",
+  "method": "per-file value-shape regex sweep (hex64, gh/AWS/slack/sk tokens, PEM, bearer, creds-in-URL, mnemonic labels, vault-path reads); hash-shaped hits classified per hash-family law; vault path NOT traversed (only path-string references inside scanned source were classified)",
+  "vault_path_traversed": false,
+  "scan_scope_note": "scan read only the 3 untracked scripts named in the card; traversal never entered ~/.hermes-secrets or any vault store",
+  "files": {
+    "scripts/deploy_hardened_4801.py": {
+      "bytes_lf": 5455,
+      "sha256_LF": "b49dc237e7cdb80f71ee7b2acbd0bb59f1283969bd1665a88872842fa3b9fae7",
+      "verdict": "CLEAN_LAND",
+      "basis": "vault-law compliant: _vault_resolve() handles VAULT-MOVED stub via encrypted vault; 'mnemonic' hits are loader logic, no embedded values; 0x hits = public testnet signer 0x98d2..97d7 + Circle USDC 0x6614..a88"
+    },
+    "scripts/e2e_route_matrix_probe_t_c80a1cbf.py": {
+      "bytes_lf": 12932,
+      "sha256_LF": "73ecaa44b6b116a2c5265f932bc5b0fc766f10fb66f5ebfbae72ae1fd210bd63",
+      "verdict": "CLEAN_LAND",
+      "basis": "hex64 at L25 = ATTEMPT1_SHA receipt anchor (== Receipt-SHA256 of landed commit 1ba246b720); script carries its own value-shape secret_scan block; no secret values"
+    },
+    "scripts/contract_loop_proof.py": {
+      "bytes_lf": 41394,
+      "sha256_LF": "b90f9e1271146bd9ac2cdf4c5449949855ed517391d2d048c664788e23e06802",
+      "verdict": "RETIRE_DO_NOT_LAND",
+      "basis": "pre-vault-law legacy: L43+L251 direct read of ~/.hermes-secrets/metamask-cli-wallet.txt without VAULT-MOVED stub resolution; superseded by tracked contract_loop_proof_V3.py (has _vault_resolve); excluded from staging, working copy untouched pending Flux bookkeeping"
+    }
+  },
+  "summary": {
+    "scanned": 3,
+    "clean_landed": 2,
+    "retired": 1,
+    "committed_secrets_found": 0
+  }
+}
