@@ -1,0 +1,137 @@
+{
+  "card": "t_2fefe6ea",
+  "tick": "2026-11-23T07:33:15Z",
+  "repo": "tanda-sync main d2cbb5821e3a501625b0ca18b11a140167b3e777",
+  "scan": "contracts/*.sol bare .transfer(/.transferFrom(/.approve( vs SafeERC20 @ d2cbb5821",
+  "delta_vs_prior_receipt_24a0bfcc1": "contracts/ tree byte-identical (git diff 24a0bfcc1..d2cbb5821 -- contracts/ empty); d2cbb5821 touched test/TandaBillV2.t.sol + proofs only",
+  "verdict": "ZERO_DEFECT",
+  "bare_sites": [
+    {
+      "file": "FastTandaBillV2.sol",
+      "line": 280,
+      "call": "IPermit2Transfer(PERMIT2).transferFrom(payer, address(this), uint160(amount), address(token));",
+      "class": "code",
+      "disposition": "NON-DEFECT: IPermit2Transfer void interface (external, no return value) - SafeERC20 N/A by EIP-2612/Permit2 design"
+    },
+    {
+      "file": "TandaBillV2.sol",
+      "line": 269,
+      "call": "IPermit2Transfer(PERMIT2).transferFrom(payer, address(this), uint160(amount), address(token));",
+      "class": "code",
+      "disposition": "NON-DEFECT: same void Permit2 interface"
+    }
+  ],
+  "comment_matches_excluded": [
+    {
+      "file": "SafeERC20Minimal.sol",
+      "line": 11,
+      "call": "/// @dev  Why bare `require(token.transfer(...), bool)` is unsafe (HIGH-2, STRANDED):",
+      "class": "comment"
+    },
+    {
+      "file": "TandaBill.sol",
+      "line": 217,
+      "call": "// The old bare require(token.transfer(...), TokenTransferFailed())",
+      "class": "comment"
+    }
+  ],
+  "safe_routed_counts": {
+    "FastTandaBillV2.sol": 3,
+    "TandaBill.sol": 2,
+    "TandaBillV2.sol": 3
+  },
+  "file_receipts_sha256LF": {
+    "FastTandaBillV2.sol": {
+      "bytes_raw": 23957,
+      "bytes_lf": 23957,
+      "sha256_LF": "63ea3bd18cd05e67fbec37be85d3e80ef7a15079519fd74b1f493bbd37ed54d8",
+      "git_blob": "4d7c2433965afaeb3c476a9bc31e4d3d581b787e"
+    },
+    "SafeERC20Minimal.sol": {
+      "bytes_raw": 2532,
+      "bytes_lf": 2532,
+      "sha256_LF": "7e08fc51e49bef1173ac60b4d08a9c4f28b129427ed10c315a4b6c8ea8e8e1d8",
+      "git_blob": "9412232a18bf40a9f3dc961cef80ce1abf6a7c6a"
+    },
+    "TandaBill.sol": {
+      "bytes_raw": 13255,
+      "bytes_lf": 13255,
+      "sha256_LF": "645c2fc34715a25704b1fa4ac9327752cda08aa95ad5f43b0d16cac2cfa5bfec",
+      "git_blob": "efbcf1ee81b257a9e08f48a767a1456c75d5571f"
+    },
+    "TandaBillFactory.sol": {
+      "bytes_raw": 3368,
+      "bytes_lf": 3368,
+      "sha256_LF": "4121af0521ff554b64bf54c0ae87dc87bc751428e569e340c3af65cbcaa979ea",
+      "git_blob": "afa1b6dabcb67563cbe0218a7871a9616ba5aa87"
+    },
+    "TandaBillV2.sol": {
+      "bytes_raw": 26490,
+      "bytes_lf": 26490,
+      "sha256_LF": "6ea3a1dc430848b524fe6ac0e9706ed44589b531083bfd45fedfe26303db6e0a",
+      "git_blob": "2eb989d669fd7a0c0469ec410f65bec2ff798660"
+    }
+  },
+  "forge": {
+    "command": "forge test -vv (full regression, repo root, cached build, forge from Foundry main)",
+    "totals": {
+      "suites": 7,
+      "passed": 119,
+      "failed": 0,
+      "skipped": 0,
+      "total": 119,
+      "exit": 0
+    },
+    "suites": [
+      {
+        "file": "test/XixiDesign02CeiGolden.t.sol",
+        "name": "CeiReentrancyGoldenTest",
+        "tests": 1
+      },
+      {
+        "file": "test/XixiDesign02Q2Stranding.t.sol",
+        "name": "SafeERC20StrandingTest",
+        "tests": 3
+      },
+      {
+        "file": "test/Permit2Funding.t.sol",
+        "name": "Permit2FundingTest",
+        "tests": 13
+      },
+      {
+        "file": "test/TandaBill.t.sol",
+        "name": "TandaBillTest",
+        "tests": 27
+      },
+      {
+        "file": "test/XixiDesign02Q2StrandingFast.t.sol",
+        "name": "FastTwinStrandingTest",
+        "tests": 3
+      },
+      {
+        "file": "test/P13SplitLockCoverage.t.sol",
+        "name": "P13SplitLockCoverageTest",
+        "tests": 15
+      },
+      {
+        "file": "test/TandaBillV2.t.sol",
+        "name": "TandaBillV2Test",
+        "tests": 57
+      }
+    ],
+    "seatinactive_new_suite_at_head": {
+      "note": "both SeatInactive revert-site tests from d2cbb5821 exercised in this run",
+      "test_removeSeat_inactive_revertsSeatInactive": "PASS gas 419514 (matches t_f6e6196c receipt)",
+      "test_rotateSeatWallet_inactive_revertsSeatInactive": "PASS gas 417138 (matches t_f6e6196c receipt)"
+    },
+    "parity_check": "119/119 identical to d2cbb5821 landing run; zero regressions from 24a0bfcc1 baseline (117 -> 119 via t_f6e6196c pair)"
+  },
+  "notes": [
+    "Zero bare ERC20 bool-return call sites (.transfer/.transferFrom/.approve) in contracts/*.sol at HEAD.",
+    "Two .transferFrom matches are IPermit2Transfer void interface calls (no bool return; SafeERC20 N/A).",
+    "Two further regex hits are comment text (SafeERC20Minimal.sol:11, TandaBill.sol:217) - excluded.",
+    "All 8 real ERC20 movements route through SafeERC20Minimal (incl. FastTandaBillV2 inline stricter library) or its SafeERC20Funding alias.",
+    "File hashes re-measured at write from git show <HEAD>:paths - working tree not trusted.",
+    "TandaBillV2.sol blob 2eb989d669fd7a0c0469ec410f65bec2ff798660 == canonical main blob (26490 LF bytes)."
+  ]
+}
