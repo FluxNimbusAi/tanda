@@ -287,6 +287,36 @@ contract TandaBillTest is Test {
         b2.fundEscrow(100e6);
     }
 
+    /// TWIN golden (t_dafa1c7b, mirrors V2:402): the settlement payout loop must
+    /// complete with an empty-returndata (USDT-class) token. Pre-hardening,
+    /// require(token.transfer(...)) decode-reverted mid-loop AFTER escrow funds
+    /// were collected - the STRANDED class. safeTransfer accepts empty returndata.
+    function test_TWIN_executeSettlement_succeedsWithNoReturnToken() public {
+        NoReturnToken usdt = new NoReturnToken();
+        usdt.mint(owner, 90e6);
+        vm.prank(owner);
+        TandaBill b2 = new TandaBill(IERC20(address(usdt)));
+
+        vm.startPrank(owner);
+        b2.addSeat(alice);
+        b2.addSeat(bob);
+        b2.addExpense(90e6);
+        b2.fundEscrow(90e6); // hardened pull (t_1e1f7a90) accepts the no-return token too
+        vm.stopPrank();
+
+        vm.prank(owner);
+        b2.initiateSettlement();
+        // W5: warp past the settlement window before executing.
+        vm.warp(block.timestamp + 1 hours);
+
+        vm.prank(owner);
+        b2.executeSettlement(0); // pre-HIGH-2: decode-revert mid-payout = stranded escrow
+
+        assertEq(usdt.balanceOf(alice), 45e6);
+        assertEq(usdt.balanceOf(bob), 45e6);
+        assertEq(usdt.balanceOf(address(b2)), 0);
+    }
+
     /// Gap 4 (confirmation): uneven-split remainder test uses N>1.
     /// Already covered by test_settlement_unevenSplit (3 seats). This is a
     /// documentation-only assertion that the remainder logic engages for N>1:
@@ -604,4 +634,24 @@ contract FailingToken {
     function transfer(address, uint256) external pure returns (bool) { return false; }
     function transferFrom(address, address, uint256) external pure returns (bool) { return false; }
     function balanceOf(address) external pure returns (uint256) { return 0; }
+}
+
+/// @notice USDT-class mock: transfer/transferFrom emit NO return data (empty
+/// returndata). This is the ABI shape that decode-reverted bare
+/// require(token.transfer(...)); the HIGH-2 twin-golden tests (t_1e1f7a90,
+/// t_dafa1c7b) pin that SafeERC20Minimal accepts it as success.
+contract NoReturnToken {
+    mapping(address => uint256) public balanceOf;
+
+    function mint(address to, uint256 amount) external { balanceOf[to] += amount; }
+
+    function transfer(address to, uint256 amount) external {
+        balanceOf[msg.sender] -= amount;
+        balanceOf[to] += amount;
+    }
+
+    function transferFrom(address from, address to, uint256 amount) external {
+        balanceOf[from] -= amount;
+        balanceOf[to] += amount;
+    }
 }

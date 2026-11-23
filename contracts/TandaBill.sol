@@ -213,10 +213,18 @@ contract TandaBill {
         uint256 idx = 0;
         for (uint256 i = 0; i < seats.length; i++) {
             if (seats[i].active) {
-                // USDC (World Chain) has no transfer hooks — all-or-nothing revert
+                // HIGH-2 (XIXI-DESIGN-02, t_dafa1c7b): hardened payout mirrors TandaBillV2:402.
+                // The old bare require(token.transfer(...), TokenTransferFailed())
+                // decode-reverted on empty-returndata (USDT-class) tokens AFTER escrow
+                // funds were collected - permanent stranding with no retry path.
+                // safeTransfer accepts empty returndata as success; false/revert surfaces
+                // typed SafeERC20Failed. The revert-in-loop hazard (which voids earlier
+                // seats' transfers) persists via the wrapper, so the loop suppressions
+                // are retained; the comment below is kept for ADR-0010 context.
+                // USDC (World Chain) has no transfer hooks - all-or-nothing revert
                 // protects partial settlement; per-seat failure is not a concern.
                 // forge-lint: disable-next-line(calls-loop, require-revert-in-loop)
-                require(token.transfer(seats[i].wallet, s.payouts[idx]), TokenTransferFailed());
+                SafeERC20Minimal.safeTransfer(address(token), seats[i].wallet, s.payouts[idx]);
                 idx++;
             }
         }
