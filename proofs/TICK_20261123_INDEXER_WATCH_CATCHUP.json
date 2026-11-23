@@ -1,0 +1,39 @@
+{
+ "actions": [
+  "scan_pass executed with in-memory SCAN_RANGE=100 via scratch wrapper (repo untouched): from 37337012 to head 37451709, 114698 blocks, events_ingested=4, rc=0, 123.1s",
+  "port-owner 3972 killed (only), listener count asserted 0",
+  "relaunched PID 21220 DETACHED with BILL_INDEX_WATCH=1 + BILL_INDEX_DB canonical native path",
+  "watch lane verified ticking every 5s; DB<->health twin asserted equal (cp/grants/settlements)",
+  "defect card t_2a0ebac9 created+scheduled (source chunking fix, Flux gate)"
+ ],
+ "bill_index_db": {
+  "bytes": 110592,
+  "path": "C:\\Users\\dbvis\\agent-bench\\tanda-sync\\bill_index.db",
+  "sha256": "21c2223842d2eb08f406e3798920c5c5413bfd6f0ac21e9bc44e5e8cb59e2ea1"
+ },
+ "card": "t_36208669",
+ "chain_head": 37451835,
+ "daemon_pid": 21220,
+ "final_health": {
+  "bills_indexed": 23,
+  "bills_resolved": 5,
+  "chain_id": 4801,
+  "db": "ok",
+  "last_indexed_block": 37451834,
+  "seat_grants": 13,
+  "service": "bill_index",
+  "settlements": 4,
+  "status": "ok",
+  "uptime_s": 80.8,
+  "verifications": 20
+ },
+ "lag_blocks_now": 1,
+ "lineage_head_oid": "3ebf006629bc6e64019f0fe4ac58c95bd1f1b8a5",
+ "restart_log": {
+  "bytes": 2836,
+  "sha256": "957749fe6ba98c6e22fddf6ac08160da9cfa7054f59442eb184b2342f8fcaccd"
+ },
+ "root_cause": "daemon launched without BILL_INDEX_WATCH=1 (startup gate, bill_index.py:1034); scan-once catch-up additionally blocked by keyless alchemy 100-block eth_getLogs cap vs SCAN_RANGE=2000 (bill_index.py:78)",
+ "tick_utc": "2026-11-23T16:24:54Z",
+ "watch_log_lines_present": true
+}

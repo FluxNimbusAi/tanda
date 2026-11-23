@@ -1,0 +1,140 @@
+{
+  "card": "twin-contract-scan",
+  "date_utc": "2026-11-23",
+  "repo": "FluxNimbusAi/tanda",
+  "head_commit": "3ebf006629bc6e64019f0fe4ac58c95bd1f1b8a5",
+  "sources_scanned": [
+    "contracts/TandaBillV2.sol",
+    "contracts/FastTandaBillV2.sol",
+    "contracts/SafeERC20Minimal.sol",
+    "contracts/TandaBill.sol"
+  ],
+  "egress_sites": [
+    {
+      "file": "TandaBillV2.sol",
+      "line": 245,
+      "receiver": "SafeERC20Minimal",
+      "method": "safeTransferFrom",
+      "class": "safe-wrapped",
+      "snippet": "SafeERC20Minimal.safeTransferFrom(address(token), _caller(), address(this), amount);",
+      "src_sha256_LF": "6ea3a1dc430848b524fe6ac0e9706ed44589b531083bfd45fedfe26303db6e0a"
+    },
+    {
+      "file": "TandaBillV2.sol",
+      "line": 269,
+      "receiver": "IPermit2Transfer(PERMIT2)",
+      "method": "transferFrom",
+      "class": "permit2-protocol-exempt",
+      "snippet": "IPermit2Transfer(PERMIT2).transferFrom(payer, address(this), uint160(amount), address(token));",
+      "src_sha256_LF": "6ea3a1dc430848b524fe6ac0e9706ed44589b531083bfd45fedfe26303db6e0a"
+    },
+    {
+      "file": "TandaBillV2.sol",
+      "line": 402,
+      "receiver": "SafeERC20Minimal",
+      "method": "safeTransfer",
+      "class": "safe-wrapped",
+      "snippet": "SafeERC20Minimal.safeTransfer(address(token), seats[seatId].wallet, amount);",
+      "src_sha256_LF": "6ea3a1dc430848b524fe6ac0e9706ed44589b531083bfd45fedfe26303db6e0a"
+    },
+    {
+      "file": "TandaBillV2.sol",
+      "line": 419,
+      "receiver": "SafeERC20Minimal",
+      "method": "safeTransfer",
+      "class": "safe-wrapped",
+      "snippet": "SafeERC20Minimal.safeTransfer(address(token), owner, s.totalAmount); // HIGH-2 hardened (XIXI-DESIGN-02)",
+      "src_sha256_LF": "6ea3a1dc430848b524fe6ac0e9706ed44589b531083bfd45fedfe26303db6e0a"
+    },
+    {
+      "file": "FastTandaBillV2.sol",
+      "line": 46,
+      "receiver": "address(token)",
+      "method": "call",
+      "class": "lowlevel-inside-safe-lib",
+      "snippet": "(bool success, bytes memory data) = address(token).call(abi.encodeWithSelector(token.transfer.selector, to, value));",
+      "src_sha256_LF": "63ea3bd18cd05e67fbec37be85d3e80ef7a15079519fd74b1f493bbd37ed54d8"
+    },
+    {
+      "file": "FastTandaBillV2.sol",
+      "line": 256,
+      "receiver": "SafeERC20Funding",
+      "method": "safeTransferFrom",
+      "class": "safe-wrapped",
+      "snippet": "SafeERC20Funding.safeTransferFrom(address(token), _caller(), address(this), amount);",
+      "src_sha256_LF": "63ea3bd18cd05e67fbec37be85d3e80ef7a15079519fd74b1f493bbd37ed54d8"
+    },
+    {
+      "file": "FastTandaBillV2.sol",
+      "line": 280,
+      "receiver": "IPermit2Transfer(PERMIT2)",
+      "method": "transferFrom",
+      "class": "permit2-protocol-exempt",
+      "snippet": "IPermit2Transfer(PERMIT2).transferFrom(payer, address(this), uint160(amount), address(token));",
+      "src_sha256_LF": "63ea3bd18cd05e67fbec37be85d3e80ef7a15079519fd74b1f493bbd37ed54d8"
+    },
+    {
+      "file": "FastTandaBillV2.sol",
+      "line": 380,
+      "receiver": "SafeERC20Minimal",
+      "method": "safeTransfer",
+      "class": "safe-wrapped",
+      "snippet": "SafeERC20Minimal.safeTransfer(token, seats[i].wallet, s.payouts[idx]);",
+      "src_sha256_LF": "63ea3bd18cd05e67fbec37be85d3e80ef7a15079519fd74b1f493bbd37ed54d8"
+    },
+    {
+      "file": "FastTandaBillV2.sol",
+      "line": 403,
+      "receiver": "SafeERC20Minimal",
+      "method": "safeTransfer",
+      "class": "safe-wrapped",
+      "snippet": "SafeERC20Minimal.safeTransfer(token, owner, s.totalAmount);",
+      "src_sha256_LF": "63ea3bd18cd05e67fbec37be85d3e80ef7a15079519fd74b1f493bbd37ed54d8"
+    },
+    {
+      "file": "SafeERC20Minimal.sol",
+      "line": 28,
+      "receiver": "token",
+      "method": "call",
+      "class": "lowlevel-inside-safe-lib",
+      "snippet": "(bool success, bytes memory ret) = token.call(",
+      "src_sha256_LF": "7e08fc51e49bef1173ac60b4d08a9c4f28b129427ed10c315a4b6c8ea8e8e1d8"
+    },
+    {
+      "file": "SafeERC20Minimal.sol",
+      "line": 37,
+      "receiver": "token",
+      "method": "call",
+      "class": "lowlevel-inside-safe-lib",
+      "snippet": "(bool success, bytes memory ret) = token.call(",
+      "src_sha256_LF": "7e08fc51e49bef1173ac60b4d08a9c4f28b129427ed10c315a4b6c8ea8e8e1d8"
+    },
+    {
+      "file": "TandaBill.sol",
+      "line": 145,
+      "receiver": "SafeERC20Minimal",
+      "method": "safeTransferFrom",
+      "class": "safe-wrapped",
+      "snippet": "SafeERC20Minimal.safeTransferFrom(address(token), msg.sender, address(this), amount);",
+      "src_sha256_LF": "645c2fc34715a25704b1fa4ac9327752cda08aa95ad5f43b0d16cac2cfa5bfec"
+    },
+    {
+      "file": "TandaBill.sol",
+      "line": 227,
+      "receiver": "SafeERC20Minimal",
+      "method": "safeTransfer",
+      "class": "safe-wrapped",
+      "snippet": "SafeERC20Minimal.safeTransfer(address(token), seats[i].wallet, s.payouts[idx]);",
+      "src_sha256_LF": "645c2fc34715a25704b1fa4ac9327752cda08aa95ad5f43b0d16cac2cfa5bfec"
+    }
+  ],
+  "counts": {
+    "total_egress_sites": 13,
+    "safe_wrapped": 8,
+    "permit2_exempt": 2,
+    "lowlevel_in_safe_lib": 3,
+    "bare_defects": 0
+  },
+  "verdict": "CLEAN",
+  "notes": "Permit2 sites (TandaBillV2:269, FastTandaBillV2:280) call the 4-arg non-returning protocol interface; SafeERC20 bool-returndata rules not applicable by interface design. FastTandaBillV2 executeSettlement CEI-order remains design-GATED (see proofs/HIGH1_CEI_GATE_STATUS_20261120.md) - not re-raised by this scan."
+}
