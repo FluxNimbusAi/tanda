@@ -1,0 +1,78 @@
+{
+  "archive_sha256_LF_after_copy": [
+    {
+      "bytes_norm": 41394,
+      "bytes_raw": 41394,
+      "path": "archive/retired_orphans_20261123_ENG-A1/contract_loop_proof.py",
+      "sha256_LF": "b90f9e1271146bd9ac2cdf4c5449949855ed517391d2d048c664788e23e06802",
+      "sha256_raw": "b90f9e1271146bd9ac2cdf4c5449949855ed517391d2d048c664788e23e06802"
+    },
+    {
+      "bytes_norm": 1281,
+      "bytes_raw": 1314,
+      "path": "archive/retired_orphans_20261123_ENG-A1/tests_test_auth_fail_closed.py",
+      "sha256_LF": "2c0b8c32ab3933f01d0415f89c393ddf948f095ac5e3c53a0bc8b1c621489622",
+      "sha256_raw": "e92f84a3584c6f2883c7bc7629fe21f7a3f0e7dd5c2957173bf09cc54804fd48"
+    }
+  ],
+  "artifacts": [
+    {
+      "bytes_norm": 41394,
+      "bytes_raw": 41394,
+      "path": "scripts/contract_loop_proof.py",
+      "sha256_LF": "b90f9e1271146bd9ac2cdf4c5449949855ed517391d2d048c664788e23e06802",
+      "sha256_raw": "b90f9e1271146bd9ac2cdf4c5449949855ed517391d2d048c664788e23e06802"
+    },
+    {
+      "bytes_norm": 1281,
+      "bytes_raw": 1314,
+      "path": "tests/test_auth_fail_closed.py",
+      "sha256_LF": "2c0b8c32ab3933f01d0415f89c393ddf948f095ac5e3c53a0bc8b1c621489622",
+      "sha256_raw": "e92f84a3584c6f2883c7bc7629fe21f7a3f0e7dd5c2957173bf09cc54804fd48"
+    }
+  ],
+  "card": "t_f7249cd2",
+  "eng_id": "ENG-20261123-A1",
+  "evidence": {
+    "archived_to": [
+      "archive/retired_orphans_20261123_ENG-A1/contract_loop_proof.py",
+      "archive/retired_orphans_20261123_ENG-A1/tests_test_auth_fail_closed.py"
+    ],
+    "miniapp_grep": {
+      "app_id_files": [
+        "C:\\Users\\dbvis\\agent-bench\\tanda-miniapp\\src\\lib\\inviteLink.ts",
+        "C:\\Users\\dbvis\\agent-bench\\tanda-miniapp\\src\\lib\\portalAnchors.ts",
+        "C:\\Users\\dbvis\\agent-bench\\tanda-miniapp\\src\\lib\\seatJoin.ts",
+        "C:\\Users\\dbvis\\agent-bench\\tanda-miniapp\\src\\lib\\__tests__\\inviteLink.test.ts",
+        "C:\\Users\\dbvis\\agent-bench\\tanda-miniapp\\src\\lib\\__tests__\\portalAnchors.test.ts",
+        "C:\\Users\\dbvis\\agent-bench\\tanda-miniapp\\src\\app\\api\\notify\\route.ts",
+        "C:\\Users\\dbvis\\agent-bench\\tanda-miniapp\\src\\app\\api\\v2\\minikit\\transaction\\[hash]\\route.ts",
+        "C:\\Users\\dbvis\\agent-bench\\tanda-miniapp\\src\\app\\api\\notify\\__tests__\\route.test.ts"
+      ],
+      "auth_index_credential_keys": [
+        "nonce",
+        "signedNonce",
+        "finalPayloadJson"
+      ],
+      "note": "test keys world_id/app_id absent from entire miniapp src; src/auth/index.ts uses nonce/signedNonce/finalPayloadJson only",
+      "nullifier_files_count": 9,
+      "world_id_files": []
+    },
+    "phantom_test_standalone": {
+      "returncode": 0,
+      "tail": " ... ok\ntest_partial_missing_field_closes (tests.test_auth_fail_closed.TestFailClosed.test_partial_missing_field_closes) ... ok\ntest_valid (tests.test_auth_fail_closed.TestFailClosed.test_valid) ... ok\n\n----------------------------------------------------------------------\nRan 4 tests in 0.000s\n\nOK\n"
+    },
+    "signers": {
+      "scripts/contract_loop_proof.py": {
+        "pre_rotation": true,
+        "rotated": false
+      },
+      "scripts/contract_loop_proof_V3.py (tracked)": {
+        "pre_rotation": true,
+        "rotated": true
+      }
+    }
+  },
+  "tick_utc": "2026-11-23T13:50Z",
+  "verdict": "RETIRE_ARCHIVE"
+}
