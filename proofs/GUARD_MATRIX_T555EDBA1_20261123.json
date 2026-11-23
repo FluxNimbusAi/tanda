@@ -1,0 +1,59 @@
+{
+ "card": "t_555edba1",
+ "tick": "2026-11-23T06:23:09-05:00",
+ "repo": "tanda-sync main e3c1528f8c0b1f34b327784f88e788b5fb329b8e",
+ "method": "site-level diff: 43 revert/require sites (regex over revert Name() + require(cond,Name()) ) vs expectRevert-paired calls in all test/*.t.sol",
+ "verdict": "9 GAPS CLOSED",
+ "gaps_closed": [
+  [
+   "addSeat",
+   "NotOwner"
+  ],
+  [
+   "addSeat",
+   "TooManySeats"
+  ],
+  [
+   "removeSeat",
+   "NotOwner"
+  ],
+  [
+   "removeSeat",
+   "SeatNotFound"
+  ],
+  [
+   "rotateSeatWallet",
+   "SeatNotFound"
+  ],
+  [
+   "initiateSettlement",
+   "NotOwner"
+  ],
+  [
+   "executeSettlement",
+   "SettlementNotFound"
+  ],
+  [
+   "refundSettlement",
+   "SettlementNotFound"
+  ],
+  [
+   "refundSettlement",
+   "AlreadySettled"
+  ]
+ ],
+ "already_covered_notes": "addSeat DuplicateSeat covered via test_removeSeat_reinvite (L1011); initialize DuplicateSeat via factory test L221; Permit2AmountTooLarge via Permit2Funding L195; SeatInactive sites via t_f6e6196c/t_df262414; second NotAnExpectedSeat branch (expectedMask) via test_confirm/claim_revertsNotAnExpectedSeat",
+ "file_receipts": {
+  "test/TandaBillV2.t.sol": {
+   "bytes_lf": 47804,
+   "sha256_LF": "36356428265e448ac4862e6ac292a4816483a89be9a6b151bd411458823bee89"
+  }
+ },
+ "forge": {
+  "suite_file_tests": 69,
+  "suite_file_pass": 69,
+  "full_suite_total": 162,
+  "full_suite_pass": 162,
+  "failed": 0
+ }
+}

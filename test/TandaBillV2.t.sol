@@ -1032,4 +1032,84 @@ contract TandaBillV2Test is Test {
         assertEq(token.balanceOf(bob) - bobBefore, amount / 3);
         assertEq(bill.totalExpenses(), amount);
     }
+
+    // ─── Guard-branch matrix (t_555edba1, engine tick 2026-11-23) ─────────
+    // Site-level diff over the 43 revert/require sites in TandaBillV2.sol found
+    // these 9 (function, error) pairs never exercised by the V2 suite.
+
+    function test_addSeat_revertsNotOwner() public {
+        TandaBillV2 bill = _createAs(owner, _seats3());
+        vm.expectRevert(TandaBillV2.NotOwner.selector);
+        vm.prank(eve);
+        bill.addSeat(carol);
+    }
+
+    function test_addSeat_revertsTooManySeats() public {
+        TandaBillV2 bill = _createAs(owner, _seats3()); // roster 3/256
+        vm.startPrank(owner);
+        for (uint256 i = 1; i <= 253; i++) {
+            bill.addSeat(address(uint160(0x10000 + i))); // all distinct, none in roster
+        }
+        assertEq(bill.activeSeatCount(), 256); // seats.length == MAX_SEATS
+        vm.expectRevert(TandaBillV2.TooManySeats.selector);
+        bill.addSeat(address(uint160(0x20000)));
+        vm.stopPrank();
+    }
+
+    function test_removeSeat_revertsNotOwner() public {
+        TandaBillV2 bill = _createAs(owner, _seats3());
+        vm.expectRevert(TandaBillV2.NotOwner.selector);
+        vm.prank(alice);
+        bill.removeSeat(2);
+    }
+
+    function test_removeSeat_revertsSeatNotFound() public {
+        TandaBillV2 bill = _createAs(owner, _seats3()); // seats.length == 3
+        vm.expectRevert(abi.encodeWithSelector(TandaBillV2.SeatNotFound.selector, 3));
+        vm.prank(owner);
+        bill.removeSeat(3);
+    }
+
+    function test_rotate_revertsSeatNotFound() public {
+        TandaBillV2 bill = _createAs(owner, _seats3());
+        // bounds check runs BEFORE the seat/owner gate (L204 precedes L208)
+        vm.expectRevert(abi.encodeWithSelector(TandaBillV2.SeatNotFound.selector, 9));
+        vm.prank(owner);
+        bill.rotateSeatWallet(9, eve);
+    }
+
+    function test_initiate_revertsNotOwner() public {
+        TandaBillV2 bill = _createAs(owner, _seats3());
+        // NotOwner is the first guard in initiateSettlement — no funding needed
+        vm.expectRevert(TandaBillV2.NotOwner.selector);
+        vm.prank(alice);
+        bill.initiateSettlement();
+    }
+
+    function test_execute_revertsSettlementNotFound() public {
+        TandaBillV2 bill = _initiatedBill(100e6); // settlements.length == 1
+        vm.expectRevert(TandaBillV2.SettlementNotFound.selector);
+        bill.executeSettlement(1);
+    }
+
+    function test_refund_revertsSettlementNotFound() public {
+        TandaBillV2 bill = _initiatedBill(100e6);
+        vm.expectRevert(TandaBillV2.SettlementNotFound.selector);
+        vm.prank(owner);
+        bill.refundSettlement(1);
+    }
+
+    function test_refund_revertsAlreadySettled_afterExecute() public {
+        // Branch order proof: AlreadySettled (L414) fires before the MAX_HOLD /
+        // fullyConfirmed RefundNotAvailable require (L416) once a settlement executed.
+        TandaBillV2 bill = _initiatedBill(100e6);
+        _fullConfirm3(bill);
+        vm.warp(_s(bill, 0).fullyConfirmedAt + 3600);
+        bill.executeSettlement(0); // settledAt != 0
+        vm.warp(_s(bill, 0).initiatedAt + 73 hours); // past MAX_HOLD: would be
+        // RefundNotAvailable via fullyConfirmedAt != 0 if AlreadySettled were unchecked
+        vm.expectRevert(TandaBillV2.AlreadySettled.selector);
+        vm.prank(owner);
+        bill.refundSettlement(0);
+    }
 }
