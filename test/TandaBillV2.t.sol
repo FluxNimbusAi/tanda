@@ -949,4 +949,87 @@ contract TandaBillV2Test is Test {
         vm.expectRevert(abi.encodeWithSelector(TandaBillV2.SeatInactive.selector, 1));
         bill.rotateSeatWallet(1, eve);
     }
+
+    // ── Matrix deepening 2026-11-23 (t_2c233e6b): totalExpenses() audit view
+    //    (zero test mentions before this card) + removed-seat re-invite branch ──
+
+    function test_totalExpenses_view_empty_and_accumulates() public {
+        TandaBillV2 bill = _createAs(owner, _seats3());
+        assertEq(bill.totalExpenses(), 0); // fresh bill: empty ledger
+        vm.startPrank(owner);
+        bill.addExpense(10e6);
+        bill.addExpense(0);      // zero-amount entry is legal and adds nothing
+        bill.addExpense(5e6);
+        vm.stopPrank();
+        assertEq(bill.totalExpenses(), 15e6);
+    }
+
+    function test_totalExpenses_includesSettled_defersPostInitiate() public {
+        // addExpense has NO settlementInitiated gate: expenses added after
+        // initiateSettlement() are inert for the open round (payouts/mask are
+        // snapshotted) and settle in the NEXT round. Pins that contract.
+        uint256 first = 100e6;
+        TandaBillV2 bill = _createAs(owner, _seats3());
+        vm.startPrank(owner);
+        bill.addExpense(first);
+        token.approve(address(bill), first);
+        bill.fundEscrow(first);
+        bill.initiateSettlement();
+        bill.addExpense(50e6);   // post-initiate expense
+        vm.stopPrank();
+        assertEq(bill.totalExpenses(), 150e6);            // audit view: everything
+        assertEq(_sum(bill.settlementPayouts(0)), first); // open round: only 100e6
+        _confirmAs(owner, bill, 0);
+        _confirmAs(alice, bill, 0);
+        _confirmAs(bob, bill, 0);
+        vm.warp(_s(bill, 0).fullyConfirmedAt + 3600);
+        bill.executeSettlement(0); // permissionless executor, as per lifecycle test
+        _drain3(bill);
+        // Round 2 picks up the deferred expense exactly.
+        vm.startPrank(owner);
+        token.approve(address(bill), 50e6);
+        bill.fundEscrow(50e6);
+        bill.initiateSettlement();
+        vm.stopPrank();
+        assertEq(bill.settlementPayouts(1).length, 3);
+        assertEq(_sum(bill.settlementPayouts(1)), 50e6);
+        assertEq(bill.totalExpenses(), 150e6);
+    }
+
+    function test_removeSeat_reinvite_paysAtNewSeatId() public {
+        // removeSeat() clears seatIdOf so the wallet is re-invitable at a NEW
+        // id (contract comment, L194 region). Branch untested until now.
+        TandaBillV2 bill = _createAs(owner, _seats3()); // owner=0, alice=1, bob=2
+        vm.prank(owner);
+        bill.removeSeat(2);
+        assertEq(bill.seatIdOf(bob), 0); // mapping cleared: re-invitable
+        vm.prank(owner);
+        bill.addSeat(bob);
+        assertEq(bill.seatIdOf(bob), 4); // seatId 3 stored as id+1
+        assertEq(bill.activeSeatCount(), 3);
+        // Duplicate re-add must revert at the new id.
+        vm.expectRevert(abi.encodeWithSelector(TandaBillV2.DuplicateSeat.selector, bob));
+        vm.prank(owner);
+        bill.addSeat(bob);
+        // Full lifecycle: bob participates only through his NEW seat.
+        uint256 amount = 300e6;
+        vm.startPrank(owner);
+        bill.addExpense(amount);
+        token.approve(address(bill), amount);
+        bill.fundEscrow(amount);
+        bill.initiateSettlement();
+        vm.stopPrank();
+        uint256[] memory p = bill.settlementPayouts(0);
+        assertEq(p.length, 3);        // inactive middle seat excluded
+        assertEq(_sum(p), amount);
+        _confirmAs(owner, bill, 0);
+        _confirmAs(alice, bill, 0);
+        _confirmAs(bob, bill, 0);     // confirms via seatIdOf[bob]=3 -> mask bit 3
+        vm.warp(_s(bill, 0).fullyConfirmedAt + 3600);
+        bill.executeSettlement(0);
+        uint256 bobBefore = token.balanceOf(bob);
+        _claimAs(bob, bill, 0);
+        assertEq(token.balanceOf(bob) - bobBefore, amount / 3);
+        assertEq(bill.totalExpenses(), amount);
+    }
 }

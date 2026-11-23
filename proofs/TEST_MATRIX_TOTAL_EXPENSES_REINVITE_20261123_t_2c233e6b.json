@@ -1,0 +1,23 @@
+{
+  "card": "t_2c233e6b",
+  "idempotency_key": "8f1da8748da9",
+  "task": "Test-matrix deepening TandaBillV2.sol: totalExpenses() view (0 prior mentions) + removed-seat re-invite branch",
+  "tests_added": [
+    "test_totalExpenses_view_empty_and_accumulates",
+    "test_totalExpenses_includesSettled_defersPostInitiate",
+    "test_removeSeat_reinvite_paysAtNewSeatId"
+  ],
+  "forge_result": "60 passed; 0 failed; 0 skipped",
+  "forge_version": "1.9.0 commit 6056c5845d34205a83cf7108042adb137325c9df",
+  "branch": "tb/matrix-totalExpenses-reinvite",
+  "commit_sha": "59375505a862ffdc3dd3a225493eaebf30d064cf",
+  "main_head": "ac0c4f3393987a5ef3cd97310175a5e988d0d322",
+  "pushed": false,
+  "push_note": "stays in PR lane pending Flux review",
+  "test_file_blob_git_sha1": "70fe332907679c3fa4bdde82d8c2b6d71e4ce97e",
+  "test_file_blob_bytes": 44414,
+  "test_file_sha256_LF": "a551d0601904c3250066b5309363d47e38bfd4b23045d636e290f83632face00",
+  "receipt_scope": "staged diff LF-normalized; verified equal to git show post-commit",
+  "contract_untouched": "contracts/TandaBillV2.sol unchanged",
+  "generated_utc": "2026-11-23T08:45:43Z"
+}
