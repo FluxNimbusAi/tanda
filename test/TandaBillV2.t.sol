@@ -928,4 +928,25 @@ contract TandaBillV2Test is Test {
         assertEq(bill.claimablePayout(0, eve),   0); // non-seat
         assertEq(bill.claimablePayout(9, alice), 0); // unknown settlement
     }
+
+    // ─── SeatInactive coverage (continuity tick 2026-11-23, t_f6e6196c) ───
+    // Only reachable custom error in V2 that had zero selector-level assertions.
+
+    function test_removeSeat_inactive_revertsSeatInactive() public {
+        TandaBillV2 bill = _createAs(owner, _seats3());
+        vm.startPrank(owner);
+        bill.removeSeat(2); // bob active -> inactive
+        vm.expectRevert(abi.encodeWithSelector(TandaBillV2.SeatInactive.selector, 2));
+        bill.removeSeat(2); // double-remove hits L191
+        vm.stopPrank();
+    }
+
+    function test_rotateSeatWallet_inactive_revertsSeatInactive() public {
+        TandaBillV2 bill = _createAs(owner, _seats3());
+        vm.prank(owner);
+        bill.removeSeat(1); // alice removed
+        // SeatInactive gate (L205) fires before the auth gate — no prank needed.
+        vm.expectRevert(abi.encodeWithSelector(TandaBillV2.SeatInactive.selector, 1));
+        bill.rotateSeatWallet(1, eve);
+    }
 }

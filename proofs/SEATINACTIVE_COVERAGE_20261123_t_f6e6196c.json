@@ -1,0 +1,41 @@
+{
+  "card": "t_f6e6196c",
+  "tick": "2026-11-23T01:52-05:00",
+  "family": "B-1 test-matrix deepening (TandaBillV2.sol)",
+  "repo": "FluxNimbusAi/tanda main 24a0bfcc133a01b80b25a8dc9b3dfd3d690f9109 (local==remote verified)",
+  "audit_method": "selector-level assertion census: all 25 custom errors in TandaBillV2.sol vs vm.expectRevert sites across 7 suites; then function-level census of 20 external/public fns",
+  "findings": {
+    "SeatInactive": "REACHABLE, previously UNASSERTED - L191 removeSeat-after-inactive, L205 rotateSeatWallet-on-inactive (gate precedes auth check)",
+    "TokenTransferFailed": "DEAD DECLARATION in TandaBillV2.sol L131 and FastTandaBillV2.sol L141 - superseded by SafeERC20Minimal.SafeERC20Failed bubbling (documented at TandaBill.sol L217); not exercisable, no card needed",
+    "all_other_23_errors": "asserted; all external fns referenced"
+  },
+  "tests_added": [
+    {
+      "name": "test_removeSeat_inactive_revertsSeatInactive",
+      "result": "PASS",
+      "gas": 419514
+    },
+    {
+      "name": "test_rotateSeatWallet_inactive_revertsSeatInactive",
+      "result": "PASS",
+      "gas": 417138
+    }
+  ],
+  "suite_totals": {
+    "suites": 7,
+    "passed": 119,
+    "failed": 0,
+    "skipped": 0,
+    "V2_suite": "57 passed (was 55)"
+  },
+  "toolchain": "forge (C:/Users/dbvis/.foundry/bin/forge.exe) via Solc 0.8.38",
+  "file_receipts": {
+    "test/TandaBillV2.t.sol": {
+      "bytes_raw": 41573,
+      "bytes_lf": 40622,
+      "sha256_LF": "ee410f68d005f6c437b7b9b28f01c8221cac90a869567c52cc653efc8b0271ea",
+      "git_blob_sha1": "c20482a360aa8312aaff92feda8d9f1c24760ac0"
+    }
+  },
+  "note": "working-tree bytes measured raw + LF-normalized per autocrlf amendment; blob sha1 = hash-object of working file"
+}
