@@ -1,0 +1,281 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>TandaBill — Neon Noir design system (proposal)</title>
+<style>
+/* ============ TOKENS — the whole system is this block ============ */
+:root{
+  --bg-0:#0A0B0F; --bg-1:#101218; --bg-2:#171A22;
+  --border:#232834; --border-hi:#2E3546;
+  --text-1:#F4F5F7; --text-2:#A0A6B4; --text-3:#6B7280;
+  --pink:#FF3D8A; --pink-dim:#B32A61;
+  --blue:#4DA6FF; --blue-dim:#2E6FB0;
+  --st-pending:#F5B84D; --st-active:#4DA6FF; --st-settled:#3DDC97; --st-refunded:#8B93A7; --st-error:#FF5C5C;
+  --r-card:20px; --r-ctl:14px;
+  --mono:'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
+  --sans:'Inter',system-ui,-apple-system,'Segoe UI',sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:var(--bg-0);color:var(--text-1);font-family:var(--sans);font-size:15px;line-height:1.45}
+body{padding:32px 16px 80px;max-width:1200px;margin:0 auto}
+h1{font-size:24px;font-weight:600;letter-spacing:-.01em}
+h2{font-size:18px;font-weight:600;margin:40px 0 12px;color:var(--text-1)}
+.sub{color:var(--text-3);font-size:13px;margin-top:4px}
+.mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
+.row{display:flex;gap:16px;flex-wrap:wrap}
+.phone{width:375px;min-height:700px;background:var(--bg-0);border:1px solid var(--border);border-radius:36px;padding:20px 16px 84px;position:relative;flex:0 0 auto}
+.phone .tabbar{position:absolute;bottom:0;left:0;right:0;height:64px;background:rgba(16,18,24,.92);backdrop-filter:blur(8px);border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-around;border-radius:0 0 36px 36px}
+.tab{display:flex;flex-direction:column;align-items:center;gap:3px;font-size:10px;color:var(--text-3)}
+.tab.on{color:var(--pink)}
+.tab .ic{width:22px;height:22px;border-radius:7px;background:var(--border);display:grid;place-items:center;font-size:11px}
+.tab.on .ic{background:rgba(255,61,138,.16);color:var(--pink)}
+.card{background:var(--bg-1);border:1px solid var(--border);border-radius:var(--r-card);padding:16px;margin-bottom:12px}
+.chip{display:inline-flex;align-items:center;gap:6px;font-size:12px;padding:4px 10px;border-radius:999px;border:1px solid var(--border);color:var(--text-2);background:var(--bg-1)}
+.chip .dot{width:7px;height:7px;border-radius:50%}
+.chip.you{border-color:rgba(255,61,138,.4);color:var(--pink);background:rgba(255,61,138,.08)}
+.chip.other{border-color:rgba(77,166,255,.35);color:var(--blue);background:rgba(77,166,255,.07)}
+.chip.ok{border-color:rgba(61,220,151,.35);color:var(--st-settled);background:rgba(61,220,151,.07)}
+.chip.wait{border-color:rgba(245,184,77,.35);color:var(--st-pending);background:rgba(245,184,77,.07)}
+.cta{display:block;width:100%;text-align:center;background:var(--pink);color:#fff;font-weight:600;font-size:15px;padding:14px;border-radius:var(--r-ctl);border:none;box-shadow:0 0 16px rgba(255,61,138,.25);cursor:pointer}
+.cta.ghost{background:transparent;color:var(--blue);border:1px solid var(--blue-dim);box-shadow:none}
+.amt{font-family:var(--mono);font-variant-numeric:tabular-nums;font-weight:600}
+.amt.big{font-size:32px;letter-spacing:-.02em}
+.lbl{font-size:12px;color:var(--text-3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.divider{height:1px;background:var(--border);margin:14px 0}
+/* timeline */
+.tl{position:relative;padding-left:26px}
+.tl::before{content:'';position:absolute;left:8px;top:6px;bottom:6px;width:1px;background:var(--border)}
+.tl .node{position:relative;margin-bottom:18px}
+.tl .node::before{content:'';position:absolute;left:-22px;top:4px;width:9px;height:9px;border-radius:50%;background:var(--st-settled);box-shadow:0 0 0 3px rgba(61,220,151,.15)}
+.tl .node.wait::before{background:var(--st-pending);box-shadow:0 0 0 3px rgba(245,184,77,.15)}
+.tl .node.info::before{background:var(--st-active);box-shadow:0 0 0 3px rgba(77,166,255,.15)}
+.tl .t{font-size:14px;font-weight:500}
+.tl .m{font-size:12px;color:var(--text-3);font-family:var(--mono);margin-top:2px}
+/* ledger table */
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{font-size:11px;color:var(--text-3);text-transform:uppercase;letter-spacing:.07em;text-align:left;padding:6px 8px;border-bottom:1px solid var(--border)}
+td{padding:9px 8px;border-bottom:1px solid rgba(35,40,52,.6)}
+td.num,th.num{text-align:right;font-family:var(--mono);font-variant-numeric:tabular-nums}
+tr:last-child td{border-bottom:none}
+.who{display:flex;align-items:center;gap:8px}
+.avatar{width:26px;height:26px;border-radius:50%;display:grid;place-items:center;font-size:11px;font-weight:600;flex:0 0 auto}
+.avatar.you{background:rgba(255,61,138,.15);color:var(--pink)}
+.avatar.other{background:rgba(77,166,255,.14);color:var(--blue)}
+.orb{width:14px;height:14px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#9fd0ff,#4DA6FF 60%,#1c4d80);display:inline-block;flex:0 0 auto}
+.note{font-size:12px;color:var(--text-3);margin-top:10px}
+.badge-verified{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--st-settled)}
+.empty{padding:48px 16px;text-align:center;color:var(--text-3);font-size:14px}
+.empty .cta{max-width:220px;margin:18px auto 0}
+.seatstrip{display:flex;gap:8px;flex-wrap:wrap}
+.mini{font-size:12px;color:var(--text-2)}
+.kv{display:flex;justify-content:space-between;font-size:13px;padding:5px 0}
+.kv .k{color:var(--text-3)}
+.kv .v{font-family:var(--mono);font-variant-numeric:tabular-nums}
+.danger{color:var(--st-error);border-color:rgba(255,92,92,.4)!important;background:rgba(255,92,92,.06)!important}
+.swatchrow{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
+.sw{width:120px;background:var(--bg-1);border:1px solid var(--border);border-radius:12px;padding:10px;font-size:11px;color:var(--text-3)}
+.sw .c{height:44px;border-radius:8px;margin-bottom:8px}
+.tokenlist{font-family:var(--mono);font-size:12px;color:var(--text-2);line-height:1.9;background:var(--bg-1);border:1px solid var(--border);border-radius:12px;padding:14px 16px;overflow-x:auto}
+h3{font-size:15px;font-weight:600;margin:24px 0 8px}
+ul.dash{padding-left:18px;color:var(--text-2);font-size:14px;line-height:1.8}
+</style>
+</head>
+<body>
+
+<h1>TandaBill — Neon Noir</h1>
+<div class="sub">Design system v1 · proposal 2026-11-23 · companion to showcase/design/TANDA_DESIGN_SYSTEM_20261123.md · states are real V2 lifecycle events, API shapes are real bill_index routes</div>
+
+<h2>Tokens</h2>
+<div class="swatchrow">
+  <div class="sw"><div class="c" style="background:#0A0B0F"></div>--bg-0 #0A0B0F</div>
+  <div class="sw"><div class="c" style="background:#101218"></div>--bg-1 #101218</div>
+  <div class="sw"><div class="c" style="background:#171A22"></div>--bg-2 #171A22</div>
+  <div class="sw"><div class="c" style="background:#FF3D8A"></div>--accent-pink #FF3D8A</div>
+  <div class="sw"><div class="c" style="background:#4DA6FF"></div>--accent-blue #4DA6FF</div>
+  <div class="sw"><div class="c" style="background:#F5B84D"></div>--st-pending #F5B84D</div>
+  <div class="sw"><div class="c" style="background:#3DDC97"></div>--st-settled #3DDC97</div>
+  <div class="sw"><div class="c" style="background:#8B93A7"></div>--st-refunded #8B93A7</div>
+</div>
+<div class="tokenlist" style="margin-top:12px">
+--text-1 #F4F5F7 · --text-2 #A0A6B4 · --text-3 #6B7280<br>
+--border #232834 · --border-hi #2E3546 · --st-error #FF5C5C<br>
+radius: card 20px · control 14px · chip 999px<br>
+type: Inter (UI) + JetBrains Mono tabular-nums (money/hashes)<br>
+glow rule: 0 0 16px rgba(255,61,138,.25) — primary CTA only. Never on data.
+</div>
+
+<h2>Screen 1 — Bill home (state: escrow funded, awaiting confirmations)</h2>
+<div class="row">
+  <div class="phone">
+    <div class="lbl">Dinner · 4 seats</div>
+    <div class="card" style="margin-top:8px">
+      <div class="lbl">Total in escrow</div>
+      <div class="amt big">247.50 <span style="font-size:16px;color:var(--text-3)">USDC</span></div>
+      <div class="mini" style="margin-top:6px">Equal share <span class="mono">61.88</span> · 4 active seats · hold ends in <span class="mono">51h 12m</span></div>
+      <div class="divider"></div>
+      <div class="seatstrip">
+        <span class="chip you"><span class="orb"></span>You · owes 18.40</span>
+        <span class="chip other">Mara · owes 0.00</span>
+        <span class="chip other">Dev · owes 42.10</span>
+        <span class="chip other">Sofia · paid in full</span>
+      </div>
+    </div>
+    <div class="card">
+      <div class="lbl">Settlement progress</div>
+      <div class="kv"><span class="k">Initiated</span><span class="v mono">2h ago · 0x9f31…c2e8</span></div>
+      <div class="kv"><span class="k">Confirmed</span><span class="v mono" style="color:var(--st-pending)">1 / 3 pending seats</span></div>
+      <div class="kv"><span class="k">Your action</span><span class="v" style="color:var(--pink)">Confirm settlement</span></div>
+    </div>
+    <button class="cta">Confirm settlement</button>
+    <div class="note">Escrow is funded on-chain. Confirming lets the bill settle — your share is paid out only after every seat confirms.</div>
+    <div class="tabbar">
+      <div class="tab on"><div class="ic">▣</div>Bill</div>
+      <div class="tab"><div class="ic">≡</div>Ledger</div>
+      <div class="tab"><div class="ic">◷</div>Settlements</div>
+      <div class="tab"><div class="ic">◉</div>Seats</div>
+    </div>
+  </div>
+
+  <div style="flex:1;min-width:280px">
+    <h3>Pattern sources</h3>
+    <ul class="dash">
+      <li><b>Phantom:</b> balance-first home, one primary CTA, activity below the fold.</li>
+      <li><b>Solflare:</b> every status chip = icon + label + color. Colorblind-safe by construction.</li>
+      <li><b>World ID:</b> orb badge per seat — "everyone in this bill is a verified human" (grants endpoint: nullifier + verified_at).</li>
+      <li><b>Subtlety rule:</b> the only glow on screen is the CTA. The big number is crisp, un-glowed.</li>
+    </ul>
+    <h3>State machine</h3>
+    <div class="tokenlist">bill → {expenses[], seats[], escrow, settlement?}<br>CTA = f(state):<br>
+&nbsp;&nbsp;unfunded → "Fund escrow"<br>
+&nbsp;&nbsp;funded, not initiated → "Initiate settlement"<br>
+&nbsp;&nbsp;initiated, you unconfirmed → "Confirm settlement" ← <b>this screen</b><br>
+&nbsp;&nbsp;fully confirmed → "Execute settlement" (owner)<br>
+&nbsp;&nbsp;executed, unclaimed → "Claim payout"</div>
+  </div>
+</div>
+
+<h2>Screen 2 — Expense ledger (dense table, tabular numerals)</h2>
+<div class="row">
+  <div class="phone">
+    <div class="card">
+      <table>
+        <tr><th>When</th><th>Who</th><th class="num">Amount</th></tr>
+        <tr><td class="mono" style="color:var(--text-3)">Nov 21</td><td><div class="who"><div class="avatar you">Y</div>You</div></td><td class="num">86.00</td></tr>
+        <tr><td class="mono" style="color:var(--text-3)">Nov 21</td><td><div class="who"><div class="avatar other">M</div>Mara</div></td><td class="num">121.50</td></tr>
+        <tr><td class="mono" style="color:var(--text-3)">Nov 21</td><td><div class="who"><div class="avatar other">D</div>Dev</div></td><td class="num">40.00</td></tr>
+      </table>
+    </div>
+    <div class="card">
+      <div class="kv"><span class="k">Total expenses</span><span class="v">247.50 USDC</span></div>
+      <div class="kv"><span class="k">Escrow funded</span><span class="v" style="color:var(--st-settled)">247.50 ✓</span></div>
+      <div class="kv"><span class="k">Per-seat share</span><span class="v">61.88</span></div>
+    </div>
+    <button class="cta ghost">+ Add expense</button>
+    <div class="tabbar">
+      <div class="tab"><div class="ic">▣</div>Bill</div>
+      <div class="tab on"><div class="ic">≡</div>Ledger</div>
+      <div class="tab"><div class="ic">◷</div>Settlements</div>
+      <div class="tab"><div class="ic">◉</div>Seats</div>
+    </div>
+  </div>
+  <div style="flex:1;min-width:280px">
+    <h3>Pattern sources</h3>
+    <ul class="dash">
+      <li><b>Jupiter:</b> dense-but-calm table; tabular numerals so columns align; no chart noise on a ledger.</li>
+      <li><b>Coinbase Wallet:</b> who-paid is identity-first (avatar + name), amount is right-aligned mono.</li>
+      <li>Add-expense is a bottom sheet (one task per page law), not a route change.</li>
+    </ul>
+  </div>
+</div>
+
+<h2>Screen 3 — Settlement timeline (real V2 event names)</h2>
+<div class="row">
+  <div class="phone">
+    <div class="card">
+      <div class="lbl">Settlement #1 · 247.50 USDC</div>
+      <div class="tl">
+        <div class="node"><div class="t">EscrowFunded</div><div class="m">Nov 21 18:02 · 0x77aa…1b02 · 247.50 USDC</div></div>
+        <div class="node"><div class="t">SettlementInitiated</div><div class="m">Nov 21 19:44 · 0x9f31…c2e8 · expected 4 seats</div></div>
+        <div class="node info"><div class="t">SeatConfirmed — Mara</div><div class="m">Nov 21 20:10 · 0x41d9…77ae</div></div>
+        <div class="node wait"><div class="t">SeatConfirmed — You · Dev</div><div class="m">awaiting 2 confirmations</div></div>
+        <div class="node wait"><div class="t">SettlementFullyConfirmed</div><div class="m">unlocks executeSettlement (owner)</div></div>
+        <div class="node wait"><div class="t">SettlementExecuted → SeatPayoutClaimed ×4</div><div class="m">escrow drains to seats; claim per seat</div></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="badge-verified"><span class="orb"></span>All 4 seats World-ID verified</div>
+      <div class="note">Read from GET /settlements/&lt;bill&gt; — settlements + append-only event ledger + seat_claims. No client-side reconstruction.</div>
+    </div>
+    <div class="tabbar">
+      <div class="tab"><div class="ic">▣</div>Bill</div>
+      <div class="tab"><div class="ic">≡</div>Ledger</div>
+      <div class="tab on"><div class="ic">◷</div>Settlements</div>
+      <div class="tab"><div class="ic">◉</div>Seats</div>
+    </div>
+  </div>
+  <div style="flex:1;min-width:280px">
+    <h3>Pattern sources</h3>
+    <ul class="dash">
+      <li><b>Coinbase Wallet:</b> transaction lifecycle as vertical timeline, one node per step, per-step status.</li>
+      <li>Node colors follow the semantic scale: mint = done, amber = waiting on you/them, blue = in flight, slate = refunded.</li>
+      <li>Every node carries a truncated tx hash (mono) — the trust surface of an on-chain product.</li>
+    </ul>
+  </div>
+</div>
+
+<h2>Screens 4 + 5 — Seat detail &amp; empty/pending states</h2>
+<div class="row">
+  <div class="phone">
+    <div class="card">
+      <div class="who" style="margin-bottom:10px"><div class="avatar other" style="width:40px;height:40px;font-size:15px">M</div>
+        <div><div style="font-weight:600">Mara</div><div class="mini mono">0x8a3f…e21b</div></div>
+        <span class="chip ok" style="margin-left:auto"><span class="orb"></span>Verified</span>
+      </div>
+      <div class="kv"><span class="k">Seat</span><span class="v">#2 · joined Nov 12</span></div>
+      <div class="kv"><span class="k">Paid</span><span class="v">121.50 USDC</span></div>
+      <div class="kv"><span class="k">Share owed</span><span class="v">61.88 USDC</span></div>
+      <div class="kv"><span class="k">Settlement #1</span><span class="v" style="color:var(--st-settled)">confirmed ✓</span></div>
+      <div class="divider"></div>
+      <button class="cta ghost danger" style="box-shadow:none">Rotate wallet (danger zone)</button>
+    </div>
+    <div class="card">
+      <div class="empty" style="padding:24px 8px">
+        No expenses yet.<br>The first one starts the ledger.
+        <button class="cta" style="margin-top:14px">Add first expense</button>
+      </div>
+    </div>
+    <div class="tabbar">
+      <div class="tab"><div class="ic">▣</div>Bill</div>
+      <div class="tab"><div class="ic">≡</div>Ledger</div>
+      <div class="tab"><div class="ic">◷</div>Settlements</div>
+      <div class="tab on"><div class="ic">◉</div>Seats</div>
+    </div>
+  </div>
+  <div style="flex:1;min-width:280px">
+    <h3>Pattern sources</h3>
+    <ul class="dash">
+      <li><b>World mini-apps:</b> bottom tab nav, one task per page, CTA always visible, 100dvh + overscroll fix — review-gate compliance, not style.</li>
+      <li><b>Base app:</b> card elevation on near-black, generous radius, confident minimal type.</li>
+      <li>Danger actions: ghost blue → red border on confirm. Destructive is never the default color.</li>
+      <li>Empty states are designed screens with product voice — they do the selling when the ledger is blank.</li>
+    </ul>
+  </div>
+</div>
+
+<h2>Technical elevation (v1 scope, beyond the visual pass)</h2>
+<ul class="dash">
+  <li><b>Settlement state machine in the shell</b> — UI = pure function of bill_index reads (/api/settlements, /settlements/&lt;bill&gt;, /api/grants, /bills/by-userop). No client-side address guessing (W8 law).</li>
+  <li><b>Debt minimization</b> — greedy min-transfer view pre-settlement: "3 transfers settle this bill" with exact pairs. Splitwise's headline feature, client-side math over on-chain claims.</li>
+  <li><b>preferredCurrency-aware pay</b> — MiniKit state gives it free; WLD / local stablecoin path alongside USDC.</li>
+  <li><b>Native growth loop</b> — MiniKit.chat invite + share sheet: one tap puts the bill invite in World chat.</li>
+  <li><b>Nudge engine UI</b> — six settlement triggers, hard caps, default-off; in-app toast + pending-notifications counter now, MiniKit notifications command when it ships.</li>
+  <li><b>Performance budget</b> — initial ≤2–3s, action &lt;1s, Eruda off in prod, EN/ES localization scaffold first.</li>
+</ul>
+
+<div class="note" style="margin-top:24px">Proposal artifact — no UI code exists yet. Awaiting d3b0m3n sign-off on tokens, screen set, and debt-minimization scope. Xixi, 2026-11-23.</div>
+
+</body>
+</html>
