@@ -75,7 +75,16 @@ RECEIPT_RETRIES = 3               # replica-lag lesson (W6)
 # pass is the safety margin. Deeper orgs are OUT of scope by design and
 # documented on scan_pass().
 REORG_OVERLAP = 12
-SCAN_RANGE = 2000                  # max blocks per eth_getLogs request (chunked)
+SCAN_RANGE = 2000                  # ceiling for the total scan window (chunked)
+# t_2a0ebac9 (2026-11-23): the keyless public RPC (worldchain-sepolia.g.alchemy.com/public)
+# REJECTS eth_getLogs ranges >100 blocks (HTTP 400 / -32600; probe-verified this
+# tick: ranges 2000 and 1000 -> 400, 100 and 50 -> OK). SCAN_RANGE as the sole
+# chunk size was a stall-maker: any lag >100 blocks (watch off at start, or a
+# --scan-once after downtime — the 114,589-block stall of 2026-11-23) failed
+# EVERY pass in the watch retry loop forever. scan_pass chunks at
+# min(SCAN_RANGE, RPC_LOG_CAP) now; key-bearing RPCs can raise the cap via
+# BILL_INDEX_MAX_CHUNK without touching the ceiling semantics.
+RPC_LOG_CAP = int(os.environ.get("BILL_INDEX_MAX_CHUNK", "100"))
 
 HEX64 = re.compile(r"^0x[0-9a-fA-F]{64}$")
 ADDR_RE = re.compile(r"^0x[a-fA-F0-9]{40}$")
@@ -512,8 +521,9 @@ def scan_pass(db, head=None):
     n_events = n_bills = 0
     factory_set = {f.lower() for f in FACTORIES}
     lo = from_block
+    chunk = min(SCAN_RANGE, RPC_LOG_CAP)  # t_2a0ebac9: never exceed the RPC range cap
     while lo <= head:
-        hi = min(lo + SCAN_RANGE - 1, head)
+        hi = min(lo + chunk - 1, head)
         logs = _rpc("eth_getLogs", [{"fromBlock": hex(lo), "toBlock": hex(hi),
                                      "address": sorted(factory_set | known)}])
         new_bills = False
