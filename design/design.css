@@ -1,0 +1,33 @@
+/* TandaBill Design System v1 — "Night Ledger" (Flux, 2026-11-25)
+Dark-first, neon pink/blue accents used as signal, not decoration.
+Borrowed traits (cherry-picked, not copied): Phantom transaction previews + system-dark;
+Jupiter 'always dark' conviction & bold type on dark; Base app card rhythm; World mini-app
+spacing rules (24px padding, 16px header-content, 32px sections, tab nav, no hamburger). */
+:root{
+  --bg:#0a0b10; --surface:#12141d; --surface-2:#171a25;
+  --text:#e8eaf2; --text-dim:#8b90a3;
+  --neon-pink:#ff3e7f; --neon-blue:#3ec8ff;   /* accents: max 1 per view */
+  --ok:#2dd4bf; --warn:#fbbf24;
+  --r:14px; --pad:24px; --gap:16px; --sec:32px;
+  font-family:system-ui,-apple-system,'Segoe UI',sans-serif;
+}
+*{box-sizing:border-box;margin:0}
+body{background:var(--bg);color:var(--text);padding:var(--pad)}
+.card{background:var(--surface);border-radius:var(--r);padding:var(--gap) var(--pad);
+  border:1px solid rgba(255,255,255,.06)}
+.card + .card{margin-top:var(--sec)}
+h1{font-size:1.4rem;font-weight:700;letter-spacing:.02em}
+.metric{font-size:1.9rem;font-weight:800;color:var(--neon-blue)}   /* money = blue */
+.pink{color:var(--neon-pink)}                                      /* action/danger = pink */
+.accent-line{height:2px;background:linear-gradient(90deg,var(--neon-pink),transparent 60%);border-radius:2px}
+.btn{display:inline-block;padding:12px 20px;border-radius:var(--r);font-weight:600;
+  background:var(--neon-blue);color:#0a0b10}
+.btn.ghost{background:transparent;color:var(--neon-blue);border:1px solid rgba(62,200,255,.35)}
+.tabbar{display:flex;gap:var(--gap);margin-top:var(--sec)}
+.tab{flex:1;text-align:center;padding:12px;border-radius:var(--r);background:var(--surface-2);color:var(--text-dim)}
+.tab.active{color:var(--text);box-shadow:inset 0 -2px 0 var(--neon-pink)}
+.txn{display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid rgba(255,255,255,.05)}
+.txn .amt{font-variant-numeric:tabular-nums}
+.preview{background:var(--surface-2);border-radius:var(--r);padding:var(--gap);
+  border-left:3px solid var(--neon-blue)}   /* Phantom-style transaction preview before signing */
+.empty{text-align:center;color:var(--text-dim);padding:48px 0}
