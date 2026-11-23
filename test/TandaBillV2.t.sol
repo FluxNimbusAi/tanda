@@ -214,6 +214,19 @@ contract TandaBillV2Test is Test {
         factory.createBill(IERC20(address(token)), many);
     }
 
+    /// Pin V2 L146 true-arm (revert TooManySeats inside the initialize roster loop).
+    /// The factory guards `seats.length > 256` BEFORE forwarding (TandaBillFactory.sol L34,
+    /// pinned by test_factory_createBill_revertsTooManySeats), so the createBill path can
+    /// never reach V2's per-iteration cap check. Only a direct initialize() exercises L146:
+    /// iteration i=256 passes the DuplicateSeat arm, then seats.length(256) >= MAX_SEATS
+    /// (256) reverts TooManySeats at L146.
+    function test_initialize_direct_revertsTooManySeats_L146() public {
+        address[] memory many = new address[](257);
+        for (uint256 i = 0; i < 257; i++) many[i] = address(uint160(0x1000 + i));
+        vm.expectRevert(TandaBillV2.TooManySeats.selector);
+        impl.initialize(IERC20(address(token)), owner, many);
+    }
+
     function test_factory_createBill_revertsDuplicateSeat() public {
         address[] memory dup = new address[](2);
         dup[0] = owner;
@@ -493,6 +506,20 @@ contract TandaBillV2Test is Test {
         bill.addExpense(100e6);
         token.approve(address(bill), 10e6);
         bill.fundEscrow(10e6); // less than expense
+        vm.expectRevert(TandaBillV2.EscrowEmpty.selector);
+        bill.initiateSettlement();
+        vm.stopPrank();
+    }
+
+    /// Pin V2 L280 false-arm: with zero unsettled expenses require(unsettled > 0, EscrowEmpty())
+    /// reverts BEFORE the escrow check — even though escrowBalance > 0 would satisfy L281.
+    /// Distinct from test_settlement_revertsIfEscrowShort, whose unsettled > 0 passes L280
+    /// and fails the separate L281 arm (escrowBalance >= unsettled).
+    function test_initiateSettlement_revertsZeroUnsettled_L280() public {
+        TandaBillV2 bill = _createAs(owner, _seats3());
+        vm.startPrank(owner);
+        token.approve(address(bill), 100e6);
+        bill.fundEscrow(100e6); // funded escrow, but NO expenses recorded → unsettled == 0
         vm.expectRevert(TandaBillV2.EscrowEmpty.selector);
         bill.initiateSettlement();
         vm.stopPrank();

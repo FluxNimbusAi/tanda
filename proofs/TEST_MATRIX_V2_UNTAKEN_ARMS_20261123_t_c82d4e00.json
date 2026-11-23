@@ -1,0 +1,54 @@
+{
+ "card": "t_c82d4e00",
+ "card_acceptance": "2 new tests green in TandaBillV2Test + forge coverage 73/73 branches on V2 + proof JSON here + commit+push origin/main + CI verified",
+ "contract_untouched": "contracts/TandaBillV2.sol unchanged (test-only diff)",
+ "coverage_row_TandaBillV2_sol": {
+  "branches": "100.00% (73/73)",
+  "cmd": "forge coverage",
+  "funcs": "100.00% (21/21)",
+  "lines": "100.00% (170/170)",
+  "statements": "100.00% (240/240)",
+  "uncovered_branch_sections_in_log": 0
+ },
+ "forge_full_suite": {
+  "cmd": "forge test",
+  "failed": 0,
+  "note": "182 pre-existing + 2 new pins",
+  "passed": 184,
+  "skipped": 0,
+  "suites": 12
+ },
+ "forge_suite": {
+  "cmd": "forge test --match-contract TandaBillV2Test",
+  "failed": 0,
+  "passed": 71,
+  "skipped": 0
+ },
+ "forge_version": "forge Version: 1.9.0\nCommit SHA: 6056c5845d34205a83cf7108042adb137325c9df\nBuild Timestamp: 2026-11-02T20:11:29.162616900Z (1793650289)\nBuild Profile: dist",
+ "generated_utc": "2026-11-23T21:19:53Z",
+ "idempotency_key": "e4546882001b",
+ "lineage_base_oid": "8a34c22bfbcd918adc9aee4284e93e187b9427d3",
+ "pins": [
+  {
+   "arm": "contracts/TandaBillV2.sol L146 `if (seats.length >= MAX_SEATS) revert TooManySeats()` TRUE-arm",
+   "test": "test_initialize_direct_revertsTooManySeats_L146",
+   "why_direct_only": "TandaBillFactory.sol L34 guards seats.length > 256 with factory TooManySeats BEFORE initialize forwarding; only direct impl.initialize with a 257-distinct roster reaches V2 L146 (i=256: DuplicateSeat arm passes, seats.length==256>=MAX_SEATS reverts)"
+  },
+  {
+   "arm": "contracts/TandaBillV2.sol L280 `require(unsettled > 0, EscrowEmpty())` FALSE/revert-arm",
+   "test": "test_initiateSettlement_revertsZeroUnsettled_L280",
+   "why_distinct": "existing test_settlement_revertsIfEscrowShort has unsettled>0 (L280 passes) and fails the separate L281 arm (escrowBalance >= unsettled); this pin funds escrow 100e6 with ZERO expenses so L281 would pass and only L280 can revert"
+  }
+ ],
+ "task": "Test-matrix deepening TandaBillV2.sol: pin untaken branch arms 146b2a0 (initialize L146 TooManySeats true-arm, direct path only) + 280b25a0 (initiateSettlement L280 EscrowEmpty false-arm, zero unsettled)",
+ "test_file_receipt": {
+  "bytes_LF": 49414,
+  "path": "test/TandaBillV2.t.sol",
+  "scope": "working-tree bytes LF-normalized; git blob verified post-commit",
+  "sha256_LF": "a4e82333270beb66ad003dd38147cf07cbe62fb2721f5e9b23603e4cf9b6ff4c"
+ },
+ "tests_added": [
+  "test_initialize_direct_revertsTooManySeats_L146",
+  "test_initiateSettlement_revertsZeroUnsettled_L280"
+ ]
+}
