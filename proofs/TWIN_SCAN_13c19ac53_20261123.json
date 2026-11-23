@@ -1,0 +1,90 @@
+{
+  "kind": "TWIN_SCAN",
+  "scan": "contracts/*.sol bare .transfer(/.transferFrom(/.approve( vs SafeERC20, receiver-classified",
+  "tick": "2026-11-23T12:00:32Z",
+  "repo": "tanda-sync main 13c19ac53f93bee376c062803c67424c94dc37e2",
+  "verdict": "ZERO_DEFECT",
+  "bare_sites": [
+    {
+      "file": "FastTandaBillV2.sol",
+      "line": 280,
+      "code": "IPermit2Transfer(PERMIT2).transferFrom(payer, address(this), uint160(amount), address(token));",
+      "disposition": "NON-DEFECT: void Permit2 interface (decl verified this scan) - SafeERC20 N/A by EIP-2612 design",
+      "kind": "permit2_void_pull"
+    },
+    {
+      "file": "TandaBillV2.sol",
+      "line": 269,
+      "code": "IPermit2Transfer(PERMIT2).transferFrom(payer, address(this), uint160(amount), address(token));",
+      "disposition": "NON-DEFECT: void Permit2 interface (decl verified this scan) - SafeERC20 N/A by EIP-2612 design",
+      "kind": "permit2_void_pull"
+    }
+  ],
+  "safe_routed_counts": {
+    "FastTandaBillV2.sol": 4,
+    "SafeERC20Minimal.sol": 1,
+    "TandaBill.sol": 4,
+    "TandaBillFactory.sol": 0,
+    "TandaBillV2.sol": 4
+  },
+  "ipermit2_void_interface_verified": {
+    "FastTandaBillV2.sol": {
+      "declares_transferFrom": true,
+      "void_no_returns": true
+    },
+    "TandaBillV2.sol": {
+      "declares_transferFrom": true,
+      "void_no_returns": true
+    }
+  },
+  "file_receipts_sha256LF": {
+    "FastTandaBillV2.sol": {
+      "bytes_lf": 23957,
+      "sha256_LF": "63ea3bd18cd05e67fbec37be85d3e80ef7a15079519fd74b1f493bbd37ed54d8",
+      "git_blob": "4d7c2433965afaeb3c476a9bc31e4d3d581b787e"
+    },
+    "SafeERC20Minimal.sol": {
+      "bytes_lf": 2532,
+      "sha256_LF": "7e08fc51e49bef1173ac60b4d08a9c4f28b129427ed10c315a4b6c8ea8e8e1d8",
+      "git_blob": "9412232a18bf40a9f3dc961cef80ce1abf6a7c6a"
+    },
+    "TandaBill.sol": {
+      "bytes_lf": 13255,
+      "sha256_LF": "645c2fc34715a25704b1fa4ac9327752cda08aa95ad5f43b0d16cac2cfa5bfec",
+      "git_blob": "efbcf1ee81b257a9e08f48a767a1456c75d5571f"
+    },
+    "TandaBillFactory.sol": {
+      "bytes_lf": 3368,
+      "sha256_LF": "4121af0521ff554b64bf54c0ae87dc87bc751428e569e340c3af65cbcaa979ea",
+      "git_blob": "afa1b6dabcb67563cbe0218a7871a9616ba5aa87"
+    },
+    "TandaBillV2.sol": {
+      "bytes_lf": 26490,
+      "sha256_LF": "6ea3a1dc430848b524fe6ac0e9706ed44589b531083bfd45fedfe26303db6e0a",
+      "git_blob": "2eb989d669fd7a0c0469ec410f65bec2ff798660"
+    }
+  },
+  "forge": {
+    "command": "forge test @ HEAD 13c19ac53 (repo root, cached build)",
+    "totals": {
+      "suites": 8,
+      "passed": 162,
+      "failed": 0,
+      "skipped": 0,
+      "total": 162,
+      "exit": 0
+    },
+    "suites": {
+      "CeiReentrancyGoldenTest": 1,
+      "SafeERC20StrandingTest": 3,
+      "Permit2FundingTest": 13,
+      "P13SplitLockCoverageTest": 15,
+      "FastTwinStrandingTest": 3,
+      "TandaBillTest": 27,
+      "FastTwinMatrixParityTest": 31,
+      "TandaBillV2Test": 69
+    },
+    "parity_note": "suite growth 119->162 since pinned baseline d2cbb5821 = coverage legs #63/#65/13c19ac53; zero failures"
+  },
+  "delta_vs_pinned_receipt_TWIN_SCAN_HEAD_20261123_d2cbb5821": "contracts/ byte-identical d2cbb5821..13c19ac53 (git diff empty); verdict re-confirmed at HEAD with Permit2 void-interface verified from source this scan; all 5 per-file sha256-LF re-measured from HEAD blobs"
+}
