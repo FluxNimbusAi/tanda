@@ -1,0 +1,50 @@
+{
+  "card": "t_0cb7907a",
+  "tick": "2026-11-22T23:48-05:00",
+  "repo": "tanda-sync main 24a0bfcc133a01b80b25a8dc9b3dfd3d690f9109",
+  "verdict": "ZERO_DEFECT",
+  "scan": "contracts/*.sol bare .transfer(/.transferFrom(/.approve( vs SafeERC20",
+  "bare_sites": [
+    {
+      "file": "FastTandaBillV2.sol",
+      "line": 280,
+      "call": "IPermit2Transfer(PERMIT2).transferFrom(...)",
+      "disposition": "NON-DEFECT: void interface (interface decl L16: external, no return) - SafeERC20 N/A by EIP-2612 design"
+    },
+    {
+      "file": "TandaBillV2.sol",
+      "line": 269,
+      "call": "IPermit2Transfer(PERMIT2).transferFrom(...)",
+      "disposition": "NON-DEFECT: same void Permit2 interface"
+    }
+  ],
+  "safe_routed_counts": {
+    "TandaBillV2.sol": 3,
+    "FastTandaBillV2.sol": 3,
+    "TandaBill.sol": 2
+  },
+  "file_receipts_sha256LF": {
+    "FastTandaBillV2.sol": {
+      "bytes_lf": 23957,
+      "sha256_LF": "63ea3bd18cd05e67fbec37be85d3e80ef7a15079519fd74b1f493bbd37ed54d8"
+    },
+    "SafeERC20Minimal.sol": {
+      "bytes_lf": 2532,
+      "sha256_LF": "7e08fc51e49bef1173ac60b4d08a9c4f28b129427ed10c315a4b6c8ea8e8e1d8"
+    },
+    "TandaBill.sol": {
+      "bytes_lf": 13255,
+      "sha256_LF": "645c2fc34715a25704b1fa4ac9327752cda08aa95ad5f43b0d16cac2cfa5bfec"
+    },
+    "TandaBillFactory.sol": {
+      "bytes_lf": 3368,
+      "sha256_LF": "4121af0521ff554b64bf54c0ae87dc87bc751428e569e340c3af65cbcaa979ea"
+    },
+    "TandaBillV2.sol": {
+      "bytes_lf": 26490,
+      "sha256_LF": "6ea3a1dc430848b524fe6ac0e9706ed44589b531083bfd45fedfe26303db6e0a",
+      "git_blob": "2eb989d669fd7a0c0469ec410f65bec2ff798660",
+      "lineage": "== canonical main blob"
+    }
+  }
+}
