@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
+import {SafeERC20Minimal} from "./SafeERC20Minimal.sol";
+
 /// @notice Minimal ERC-20 interface (USDC on World Chain).
 interface IERC20 {
     function transfer(address to, uint256 amount) external returns (bool);
@@ -138,7 +140,9 @@ contract TandaBill {
     /// @notice Fund the escrow. The payer transfers `amount` of the bill token to this contract.
     function fundEscrow(uint256 amount) external {
         require(msg.sender == owner, NotOwner());
-        require(token.transferFrom(msg.sender, address(this), amount), TokenTransferFailed());
+        // HIGH-2 (XIXI-DESIGN-02, t_1e1f7a90): hardened pull mirrors TandaBillV2:245 —
+        // no-return-data (USDT-class) tokens no longer DoS the funding path.
+        SafeERC20Minimal.safeTransferFrom(address(token), msg.sender, address(this), amount);
         escrowBalance += amount;
     }
 

@@ -2,6 +2,7 @@
 pragma solidity ^0.8.24;
 
 import {TandaBill, IERC20} from "../contracts/TandaBill.sol";
+import {SafeERC20Minimal} from "../contracts/SafeERC20Minimal.sol";
 import {Test} from "forge-std/Test.sol";
 
 /// @notice Mock ERC-20 for tests (mimics USDC 6-decimal interface).
@@ -272,16 +273,17 @@ contract TandaBillTest is Test {
         vm.stopPrank();
     }
 
-    /// Gap 3: transferFrom failure path must revert cleanly with TokenTransferFailed().
+    /// Gap 3: transferFrom failure path must revert cleanly with SafeERC20Failed().
     /// Mock token always succeeds; this uses a failing mock to prove fundEscrow's
-    /// require(token.transferFrom(...)) guard fires on a real-world USDC failure.
+    /// hardened SafeERC20 pull (t_1e1f7a90, mirrors V2:245) fires on a real-world
+    /// USDC failure. false-return now surfaces as the typed wrapper.
     function test_fundEscrow_revertsIfTransferFromFails() public {
         FailingToken bad = new FailingToken();
         vm.prank(owner);
         TandaBill b2 = new TandaBill(IERC20(address(bad)));
         // No mint, no approve → transferFrom must fail.
         vm.prank(owner);
-        vm.expectRevert(TandaBill.TokenTransferFailed.selector);
+        vm.expectRevert(abi.encodeWithSelector(SafeERC20Minimal.SafeERC20Failed.selector, address(bad), abi.encode(false)));
         b2.fundEscrow(100e6);
     }
 
