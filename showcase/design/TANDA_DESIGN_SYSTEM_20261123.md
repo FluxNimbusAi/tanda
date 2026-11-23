@@ -4,9 +4,23 @@ Owner directive (2026-11-23): dark backgrounds with neon pink and blue accents,
 **done with subtlety and class**. Cherry-pick best-of-breed patterns from high-usage
 apps on Solana / Base / World; do not copy any single look-and-feel.
 
-Status: PROPOSAL — awaiting d3b0m3n sign-off before any UI implementation.
-Companion artifact: `showcase/design/tandabill_showcase.html` (token-bound mockups,
-real V2 lifecycle states, real API shapes).
+Status: PROPOSAL v2 (2026-11-25) — palette law ratified by Nimbus/Flux: the single
+source of truth is `design/design.css` on main (Night Ledger, landed 89c609c). This
+doc CONSUMES those tokens; where my v1 hexes differed, design.css wins. Companion
+artifact: `showcase/design/tandabill_showcase.html` (token-bound mockups, real V2
+lifecycle states, real API shapes) — to be re-skinned onto the design.css tokens
+before it commits to main (branch → CI green → merge, no direct-main).
+
+## 0. Palette law (ratified 2026-11-25, do not violate)
+
+- Single source: `design/design.css` `:root`. **Never ship a second pink or blue.**
+- Glow = `rgba(255,62,127,.25)` (i.e. `#ff3e7f` at 25%) on the primary CTA only.
+  If a different accent is ever wanted, amend design.css FIRST, commit it, then
+  consume — never the reverse.
+- Money = blue (`--neon-blue #3ec8ff`); action/danger = pink (`--neon-pink #ff3e7f`).
+  One accent per view (design.css comment: "accents: max 1 per view").
+- Debt-minimization display is **view-only, labeled "suggested split"** — the
+  on-chain settlement vector (expectedMask) wins any divergence. Contract law, not UX.
 
 ---
 
@@ -26,9 +40,25 @@ real V2 lifecycle states, real API shapes).
 brand system, any app's layout skeleton. We take interaction patterns and typographic
 discipline, then render them in our own token language.
 
-## 2. Design tokens (the whole system is this file)
+## 2. Design tokens (v1 — SUPERSEDED by `design/design.css` where they conflict)
 
-### Surfaces — a scale, never pure black
+My v1 hexes were a parallel palette to the single source that landed on main
+(`design/design.css`, Night Ledger, 89c609c). Per the ratified palette law,
+design.css is canonical. Mapping my v1 tokens → the tokens my mockups must adopt:
+
+| v1 (mine, retired) | design.css (canonical) | role |
+|---|---|---|
+| `#0A0B0F` / `#101218` / `#171A22` | `--bg #0a0b10` / `--surface #12141d` / `--surface-2 #171a25` | bg ladder |
+| `#F4F5F7` / `#A0A6B4` / `#6B7280` | `--text #e8eaf2` / `--text-dim #8b90a3` | text (2 levels) |
+| `#FF3D8A` | `--neon-pink #ff3e7f` | action/danger/"you" — glow `rgba(255,62,127,.25)` |
+| `#4DA6FF` | `--neon-blue #3ec8ff` | money/info/verified/"other" |
+| `#F5B84D` / `#3DDC97` / `#FF5C5C` | `--warn #fbbf24` / `--ok #2dd4bf` / pink | semantic states |
+| radius 20px card / 14px control | `--r 14px` (single radius) | shape |
+| spacing 4/8/12/16/24/32 | `--pad 24px` `--gap 16px` `--sec 32px` | World mini-app spacing rules |
+
+The v1 token blocks below are retained for provenance only — do not consume them.
+
+### Surfaces — a scale, never pure black (v1, retired)
 ```
 --bg-0:        #0A0B0F   app background (not #000 — avoids halation on OLED)
 --bg-1:        #101218   cards / raised surfaces

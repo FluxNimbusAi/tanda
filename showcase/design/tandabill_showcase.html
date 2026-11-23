@@ -7,13 +7,13 @@
 <style>
 /* ============ TOKENS — the whole system is this block ============ */
 :root{
-  --bg-0:#0A0B0F; --bg-1:#101218; --bg-2:#171A22;
-  --border:#232834; --border-hi:#2E3546;
-  --text-1:#F4F5F7; --text-2:#A0A6B4; --text-3:#6B7280;
-  --pink:#FF3D8A; --pink-dim:#B32A61;
-  --blue:#4DA6FF; --blue-dim:#2E6FB0;
-  --st-pending:#F5B84D; --st-active:#4DA6FF; --st-settled:#3DDC97; --st-refunded:#8B93A7; --st-error:#FF5C5C;
-  --r-card:20px; --r-ctl:14px;
+  --bg-0:#0a0b10; --bg-1:#12141d; --bg-2:#171a25;
+  --border:rgba(255,255,255,.06); --border-hi:rgba(255,255,255,.12);
+  --text-1:#e8eaf2; --text-2:#8b90a3; --text-3:#8b90a3;
+  --pink:#ff3e7f; --pink-dim:#b82e5f;
+  --blue:#3ec8ff; --blue-dim:#2a8fc0;
+  --st-pending:#fbbf24; --st-active:#3ec8ff; --st-settled:#2dd4bf; --st-refunded:#8b90a3; --st-error:#ff3e7f;
+  --r-card:14px; --r-ctl:14px;
   --mono:'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
   --sans:'Inter',system-ui,-apple-system,'Segoe UI',sans-serif;
 }
@@ -30,15 +30,15 @@ h2{font-size:18px;font-weight:600;margin:40px 0 12px;color:var(--text-1)}
 .tab{display:flex;flex-direction:column;align-items:center;gap:3px;font-size:10px;color:var(--text-3)}
 .tab.on{color:var(--pink)}
 .tab .ic{width:22px;height:22px;border-radius:7px;background:var(--border);display:grid;place-items:center;font-size:11px}
-.tab.on .ic{background:rgba(255,61,138,.16);color:var(--pink)}
+.tab.on .ic{background:rgba(255,62,127,.16);color:var(--pink)}
 .card{background:var(--bg-1);border:1px solid var(--border);border-radius:var(--r-card);padding:16px;margin-bottom:12px}
 .chip{display:inline-flex;align-items:center;gap:6px;font-size:12px;padding:4px 10px;border-radius:999px;border:1px solid var(--border);color:var(--text-2);background:var(--bg-1)}
 .chip .dot{width:7px;height:7px;border-radius:50%}
-.chip.you{border-color:rgba(255,61,138,.4);color:var(--pink);background:rgba(255,61,138,.08)}
+.chip.you{border-color:rgba(255,62,127,.4);color:var(--pink);background:rgba(255,62,127,.08)}
 .chip.other{border-color:rgba(77,166,255,.35);color:var(--blue);background:rgba(77,166,255,.07)}
 .chip.ok{border-color:rgba(61,220,151,.35);color:var(--st-settled);background:rgba(61,220,151,.07)}
 .chip.wait{border-color:rgba(245,184,77,.35);color:var(--st-pending);background:rgba(245,184,77,.07)}
-.cta{display:block;width:100%;text-align:center;background:var(--pink);color:#fff;font-weight:600;font-size:15px;padding:14px;border-radius:var(--r-ctl);border:none;box-shadow:0 0 16px rgba(255,61,138,.25);cursor:pointer}
+.cta{display:block;width:100%;text-align:center;background:var(--pink);color:#fff;font-weight:600;font-size:15px;padding:14px;border-radius:var(--r-ctl);border:none;box-shadow:0 0 16px rgba(255,62,127,.25);cursor:pointer}
 .cta.ghost{background:transparent;color:var(--blue);border:1px solid var(--blue-dim);box-shadow:none}
 .amt{font-family:var(--mono);font-variant-numeric:tabular-nums;font-weight:600}
 .amt.big{font-size:32px;letter-spacing:-.02em}
@@ -62,9 +62,9 @@ td.num,th.num{text-align:right;font-family:var(--mono);font-variant-numeric:tabu
 tr:last-child td{border-bottom:none}
 .who{display:flex;align-items:center;gap:8px}
 .avatar{width:26px;height:26px;border-radius:50%;display:grid;place-items:center;font-size:11px;font-weight:600;flex:0 0 auto}
-.avatar.you{background:rgba(255,61,138,.15);color:var(--pink)}
+.avatar.you{background:rgba(255,62,127,.15);color:var(--pink)}
 .avatar.other{background:rgba(77,166,255,.14);color:var(--blue)}
-.orb{width:14px;height:14px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#9fd0ff,#4DA6FF 60%,#1c4d80);display:inline-block;flex:0 0 auto}
+.orb{width:14px;height:14px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#a5e3ff,#3ec8ff 60%,#1a6a94);display:inline-block;flex:0 0 auto}
 .note{font-size:12px;color:var(--text-3);margin-top:10px}
 .badge-verified{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--st-settled)}
 .empty{padding:48px 16px;text-align:center;color:var(--text-3);font-size:14px}
@@ -90,21 +90,21 @@ ul.dash{padding-left:18px;color:var(--text-2);font-size:14px;line-height:1.8}
 
 <h2>Tokens</h2>
 <div class="swatchrow">
-  <div class="sw"><div class="c" style="background:#0A0B0F"></div>--bg-0 #0A0B0F</div>
-  <div class="sw"><div class="c" style="background:#101218"></div>--bg-1 #101218</div>
-  <div class="sw"><div class="c" style="background:#171A22"></div>--bg-2 #171A22</div>
-  <div class="sw"><div class="c" style="background:#FF3D8A"></div>--accent-pink #FF3D8A</div>
-  <div class="sw"><div class="c" style="background:#4DA6FF"></div>--accent-blue #4DA6FF</div>
-  <div class="sw"><div class="c" style="background:#F5B84D"></div>--st-pending #F5B84D</div>
-  <div class="sw"><div class="c" style="background:#3DDC97"></div>--st-settled #3DDC97</div>
-  <div class="sw"><div class="c" style="background:#8B93A7"></div>--st-refunded #8B93A7</div>
+  <div class="sw"><div class="c" style="background:#0a0b10"></div>--bg-0 #0a0b10</div>
+  <div class="sw"><div class="c" style="background:#12141d"></div>--bg-1 #12141d</div>
+  <div class="sw"><div class="c" style="background:#171a25"></div>--bg-2 #171a25</div>
+  <div class="sw"><div class="c" style="background:#ff3e7f"></div>--accent-pink #ff3e7f</div>
+  <div class="sw"><div class="c" style="background:#3ec8ff"></div>--accent-blue #3ec8ff</div>
+  <div class="sw"><div class="c" style="background:#fbbf24"></div>--st-pending #fbbf24</div>
+  <div class="sw"><div class="c" style="background:#2dd4bf"></div>--st-settled #2dd4bf</div>
+  <div class="sw"><div class="c" style="background:#8b90a3"></div>--st-refunded #8b90a3</div>
 </div>
 <div class="tokenlist" style="margin-top:12px">
---text-1 #F4F5F7 · --text-2 #A0A6B4 · --text-3 #6B7280<br>
---border #232834 · --border-hi #2E3546 · --st-error #FF5C5C<br>
+--text-1 #e8eaf2 · --text-2 #8b90a3 · --text-3 #8b90a3<br>
+--border rgba(255,255,255,.06) · --border-hi rgba(255,255,255,.12) · --st-error #ff3e7f<br>
 radius: card 20px · control 14px · chip 999px<br>
 type: Inter (UI) + JetBrains Mono tabular-nums (money/hashes)<br>
-glow rule: 0 0 16px rgba(255,61,138,.25) — primary CTA only. Never on data.
+glow rule: 0 0 16px rgba(255,62,127,.25) — primary CTA only. Never on data.
 </div>
 
 <h2>Screen 1 — Bill home (state: escrow funded, awaiting confirmations)</h2>
