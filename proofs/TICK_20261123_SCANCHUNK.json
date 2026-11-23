@@ -1,0 +1,51 @@
+{
+  "card": "t_2a0ebac9",
+  "chain_head_at_write": 37453007,
+  "fix": "scan_pass chunks at min(SCAN_RANGE, RPC_LOG_CAP); RPC_LOG_CAP = BILL_INDEX_MAX_CHUNK env (default 100)",
+  "full_suite": {
+    "cmd": "python -m unittest discover -s tests",
+    "outcome": "OK",
+    "ran": 162,
+    "rc": 0
+  },
+  "idempotency_key": "e9ebf1bceb41",
+  "idempotency_key_basis": "sha256('2026-11-23|scanchunk|t_2a0ebac9')[:12]",
+  "lineage_base_oid": "3ebf006629bc6e64019f0fe4ac58c95bd1f1b8a5",
+  "live_catchup": {
+    "final_checkpoint": 37453017,
+    "from": 37451256,
+    "head": 37453017,
+    "lag_blocks": 1762,
+    "rc": 0,
+    "rewound_from": 37452767,
+    "seconds": 2.4,
+    "summary": {
+      "bills_ingested": 0,
+      "bills_reorged": 0,
+      "events_ingested": 0,
+      "from": 37451256,
+      "head": 37453017,
+      "pruned_events": 0
+    }
+  },
+  "rpc_probe": {
+    "endpoint": "https://worldchain-sepolia.g.alchemy.com/public",
+    "results": {
+      "range_100": "OK",
+      "range_1200": "HTTP 400",
+      "range_90": "OK"
+    },
+    "verdict": "ranges >100 blocks rejected, <=100 accepted"
+  },
+  "secret_scan": {
+    "hits": 0,
+    "method": "content-shape regex sweep on artifact bytes pre-staging",
+    "vault_path_traversed": false
+  },
+  "tick_utc": "2026-11-23T17:04:21Z",
+  "unit_pins": {
+    "cmd": "python -m unittest tests.test_scan_chunk_cap -v",
+    "rc": 0,
+    "summary": "Ran 2 tests in 0.075s"
+  }
+}
