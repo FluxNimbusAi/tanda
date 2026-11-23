@@ -1,0 +1,167 @@
+{
+  "card": "t_c80a1cbf",
+  "tick_utc": "2026-11-23T08:08:32Z",
+  "repo": "FluxNimbusAi/tanda main 2a0f3804626f1e5e528835a7b100c4d69ce85a24",
+  "trigger": "indexer :8096 had ZERO LISTENING sockets at tick start (netstat -ano); restarted from tree 2a0f3804626f, lineage proven == origin/main (0 ahead/0 behind)",
+  "db_canonical": "bill_index.db (root; services/bill_index.db is an empty decoy - 0 rows all tables)",
+  "bill_witness": {
+    "table": "settlements",
+    "column": "bill_id",
+    "bill_id": "0x2032cc313c5b115e8aaa1ae7615d60aa3a199810"
+  },
+  "db_counts": {
+    "bill_index": 23,
+    "settlements": 3,
+    "seat_grants": 13,
+    "idkit_verifications": 20
+  },
+  "health_counters": {
+    "status": "ok",
+    "service": "bill_index",
+    "chain_id": 4801,
+    "uptime_s": 252.4,
+    "db": "ok",
+    "bills_indexed": 23,
+    "bills_resolved": 5,
+    "seat_grants": 13,
+    "verifications": 20,
+    "settlements": 3,
+    "last_indexed_block": 37337023
+  },
+  "indexer_state": [
+    {
+      "key": "last_indexed_block",
+      "value": "37337023",
+      "updated_at": "2026-11-21T00:37:52Z"
+    }
+  ],
+  "checks": [
+    {
+      "check": "GET /health -> 200",
+      "got": 200,
+      "want": 200,
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "health.chain_id == 4801",
+      "got": 4801,
+      "want": 4801,
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "parity bills_indexed (health==db)",
+      "got": true,
+      "want": true,
+      "pass": true,
+      "detail": "{\"health\": 23, \"db\": 23}"
+    },
+    {
+      "check": "parity seat_grants (health==db)",
+      "got": true,
+      "want": true,
+      "pass": true,
+      "detail": "{\"health\": 13, \"db\": 13}"
+    },
+    {
+      "check": "parity verifications (health==db)",
+      "got": true,
+      "want": true,
+      "pass": true,
+      "detail": "{\"health\": 20, \"db\": 20}"
+    },
+    {
+      "check": "parity settlements (health==db)",
+      "got": true,
+      "want": true,
+      "pass": true,
+      "detail": "{\"health\": 3, \"db\": 3}"
+    },
+    {
+      "check": "health counters are ints",
+      "got": true,
+      "want": true,
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "health.uptime_s < 900 (fresh restart owns port)",
+      "got": true,
+      "want": true,
+      "pass": true,
+      "detail": "uptime_s=252.4"
+    },
+    {
+      "check": "GET /api/settlements?bill= -> 200 auth-free",
+      "got": 200,
+      "want": 200,
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "GET /settlements/<bill> -> 200",
+      "got": 200,
+      "want": 200,
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "GET /api/grants?bill= -> 200 auth-free",
+      "got": 200,
+      "want": 200,
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "GET /grants?bill= (keyed lane) -> 401 no Authorization",
+      "got": 401,
+      "want": 401,
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "bare GET /settlements -> 404 by design (indexer)",
+      "got": 404,
+      "want": 404,
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "POST /bills '{}' -> 400 bad user_op_hash (no write)",
+      "got": 400,
+      "want": 400,
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "bill_index row count unchanged after negative POST",
+      "got": 23,
+      "want": 23,
+      "pass": true,
+      "detail": "before=23 after=23"
+    }
+  ],
+  "verdict": "PASS",
+  "totals": {
+    "checks": 15,
+    "passed": 15,
+    "failed": 0
+  },
+  "secret_scan": {
+    "vault_path_traversed": false,
+    "excluded": [
+      "~/.hermes-secrets/",
+      "AppData/Roaming/MetaMask",
+      "*.key",
+      "*.txt wallets"
+    ],
+    "pattern_hits": [],
+    "hash_family_inventory": {
+      "sha256_64hex": 0,
+      "git_blob_40hex": 1,
+      "classification": "all 64-hex spans are sha256 receipt/anchor fields; all 40-hex are git object ids"
+    },
+    "verdict": "CLEAN"
+  }
+}
