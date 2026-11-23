@@ -1,0 +1,241 @@
+{
+  "card": "t_c80a1cbf",
+  "attempt": 2,
+  "tick_utc": "2026-11-23T08:16:45Z",
+  "trigger": "indexer :8096 had ZERO LISTENING sockets at attempt-2 tick start (netstat); attempt 1 landed receipt+push then died (EOFError) and its detached-restart daemon was reaped with the reclaimed worker. This run restarted the daemon from tree 1ba246b720a (services/ byte-identical to pinned 2a0f3804626) and independently re-derived every acceptance check.",
+  "repo": "FluxNimbusAi/tanda main 1ba246b720a17c0cd31e57ddc76d8261f1dd8081",
+  "lineage": {
+    "head": "1ba246b720a17c0cd31e57ddc76d8261f1dd8081",
+    "origin_main": "1ba246b720a17c0cd31e57ddc76d8261f1dd8081",
+    "pinned_trigger_tree": "2a0f3804626f1e5e528835a7b100c4d69ce85a24",
+    "services_diff_pinned_to_head": "",
+    "service_code_sha256_lf": "4129b1df401719f196056fc9fbc764b24c9c4bc2a80c1836469d47882e64fdbe",
+    "daemon_listener_pid": "3972",
+    "uptime_s_at_probe": 263.9
+  },
+  "db_canonical": "bill_index.db (root; opened sqlite mode=ro for parity — twin-fork law)",
+  "witnesses_rederived": {
+    "settlements_bill": "0x2032cc313c5b115e8aaa1ae7615d60aa3a199810",
+    "grants_bill": "0x76f1939511b6f04a91d1b2be88e55842267843a3",
+    "derivation": "bill_id from settlements ORDER BY settlement_id; highest-grant-count bill_address from seat_grants"
+  },
+  "db_counts": {
+    "bills_indexed": 23,
+    "bills_resolved": 5,
+    "seat_grants": 13,
+    "verifications": 20,
+    "settlements": 3
+  },
+  "health_snapshot": {
+    "status": "ok",
+    "service": "bill_index",
+    "chain_id": 4801,
+    "uptime_s": 263.9,
+    "db": "ok",
+    "bills_indexed": 23,
+    "bills_resolved": 5,
+    "seat_grants": 13,
+    "verifications": 20,
+    "settlements": 3,
+    "last_indexed_block": 37337023
+  },
+  "indexer_state": [
+    {
+      "key": "last_indexed_block",
+      "value": "37337023",
+      "updated_at": "2026-11-21T00:37:52Z"
+    }
+  ],
+  "checks": [
+    {
+      "check": "GET /health -> 200",
+      "got": 200,
+      "want": 200,
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "health.chain_id == 4801",
+      "got": 4801,
+      "want": 4801,
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "health counters are ints",
+      "got": true,
+      "want": true,
+      "pass": true,
+      "detail": "{\"bills_indexed\": 23, \"bills_resolved\": 5, \"seat_grants\": 13, \"verifications\": 20, \"settlements\": 3}"
+    },
+    {
+      "check": "health.uptime_s < 900 (fresh restart owns port)",
+      "got": true,
+      "want": true,
+      "pass": true,
+      "detail": "uptime_s=263.9"
+    },
+    {
+      "check": "parity bills_indexed (health==read-only sqlite)",
+      "got": 23,
+      "want": 23,
+      "pass": true,
+      "detail": "{\"health\": 23, \"db\": 23}"
+    },
+    {
+      "check": "parity bills_resolved (health==read-only sqlite)",
+      "got": 5,
+      "want": 5,
+      "pass": true,
+      "detail": "{\"health\": 5, \"db\": 5}"
+    },
+    {
+      "check": "parity seat_grants (health==read-only sqlite)",
+      "got": 13,
+      "want": 13,
+      "pass": true,
+      "detail": "{\"health\": 13, \"db\": 13}"
+    },
+    {
+      "check": "parity verifications (health==read-only sqlite)",
+      "got": 20,
+      "want": 20,
+      "pass": true,
+      "detail": "{\"health\": 20, \"db\": 20}"
+    },
+    {
+      "check": "parity settlements (health==read-only sqlite)",
+      "got": 3,
+      "want": 3,
+      "pass": true,
+      "detail": "{\"health\": 3, \"db\": 3}"
+    },
+    {
+      "check": "parity last_indexed_block (health==indexer_state)",
+      "got": 37337023,
+      "want": 37337023,
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "witness bills match ADDR_RE",
+      "got": true,
+      "want": true,
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "GET /api/settlements?bill= -> 200 auth-free",
+      "got": 200,
+      "want": 200,
+      "pass": true,
+      "detail": "no Authorization header sent; body.bill=0x2032cc313c5b115e8aaa1ae7615d60aa3a199810; rows=1"
+    },
+    {
+      "check": "GET /settlements/<bill> -> 200",
+      "got": 200,
+      "want": 200,
+      "pass": true,
+      "detail": "body.bill=0x2032cc313c5b115e8aaa1ae7615d60aa3a199810"
+    },
+    {
+      "check": "GET /api/grants?bill= -> 200 auth-free",
+      "got": 200,
+      "want": 200,
+      "pass": true,
+      "detail": "no Authorization header sent; grants=2"
+    },
+    {
+      "check": "GET /grants?bill= (keyed lane) -> 401 no Authorization",
+      "got": 401,
+      "want": 401,
+      "pass": true,
+      "detail": "{\"error\": \"bad write key\"}"
+    },
+    {
+      "check": "bare GET /settlements -> 404 by design (indexer)",
+      "got": 404,
+      "want": 404,
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "POST /bills '{}' -> 400 bad user_op_hash",
+      "got": 400,
+      "want": 400,
+      "pass": true,
+      "detail": "{\"error\": \"bad user_op_hash\"}"
+    },
+    {
+      "check": "400 body carries the exact error string",
+      "got": "bad user_op_hash",
+      "want": "bad user_op_hash",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "bill_index rows+max_rowid unchanged after negative POST",
+      "got": [
+        23,
+        23
+      ],
+      "want": [
+        23,
+        23
+      ],
+      "pass": true,
+      "detail": "before=(23, 23) after=(23, 23)"
+    },
+    {
+      "check": "HEAD == origin/main (0/0)",
+      "got": [
+        "1ba246b72",
+        "1ba246b72"
+      ],
+      "want": [
+        "1ba246b72",
+        "1ba246b72"
+      ],
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "services/ unchanged pinned-tree..HEAD (running code == pinned tree)",
+      "got": "",
+      "want": "",
+      "pass": true,
+      "detail": ""
+    }
+  ],
+  "totals": {
+    "checks": 21,
+    "passed": 21,
+    "failed": 0
+  },
+  "verdict": "PASS",
+  "prior_receipt_crosscheck": {
+    "path": "proofs/E2E_INDEXER_ROUTE_MATRIX_20261123_t_c80a1cbf.json",
+    "trailer_claim": "603ca440c3d6577f8a07d69a086bc11f66d169b75c369a002e5f2fd3fc82a517",
+    "recomputed_sha256_lf": "603ca440c3d6577f8a07d69a086bc11f66d169b75c369a002e5f2fd3fc82a517",
+    "note": "attempt-1 anchor recomputed this run from git blob AND worktree bytes (see run log); both matched"
+  },
+  "secret_scan": {
+    "vault_path_traversed": false,
+    "excluded": [
+      "~/.hermes-secrets/",
+      "AppData/Roaming/MetaMask",
+      "*.key",
+      "*.txt wallets"
+    ],
+    "scope": "receipt file individually, pre-staging",
+    "pattern_hits": {},
+    "hash_family_inventory": {
+      "sha256_64hex_spans": 2,
+      "sha256_unexplained": [],
+      "hex40_spans": 4,
+      "hex40_unexplained": [],
+      "classification": "all 64-hex spans are public anchors (service code sha, prior receipt sha); all 40-hex spans are git object ids or bill addresses"
+    },
+    "verdict": "CLEAN"
+  }
+}
