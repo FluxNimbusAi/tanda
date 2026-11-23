@@ -1,0 +1,51 @@
+{
+  "card": "t_df262414",
+  "title": "FastTwin leg parity matrix (forwarder _caller, seat mgmt, MAX_HOLD refund, views)",
+  "date_utc": "2026-11-23",
+  "branch": "tb/fast-twin-parity-matrix",
+  "test_commit": "885785dce882a5e45560ecec1b213f3aa6ddc118",
+  "base_commit": "ac0c4f3393987a5ef3cd97310175a5e988d0d322",
+  "method": "test/FastTwinMatrixParity.t.sol: 31 tests, all bills via factory.createBill lineage (no raw initialize from tests); canonical gate matrices mirrored onto FastTandaBillV2.",
+  "legs_closed": {
+    "L174_forwarder_caller_branch": "test_f_forwarder_callBill_fullLifecycle/identityEnforced/initialize_guard",
+    "L183-239_seat_mgmt_incl_RotationWindowLocked": "addSeat x2, removeSeat x3, rotate x12 (locked-in-window, owner-locked-at-FCA, owner-locked-at-executability, post-execute, post-refund legs)",
+    "L381-404_execute_payout_loop_refund_MAX_HOLD": "windowBoundary_pushLoop, unevenSplit_remainder, MAX_HOLD refund x4 (before/after/notOwner/fullyConfirmed)",
+    "L421-436_views": "totalExpenses, activeSeatCount, isSeatConfirmed, settlementPayouts + constants pace pin"
+  },
+  "remaining_uncovered": {
+    "lines": [],
+    "note": "FastTandaBillV2.sol L50 SafeERC20Minimal.safeTransfer strict-bool require - not on the Fast payout path (pull hardened to SafeERC20Funding @ #61); not a listed leg; strict-bool semantics pinned by goldens law test_goldens_shape_b.py."
+  },
+  "forge": {
+    "suites": 8,
+    "passed": 150,
+    "failed": 0,
+    "skipped": 0,
+    "total": 150,
+    "source": "disk-captured forge test output this tick"
+  },
+  "coverage": {
+    "baseline_card_recon_at_ac0c4f339": {
+      "canonical": "170/170 = 100.00%",
+      "fast": "90/148 = 60.81%",
+      "scope": "deduped-unique-line lcov parse, 122-test suite"
+    },
+    "post": {
+      "fast_deduped": "148/148 = 100.00%",
+      "fast_da_entries": "211/213"
+    },
+    "verdict": "strictly up: 90/148 (60.81%) -> 148/148 (100.00%); all four listed leg-ranges exercised",
+    "source": "lcov.info on disk, recomputed by this script"
+  },
+  "receipts_recomputed_from_disk": true,
+  "test_file": {
+    "bytes": 22194,
+    "sha256_raw": "41ca0f395c89564b702b435643541aeb0358c98bf2bcd9a2f390e003236aa12f",
+    "sha256_lf": "41ca0f395c89564b702b435643541aeb0358c98bf2bcd9a2f390e003236aa12f",
+    "git_blob_sha1": "99ad686d73437a61eb94d78fd177a3c345bacc07",
+    "blob_equals_commit": true
+  },
+  "attempt1_lineage": "test bytes authored run 331, left staged uncommitted (iteration budget exhausted); compiled+executed+verified independently by run 332 (this) before landing.",
+  "contracts_untouched": true,
+  "reversible": "test-only diff"
+}
