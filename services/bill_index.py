@@ -93,6 +93,37 @@ RP_ID_RE = re.compile(r"^rp_[a-z0-9]+$")
 
 SERVER_START = time.time()  # Track A #8: uptime basis for GET /health
 
+# ── OVERLAY-1 (kanban t_cead034d): index-vs-chain disagreement guard ─────────
+# §7.4 settled law: when the indexer and the chain disagree, the chain is truth.
+# Every settlement READ surface (/api/settlements, /settlements/<bill>) runs a
+# cheap eth_call probe (escrowBalance + settlements[] walk) and compares against
+# the ledger rows; on disagreement the response SERVES CHAIN ROWS and raises
+# integrity:'DEFECT'. Probe failure -> 'UNCHECKED' (never a false DEFECT, and a
+# read surface must never 500 because RPC flaked). Selectors pinned canonical,
+# same hardcoded-table policy as services/nudge_engine.py:67-95 (keccak
+# derived 2026-11-24 against the repo's own owner()==0x8da5cb5b ground truth —
+# no keccak code in this stdlib-only service).
+SEL_OVERLAY = {
+    "escrow_balance": "0xe11e1b0c",  # escrowBalance()
+    "settlements_at": "0x08df7dc8",  # settlements(uint256) — array index == settlementId
+                                     # (TandaBillV2.sol:300 `settlementId = settlements.length`)
+    "owner": "0x8da5cb5b",           # owner() — sentinel, table-sanity assert only
+}
+OVERLAY_ENABLED = os.environ.get("BILL_INDEX_OVERLAY", "1") == "1"
+OVERLAY_RPC_TIMEOUT = float(os.environ.get("BILL_INDEX_OVERLAY_TIMEOUT", "8"))
+OVERLAY_MAX_SETTLEMENTS = 64  # walk cap; v1 bills carry 1-4, cap bounds worst-case cost
+OVERLAY_CACHE_TTL = 55        # seconds; absorbs UI burst on one bill
+OVERLAY_CACHE = {}            # bill -> (monotonic_ts, probe_result)
+OVERLAY_LOCK = threading.Lock()
+
+
+def _verify_overlay_selectors():
+    """Import/self-test gate mirroring nudge_engine.verify_selectors: a
+    corrupted table fails loudly, never silently misprobes."""
+    for k, v in SEL_OVERLAY.items():
+        assert re.fullmatch(r"0x[0-9a-f]{8}", v), f"bad overlay selector {k}={v}"
+    assert SEL_OVERLAY["owner"] == "0x8da5cb5b", "overlay selector table corrupted"
+
 
 def _vault_resolve(path):
     """t_fd9ad195 (post t_flux_c3): read a ~/.hermes-secrets file; if it is a
@@ -591,6 +622,169 @@ def watch_loop(stop=None, interval=None, max_passes=None):
 WATCH_STOP = threading.Event()
 
 
+# ── OVERLAY-1 machinery (t_cead034d) ─────────────────────────────────────────
+
+def _eth_call_overlay(to, data):
+    """Overlay-lane eth_call with its OWN short timeout — a UI read must not
+    inherit the 25s ingest timeout."""
+    body = json.dumps({"jsonrpc": "2.0", "id": 1, "method": "eth_call",
+                       "params": [{"to": to, "data": data}, "latest"]}).encode()
+    req = urllib.request.Request(RPC_URL, data=body,
+                                 headers={"Content-Type": "application/json"})
+    resp = json.loads(urllib.request.urlopen(req, timeout=OVERLAY_RPC_TIMEOUT).read().decode())
+    if "error" in resp:
+        raise RuntimeError(f"rpc error: {resp['error']}")
+    return resp.get("result") or "0x"
+
+
+def _decode_settlement_ret(ret):
+    """Decode the abi.encode of struct Settlement (TandaBillV2.sol:56-67) as
+    returned by settlements(i). 9 static head words + payouts[] tail:
+    [total, payoutsOffset, settledAt, initiatedAt, expectedMask, confirmedMask,
+     claimedMask, fullyConfirmedAt, refunded]. None if shorter than head."""
+    data = (ret or "0x")[2:]
+    if len(data) < 9 * 64:
+        return None
+    w = [data[i:i + 64] for i in range(0, len(data), 64)]
+    poff = int(w[1], 16) // 32
+    n = int(w[poff], 16) if poff < len(w) else 0
+    payouts = [int(x, 16) for x in w[poff + 1:poff + 1 + n]]
+    return {"total_amount": int(w[0], 16), "settled_at": int(w[2], 16),
+            "initiated_at": int(w[3], 16), "expected_mask": int(w[4], 16),
+            "confirmed_mask": int(w[5], 16), "claimed_mask": int(w[6], 16),
+            "fully_confirmed_at": int(w[7], 16), "refunded": int(w[8], 16) != 0,
+            "payouts": payouts}
+
+
+def _chain_overlay_probe(bill):
+    """escrowBalance() + settlements[0..] walk via eth_call. Array end is a
+    revert / short-return on index i>0 (expected); a revert or empty answer at
+    i==0 alongside a non-decodable escrow getter means no bill contract there —
+    raise so the caller serves 'UNCHECKED'. Transport errors always raise —
+    never silent-truncate a walk count (that would fabricate a count DEFECT)."""
+    esc = _eth_call_overlay(bill, SEL_OVERLAY["escrow_balance"])
+    if len(esc[2:]) < 64:
+        raise RuntimeError("bill has no on-chain contract data (escrowBalance() empty)")
+    settlements = []
+    truncated = False
+    for i in range(OVERLAY_MAX_SETTLEMENTS):
+        try:
+            ret = _eth_call_overlay(bill, SEL_OVERLAY["settlements_at"] + W64(i))
+        except Exception as e:
+            if "revert" in str(e).lower() and i > 0:
+                break  # out-of-range array read = end of settlements[]
+            raise
+        d = _decode_settlement_ret(ret)
+        if d is None:
+            if i == 0:
+                raise RuntimeError("settlements(0) unreadable on a contract that answered escrow")
+            break
+        d["settlement_id"] = i
+        d["claimed_count"] = d["claimed_mask"].bit_count()
+        d["claimed_seats"] = [b for b in range(min(d["expected_mask"].bit_length(), 256))
+                              if (d["claimed_mask"] >> b) & 1]
+        settlements.append(d)
+    else:
+        truncated = True  # walked to the cap without seeing the array end
+    return {"escrow_balance": int(esc[2:66], 16), "settlements": settlements,
+            "truncated": truncated}
+
+
+def W64(i):
+    return hex(int(i))[2:].rjust(64, "0")
+
+
+def _overlay_probe_cached(bill):
+    now = time.monotonic()
+    with OVERLAY_LOCK:
+        hit = OVERLAY_CACHE.get(bill)
+        if hit and now - hit[0] < OVERLAY_CACHE_TTL:
+            return hit[1]
+    probe = _chain_overlay_probe(bill)
+    with OVERLAY_LOCK:
+        OVERLAY_CACHE[bill] = (now, probe)
+        if len(OVERLAY_CACHE) > 512:  # bound the cache; evict expired first
+            for k in [k for k, (ts, _) in OVERLAY_CACHE.items()
+                      if now - ts >= OVERLAY_CACHE_TTL]:
+                OVERLAY_CACHE.pop(k, None)
+    return probe
+
+
+def _chain_rows(bill, probe):
+    """Chain-derived settlement rows mirroring the `settlements` summary
+    columns, plus source:'chain' provenance. tx_hash/block are ledger-only
+    fields — NULL on chain rows (never forge index values from chain data)."""
+    out = []
+    for cs in probe["settlements"]:
+        out.append({
+            "bill_id": bill, "settlement_id": cs["settlement_id"],
+            "user_op_hash": None, "tx_hash": None, "block": None,
+            "total_amount": cs["total_amount"],
+            "settled_at": cs["settled_at"] or None,
+            "confirmed_at": None, "initiated_block": None,
+            "fully_confirmed_at": cs["fully_confirmed_at"] or None,
+            "refunded": 1 if cs["refunded"] else 0,
+            "claimed_count": cs["claimed_count"],
+            "claimed_amount": sum(cs["payouts"][b] for b in cs["claimed_seats"]
+                                  if b < len(cs["payouts"])),
+            "source": "chain",
+        })
+    return out
+
+
+def _chain_claims(bill, probe):
+    """Per-seat claim mirror derived from claimedMask x payouts (wallets are
+    ledger-only — chain claims carry seat_id + amount)."""
+    out = []
+    for cs in probe["settlements"]:
+        for b in cs["claimed_seats"]:
+            out.append({"bill_id": bill, "settlement_id": cs["settlement_id"],
+                        "seat_id": b,
+                        "amount": cs["payouts"][b] if b < len(cs["payouts"]) else None,
+                        "source": "chain"})
+    return out
+
+
+def _overlay_check(db, bill, index_rows):
+    """Returns (integrity, payload, defects). None when disabled by env —
+    surfaces then keep their exact pre-OVERLAY shape. NEVER raises: probe
+    failure downgrades to 'UNCHECKED' with the index rows served as-is."""
+    if not OVERLAY_ENABLED:
+        return None, None, None
+    try:
+        probe = _overlay_probe_cached(bill)
+    except Exception as e:
+        return "UNCHECKED", {"reason": str(e)[:180]}, []
+    if probe["truncated"]:  # cap reached: count is a floor, no disagreement claim
+        return "UNCHECKED", {"reason": "settlements walk hit OVERLAY_MAX_SETTLEMENTS"}, []
+    chain = probe["settlements"]
+    defects = []
+    if len(chain) != len(index_rows):
+        defects.append(f"settlement_count: chain={len(chain)} index={len(index_rows)}")
+    by_sid = {int(r["settlement_id"]): r for r in index_rows}
+    for cs in chain:
+        sid = cs["settlement_id"]
+        ir = by_sid.get(sid)
+        if ir is None:
+            defects.append(f"settlement_{sid}: on chain, absent from index")
+            continue
+        ia = ir.get("total_amount")
+        if ia is not None and int(ia) != cs["total_amount"]:
+            defects.append(f"settlement_{sid}: total_amount chain={cs['total_amount']} index={int(ia)}")
+        ies = ir.get("settled_at")
+        if (ies is None and cs["settled_at"]) or (ies is not None and int(ies) != cs["settled_at"]):
+            defects.append(f"settlement_{sid}: settled_at chain={cs['settled_at']} index={ies}")
+        if bool(ir.get("refunded") or 0) != cs["refunded"]:
+            defects.append(f"settlement_{sid}: refunded flag chain={cs['refunded']} index={bool(ir.get('refunded') or 0)}")
+        db_seats = {int(r[0]) for r in db.execute(
+            "SELECT seat_id FROM seat_claims WHERE bill_id=? AND settlement_id=?", (bill, sid))}
+        if db_seats != set(cs["claimed_seats"]):
+            defects.append(f"settlement_{sid}: claimedMask chain={sorted(cs['claimed_seats'])} index={sorted(db_seats)}")
+    payload = {"escrow_balance": probe["escrow_balance"], "n_settlements": len(chain),
+               "settlements": _chain_rows(bill, probe), "claims": _chain_claims(bill, probe)}
+    return ("DEFECT" if defects else "OK"), payload, defects
+
+
 def resolve_userop(db, user_op_hash):
     """Poll userop endpoint -> tx hash -> receipt -> decode. Idempotent; returns row."""
     row = db.execute("SELECT * FROM bill_index WHERE user_op_hash=?", (user_op_hash,)).fetchone()
@@ -815,6 +1009,27 @@ class Handler(BaseHTTPRequestHandler):
         db.commit()
         return self._json(200, {"status": "granted", "bill": bill, "wallet": wallet, "nullifier": nul.lower()})
 
+    def _apply_overlay(self, db, bill, index_rows, out):
+        """OVERLAY-1 (§7.4): annotate a settlement response with the chain
+        probe result. DEFECT -> chain rows replace the served summary rows
+        (and claims where the surface has them); OK/UNCHECKED -> index rows
+        stand. Env-disabled: response shape is byte-identical to pre-OVERLAY."""
+        integrity, payload, defects = _overlay_check(db, bill, index_rows)
+        if integrity is None or payload is None:  # env-disabled: pre-OVERLAY shape
+            return out
+        out["integrity"] = integrity
+        if integrity == "UNCHECKED":
+            out["chain"] = payload
+            return out
+        out["chain"] = {"escrow_balance": payload["escrow_balance"],
+                        "n_settlements": payload["n_settlements"]}
+        if integrity == "DEFECT":
+            out["defects"] = defects
+            out["settlements"] = payload["settlements"]
+            if "claims" in out:
+                out["claims"] = payload["claims"]
+        return out
+
     def _handle_health(self):
         """Track A #8: liveness/readiness probe. Local-only by design — never
         touches RPC or the userop API, so upstream flakiness can't poison
@@ -834,6 +1049,8 @@ class Handler(BaseHTTPRequestHandler):
             "settlements": db.execute("SELECT COUNT(*) FROM settlements").fetchone()[0],
             # W2.5-2: scan-lane checkpoint (None until the first watch pass).
             "last_indexed_block": _meta_get(db, "last_indexed_block"),
+            # OVERLAY-1 config token (no RPC touched — health stays local-only).
+            "overlay": "on" if OVERLAY_ENABLED else "off",
         })
 
     def do_GET(self):
@@ -876,22 +1093,26 @@ class Handler(BaseHTTPRequestHandler):
             pno = int(page)
             off = (pno - 1) * SETTLEMENTS_PAGE_SIZE
             db = get_db()
-            srows = [dict(r) for r in db.execute(
-                "SELECT * FROM settlements WHERE lower(bill_id)=? ORDER BY settlement_id"
-                " LIMIT ? OFFSET ?", (bill, SETTLEMENTS_PAGE_SIZE, off))]
+            # OVERLAY-1: compare against the FULL bill summary set (not the
+            # page window) — chain truth is window-independent; page slice is
+            # derived in Python from the same read (kills the COUNT(*) leg).
+            full = [dict(r) for r in db.execute(
+                "SELECT * FROM settlements WHERE lower(bill_id)=? ORDER BY settlement_id",
+                (bill,))]
+            srows = full[off:off + SETTLEMENTS_PAGE_SIZE]
             erows = [dict(r) for r in db.execute(
                 "SELECT settlement_id, event, tx_hash, log_index, block, seat_id,"
                 " wallet, amount, at_ts, recorded_at FROM settlement_events"
                 " WHERE lower(bill_id)=? ORDER BY block, log_index LIMIT ? OFFSET ?",
                 (bill, SETTLEMENTS_PAGE_SIZE, off))]
-            return self._json(200, {
+            out = self._apply_overlay(db, bill, full, {
                 "bill": bill, "page": pno, "page_size": SETTLEMENTS_PAGE_SIZE,
-                "total_settlements": db.execute(
-                    "SELECT COUNT(*) FROM settlements WHERE lower(bill_id)=?", (bill,)).fetchone()[0],
+                "total_settlements": len(full),
                 "total_events": db.execute(
                     "SELECT COUNT(*) FROM settlement_events WHERE lower(bill_id)=?", (bill,)).fetchone()[0],
                 "settlements": srows, "events": erows,
             })
+            return self._json(200, out)
         if self.path.startswith("/settlements/"):
             # SR-003 F12 (t_m4_p01a): per-bill lifecycle readout — summary rows
             # (additive parity cols) + append-only event ledger. W2.5-2: plus
@@ -912,8 +1133,9 @@ class Handler(BaseHTTPRequestHandler):
                 "SELECT settlement_id, seat_id, wallet, amount, tx_hash, log_index,"
                 " block, claimed_at FROM seat_claims WHERE bill_id=?"
                 " ORDER BY settlement_id, seat_id", (bill,))]
-            return self._json(200, {"bill": bill, "settlements": rows,
-                                    "events": events, "claims": claims})
+            out = self._apply_overlay(db, bill, rows, {"bill": bill, "settlements": rows,
+                                                       "events": events, "claims": claims})
+            return self._json(200, out)
         if not self.path.startswith("/bills/by-userop/"):
             return self._json(404, {"error": "not found"})
         h = self.path.split("/")[-1].lower()
@@ -1022,10 +1244,26 @@ def self_test():
                       (pbill,)).fetchone()[0] == 0
     assert db.execute("SELECT COUNT(*) FROM seat_claims WHERE bill_id=?",
                       (pbill,)).fetchone()[0] == 0
+    # OVERLAY-1 offline probes (t_cead034d): selector table sanity + Settlement
+    # struct decode vector built against the exact TandaBillV2.sol:56-67 layout
+    # (9 head words, payouts tail at offset 9*32, mask 0b101 -> popcount 2).
+    _verify_overlay_selectors()
+    _vec = (_w(1500000) + _w(9 * 32) + _w(1700000100) + _w(1700000000)
+            + _w(0b111) + _w(0b111) + _w(0b101) + _w(1700000050) + _w(0)
+            + _w(3) + _w(500000) + _w(600000) + _w(900000))
+    _d0 = _decode_settlement_ret("0x" + _vec)
+    assert _d0 is not None, "vector head must decode"
+    assert _d0["total_amount"] == 1500000 and _d0["settled_at"] == 1700000100 \
+        and _d0["initiated_at"] == 1700000000 and _d0["expected_mask"] == 0b111 \
+        and _d0["claimed_mask"] == 0b101 and _d0["claimed_mask"].bit_count() == 2 \
+        and _d0["fully_confirmed_at"] == 1700000050 and _d0["refunded"] is False \
+        and _d0["payouts"] == [500000, 600000, 900000], _d0
+    assert _decode_settlement_ret("0x" + _vec[:8 * 64]) is None, "short head must reject"
     print("SELF_TEST PASS: decode matches DEPLOY_RECEIPT_V2 smoke bill byte-exact; "
           "storage OK; tx-lane 201 INSERT prepares with 5/5 bindings; "
           "SR-003 F12 lifecycle parity + replay idempotency OK; "
-          "W2.5-2 seat_claims mirror + indexer_state checkpoint OK (probe rows cleaned)")
+          "W2.5-2 seat_claims mirror + indexer_state checkpoint OK (probe rows cleaned); "
+          "OVERLAY-1 selector table + Settlement struct decode vector OK")
     return d
 
 
