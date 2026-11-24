@@ -235,6 +235,21 @@ contract TandaBillV2Test is Test {
         factory.createBill(IERC20(address(token)), dup);
     }
 
+    /// Pin TandaBillFactory.sol L47 create-failure arm via the EIP-2681 nonce cap:
+    /// the clone is deployed with bare `create(0, ...)` by the factory account itself,
+    /// and EIP-2681 makes CREATE unconditionally fail once the sender nonce reaches
+    /// 2**64-1. With the cap pinned, create() returns address(0), the guard must revert
+    /// CreateFailed (not register a null bill, not initialize a zero address).
+    /// setNonceUnsafe is required: plain setNonce rejects the cap value itself.
+    function test_factory_createBill_revertsCreateFailed_nonceCap() public {
+        vm.setNonceUnsafe(address(factory), type(uint64).max);
+        vm.expectRevert(TandaBillFactory.CreateFailed.selector);
+        vm.prank(owner);
+        factory.createBill(IERC20(address(token)), _seats3());
+        // Negative control: the guard must not have flipped membership for a zero addr.
+        assertFalse(factory.isBill(address(0)));
+    }
+
     function test_factory_multipleBills_distinctClones() public {
         TandaBillV2 b1 = _createAs(owner, _seats3());
         TandaBillV2 b2 = _createAs(owner, _seats3());
