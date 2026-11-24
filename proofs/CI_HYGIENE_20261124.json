@@ -1,0 +1,330 @@
+{
+  "badges_finding": "zero img.shields.io URLs in any repo README; showroom lacks visible CI status - badge insertion deferred to dedicated card (honest-green-ci law)",
+  "branch_prune": {
+    "deleted": [
+      [
+        "tanda",
+        "ci/badge-truth"
+      ],
+      [
+        "tanda",
+        "ci/honest-build-test"
+      ],
+      [
+        "tanda",
+        "courier/xixi-card6-20261122"
+      ],
+      [
+        "tanda",
+        "docs/adr-0007"
+      ],
+      [
+        "tanda",
+        "docs/p01-trackA-sync"
+      ],
+      [
+        "tanda",
+        "docs/p11-cadence-nudge-spec"
+      ],
+      [
+        "tanda",
+        "feat/w10-index-lanes"
+      ],
+      [
+        "tanda",
+        "flux/card3-exec-grade"
+      ],
+      [
+        "tanda",
+        "flux/card3-rederive"
+      ],
+      [
+        "tanda",
+        "flux/dispute-adjudication"
+      ],
+      [
+        "tanda",
+        "flux/receipt-landing"
+      ],
+      [
+        "tanda",
+        "flux/xixi-receipt-adjudication"
+      ],
+      [
+        "tanda",
+        "nimbus/design02-grade-courier2"
+      ],
+      [
+        "tanda",
+        "nimbus/provenance-restamp-w10"
+      ],
+      [
+        "tanda",
+        "nimbus/showcase-v1"
+      ],
+      [
+        "tanda",
+        "nimbus/twin-scan-20261123"
+      ],
+      [
+        "tanda",
+        "nimbus/ux3-matrix-docs"
+      ],
+      [
+        "tanda",
+        "nimbus/v3-hardened-indexer-pin"
+      ],
+      [
+        "tanda",
+        "nimbus/v3-loop-anchors"
+      ],
+      [
+        "tanda",
+        "nimbus/v3-receipt-grade"
+      ],
+      [
+        "tanda",
+        "nimbus/vault-loader-swap"
+      ],
+      [
+        "tanda",
+        "nimbus/w10-app-path-grade-20261122"
+      ],
+      [
+        "tanda",
+        "p11/nudge-engine"
+      ],
+      [
+        "tanda",
+        "p11/nudge-tests"
+      ],
+      [
+        "tanda",
+        "p13/contract-view-tests"
+      ],
+      [
+        "tanda",
+        "proofs/card5a-grade"
+      ],
+      [
+        "tanda",
+        "repin/w10-forwarder"
+      ],
+      [
+        "tanda",
+        "showroom-pc/adr-index"
+      ],
+      [
+        "tanda",
+        "sr003/topic-parity"
+      ],
+      [
+        "tanda",
+        "tb/erc20-false-return-matrix"
+      ],
+      [
+        "tanda",
+        "tb/fast-twin-parity-matrix"
+      ],
+      [
+        "tanda",
+        "tb/matrix-totalExpenses-reinvite"
+      ],
+      [
+        "tanda",
+        "w2/a1-settlement-watcher"
+      ],
+      [
+        "tanda",
+        "w2/a2-txlane-wrap"
+      ],
+      [
+        "tanda",
+        "w10-indexer-service"
+      ],
+      [
+        "tanda",
+        "w10/health-route"
+      ],
+      [
+        "tanda",
+        "w11/indexer-db-env"
+      ],
+      [
+        "tanda",
+        "xixi/design-showcase-v2"
+      ],
+      [
+        "tanda-miniapp",
+        "ci/badge-truth"
+      ],
+      [
+        "tanda-miniapp",
+        "ci/honest-build-test"
+      ],
+      [
+        "tanda-miniapp",
+        "copy/p02-escrow-guarantee"
+      ],
+      [
+        "tanda-miniapp",
+        "fix/abi-export-sync"
+      ],
+      [
+        "tanda-miniapp",
+        "fix/visual-c-night-ledger"
+      ],
+      [
+        "tanda-miniapp",
+        "m4/p01a-settlements-api"
+      ],
+      [
+        "tanda-miniapp",
+        "nimbus/kaizen-suppressions-pass"
+      ],
+      [
+        "tanda-miniapp",
+        "nimbus/ui-t1-lifecycle"
+      ],
+      [
+        "tanda-miniapp",
+        "nimbus/ux2-polish"
+      ],
+      [
+        "tanda-miniapp",
+        "nimbus/visual-b-confirm-preview"
+      ],
+      [
+        "tanda-miniapp",
+        "p03/rotation-anomaly"
+      ],
+      [
+        "tanda-miniapp",
+        "p03/seat-badge-ui"
+      ],
+      [
+        "tanda-miniapp",
+        "p11b/nudge-render"
+      ],
+      [
+        "tanda-miniapp",
+        "p14a/settlement-vector-contract"
+      ],
+      [
+        "tanda-miniapp",
+        "p14b/settlement-vector-render"
+      ],
+      [
+        "tanda-miniapp",
+        "sr-f1kp/action-pins"
+      ],
+      [
+        "tanda-miniapp",
+        "w2-f1c/join-golden-test"
+      ],
+      [
+        "tanda-miniapp",
+        "w2-f1/seat-grant-join"
+      ],
+      [
+        "tanda-miniapp",
+        "w2f2/rp-signature-allowlist"
+      ],
+      [
+        "tanda-miniapp",
+        "w10-owner-panel"
+      ],
+      [
+        "tanda-miniapp",
+        "w10-repin-miniapp"
+      ],
+      [
+        "tanda-miniapp",
+        "w10-ui-forwarder"
+      ],
+      [
+        "tandabill-website",
+        "nimbus/landing-v1"
+      ],
+      [
+        "tandabill-website",
+        "nimbus/landing-v2"
+      ]
+    ],
+    "deleted_count": 62,
+    "deletion_failures": 0,
+    "rule": "deleted only when branch head sha == merged PR head sha (exact match, base main, no open PR on ref); gh REST commit-recoverable"
+  },
+  "branches_kept_unverified": {
+    "tanda": [
+      "nimbus/design02-grade-courier",
+      "p01/pull-claim-settlement",
+      "w6-contract-v2",
+      "w8-repin-draft",
+      "w10-p01-rotation"
+    ],
+    "tanda-miniapp": [
+      "qt/https-proof-t_b3e207f9",
+      "w2-f1a/verify-client-join"
+    ],
+    "tandabill-website": []
+  },
+  "card": "t_aa9b24d6",
+  "ci_state_at_write": {
+    "tanda": {
+      "conclusion": "success",
+      "head_sha": "94ac167c0f0590769713ee0e757a9bed2ce6b5d4",
+      "status": "completed",
+      "updated": "2026-11-24T05:05:33Z",
+      "workflow": "CI"
+    },
+    "tanda-miniapp": {
+      "conclusion": "success",
+      "head_sha": "f459c09a39c89ad536065fdb17697439db672c4a",
+      "status": "completed",
+      "updated": "2026-11-24T05:12:09Z",
+      "workflow": "CI"
+    },
+    "tandabill-website": {
+      "conclusion": "success",
+      "head_sha": "bfe10429a856b6212f37e03dd6e694937478f48c",
+      "status": "completed",
+      "updated": "2026-11-24T05:02:15Z",
+      "workflow": "static-site"
+    }
+  },
+  "forge_suite": {
+    "cmd": "forge.exe test @ main",
+    "exit_code": 0,
+    "failed": 0,
+    "passed": 199,
+    "skipped": 0,
+    "suites": 13,
+    "total_tests": 199
+  },
+  "head_verified": "94ac167c0f0590769713ee0e757a9bed2ce6b5d4",
+  "indexer_health_snapshot": {
+    "bills_indexed": 23,
+    "bills_resolved": 5,
+    "chain_id": 4801,
+    "db": "ok",
+    "last_indexed_block": 37476832,
+    "seat_grants": 13,
+    "service": "bill_index",
+    "settlements": 4,
+    "status": "ok",
+    "uptime_s": 35172.6,
+    "verifications": 20
+  },
+  "kind": "ci-showroom-hygiene",
+  "measured_utc": "2026-11-24T06:18:11Z",
+  "pr_census": {
+    "finding": "zero open PRs all repos",
+    "open_prs": {
+      "tanda": 0,
+      "tanda-miniapp": 0,
+      "tandabill-website": 0
+    }
+  },
+  "stray_edits_reverted": "contracts/TandaBillV2.sol (mask,rank) + contracts/FastTandaBillV2.sol (mask): implicit-init no-ops, author unknown, canonical blob restored"
+}
