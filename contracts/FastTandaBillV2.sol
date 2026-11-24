@@ -182,6 +182,8 @@ contract FastTandaBillV2 {
 
     function addSeat(address wallet) external {
         require(_caller() == owner, NotOwner());
+        // H-01/BS-3.2 (#185) parity: freeze mirrors mainline TandaBillV2.
+        require(!settlementInitiated, SettlementInitiatedAlready());
         if (seatIdOf[wallet] != 0) revert DuplicateSeat(wallet);
         if (seats.length >= MAX_SEATS) revert TooManySeats();
         uint256 seatId = seats.length;

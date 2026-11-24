@@ -131,7 +131,8 @@ contract ClaimableViewLadderTest is Test {
         token.approve(address(bill), 30);
         bill.fundEscrow(30);
         bill.initiateSettlement();
-        bill.addSeat(dan); // seat 3, OUTSIDE expectedMask snapshot {0,1,2}
+        vm.expectRevert(TandaBillV2.SettlementInitiatedAlready.selector);
+        bill.addSeat(dan); // BS-3.2/#185: REJECTED at the gate (was: silent seat 3 outside snapshot {0,1,2})
         vm.stopPrank();
 
         // Pre-execute: dan's confirm dies on the seat rung (settledAt==0, fullyConfirmedAt==0).

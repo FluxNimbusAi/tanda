@@ -194,6 +194,9 @@ contract TandaBillV2 {
 
     function addSeat(address wallet) external {
         require(_caller() == owner, NotOwner());
+        // H-01/BS-3.2 (#185): roster freeze applies to ALL seat-mutation legs.
+        // Symmetric with registerSeat/removeSeat.
+        require(!settlementInitiated, SettlementInitiatedAlready());
         if (seatIdOf[wallet] != 0) revert DuplicateSeat(wallet);
         if (seats.length >= MAX_SEATS) revert TooManySeats();
         uint256 seatId = seats.length;
@@ -456,6 +459,11 @@ contract TandaBillV2 {
         SafeERC20Minimal.safeTransfer(address(token), seats[seatId].wallet, amount);
         // forge-lint: disable-next-line(reentrancy-events)
         emit SeatPayoutClaimed(settlementId, seatId, seats[seatId].wallet, amount);
+        // BS-3.2/#185 LATCH-2: roster freeze is per-round, not per-life. Once every
+        // settlement is terminal AND fully drained, the bill reopens for the next
+        // ritual (README: "recurring, non-terminal"). Unclaimed shares keep the
+        // freeze — no removal/addition can shift a live expectedMask's value.
+        if (_allSettlementsDrained()) settlementInitiated = false;
     }
 
     /// @notice Short-hold guarantee, other leg: if the roster never fully confirms within
@@ -472,9 +480,27 @@ contract TandaBillV2 {
         // CEI: flag set before external call
         SafeERC20Minimal.safeTransfer(address(token), owner, s.totalAmount); // HIGH-2 hardened (XIXI-DESIGN-02)
         emit SettlementRefunded(settlementId, s.totalAmount);
+        // BS-3.2/#185 LATCH-2 (refund leg): refunded counts as drained (shares never left escrow).
+        if (_allSettlementsDrained()) settlementInitiated = false;
     }
 
     // ─── Views ────────────────────────────────────────────────────────────
+
+    /// @notice BS-3.2/#185 LATCH-2 support: true when every settlement in history is
+    ///         terminal AND fully drained — refunded, or executed with all expected
+    ///         shares claimed. This is the moment the roster freeze lifts for the next
+    ///         round. Complexity O(settlements × mask) is bounded by MAX_SEATS and the
+    ///         one-initiate-per-expense-cycle invariant; gas-tested in goldens (H8).
+    function _allSettlementsDrained() internal view returns (bool) {
+        for (uint256 i = 0; i < settlements.length; i++) {
+            Settlement storage s = settlements[i];
+            if (!s.refunded) {
+                if (s.settledAt == 0) return false;                 // still in confirm/execute phase
+                if (s.claimedMask != s.expectedMask) return false; // live settlement with unclaimed shares
+            }
+        }
+        return true;
+    }
 
     function _unsettledTotal() internal view returns (uint256 total) {
         for (uint256 i = 0; i < expenses.length; i++) {
