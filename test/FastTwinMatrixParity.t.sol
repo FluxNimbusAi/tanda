@@ -167,11 +167,12 @@ contract FastTwinMatrixParityTest is Test {
         // mask-snapshot regression, mirrored from the canonical E2E-caught bug
         uint256 amount = 200e6;
         FastTandaBillV2 bill = _initiatedBill(amount);
+        vm.expectRevert(FastTandaBillV2.SettlementInitiatedAlready.selector);
         vm.prank(owner);
-        bill.addSeat(dan); // after initiateSettlement: outside expectedMask
-        // snapshot check BEFORE settle - post-execute confirm would revert AlreadySettled first
+        bill.addSeat(dan); // BS-3.2/#185 parity: frozen (was: silent seat outside expectedMask)
+        // snapshot check BEFORE settle - dan never became a seat, dies on seat rung:
         vm.expectRevert(FastTandaBillV2.NotAnExpectedSeat.selector);
-        _confirmAs(dan, bill, 0); // seatIdOf set, but bit not in expectedMask (L347)
+        _confirmAs(dan, bill, 0);
         _fullConfirm3(bill);
         vm.warp(_s(bill, 0).fullyConfirmedAt + bill.SETTLEMENT_WINDOW());
         bill.executeSettlement(0);

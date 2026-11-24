@@ -352,9 +352,11 @@ contract TandaBillV2Test is Test {
         // eve is not a seat at all
         vm.expectRevert(TandaBillV2.NotAnExpectedSeat.selector);
         _confirmAs(eve, bill, 0);
-        // dan is a seat but added AFTER initiation → not in the snapshot mask
+        // BS-3.2/#185: dan cannot even BECOME a post-initiate seat anymore...
+        vm.expectRevert(TandaBillV2.SettlementInitiatedAlready.selector);
         vm.prank(owner);
         bill.addSeat(dan);
+        // ...and as a non-seat his confirm still dies on the same rung:
         vm.expectRevert(TandaBillV2.NotAnExpectedSeat.selector);
         _confirmAs(dan, bill, 0);
     }
@@ -430,16 +432,17 @@ contract TandaBillV2Test is Test {
     // ─── Roster + payout math ────────────────────────────────────────────
 
     function test_postInitiateSeat_receivesNothing() public {
-        // Regression the live E2E caught: a seat added AFTER initiate is not in the
-        // expectedMask snapshot — it can't confirm, receives nothing, payouts stay 3.
+        // Regression the live E2E caught. BS-3.2/#185 HARDENING: the post-initiate
+        // add is now REJECTED at the gate (was: silently excluded from the mask).
         uint256 amount = 200e6;
         TandaBillV2 bill = _initiatedBill(amount);
+        vm.expectRevert(TandaBillV2.SettlementInitiatedAlready.selector);
         vm.prank(owner);
-        bill.addSeat(dan); // after initiateSettlement
+        bill.addSeat(dan); // frozen after initiateSettlement
         _fullConfirm3(bill);
         vm.warp(_s(bill, 0).fullyConfirmedAt + 3600);
         bill.executeSettlement(0);
-        _drain3(bill); // snapshot seats drain; dan (post-initiate) has no claim
+        _drain3(bill); // snapshot seats drain; dan never became a seat
 
         uint256[] memory payouts = bill.settlementPayouts(0);
         assertEq(payouts.length, 3); // snapshot: owner+alice+bob
@@ -868,15 +871,16 @@ contract TandaBillV2Test is Test {
 
     function test_pull_claim_revertsNotAnExpectedSeat() public {
         TandaBillV2 bill = _initiatedBill(300e6);
+        vm.expectRevert(TandaBillV2.SettlementInitiatedAlready.selector);
         vm.prank(owner);
-        bill.addSeat(dan); // post-initiate seat → outside the snapshot mask
+        bill.addSeat(dan); // BS-3.2/#185: frozen — post-initiate seats cannot exist
         _fullConfirm3(bill);
         vm.warp(block.timestamp + 1 hours + 1);
         bill.executeSettlement(0);
         vm.expectRevert(TandaBillV2.NotAnExpectedSeat.selector);
         _claimAs(eve, bill, 0); // holds no seat at all
         vm.expectRevert(TandaBillV2.NotAnExpectedSeat.selector);
-        _claimAs(dan, bill, 0); // seat, but not in expectedMask
+        _claimAs(dan, bill, 0); // add was rejected -> holds no seat either
     }
 
     function test_pull_claim_revertsPayoutAlreadyClaimed() public {
