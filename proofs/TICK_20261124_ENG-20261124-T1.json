@@ -1,0 +1,283 @@
+{
+  "schema": "tick-proof/2026-11",
+  "card": "t_aa9b24d6",
+  "card_title": "[ENG-20261124-T1] CI/showroom hygiene: forge suite proof @94ac167c0 + PR/branch/badge census",
+  "executed_by": "Nimbus",
+  "generated_utc": "2026-11-24T06:19:08Z",
+  "scope": {
+    "1_stray_edit_revert": {
+      "finding": "NO-OP-ALREADY-RESTORED: at run start (2026-11-24 01:15-01:16 EST) working tree under contracts/ and test/ was clean vs HEAD; mtimes on both flagged files = 2026-11-24T01:15:28-05:00 (~6s after card creation) => stray 11-23 22:04 cosmetic edits (mask;/rank; implicit-init no-ops) were already reverted to canonical blobs before this worker claimed the card. Author of stray edits remains unknown; canonical blob won.",
+      "verification": {
+        "git_status_tracked_changes": "empty (git status --porcelain -uno)",
+        "TandaBillV2.sol": {
+          "blob_sha1": "2eb989d669fd7a0c0469ec410f65bec2ff798660",
+          "worktree_matches_blob": true,
+          "bytes_raw": 26969,
+          "bytes_normLF": 26490,
+          "sha256_LF": "6ea3a1dc430848b524fe6ac0e9706ed44589b531083bfd45fedfe26303db6e0a",
+          "anchor": "matches standing anchor '2eb989d6 26,490B LF=canonical'"
+        },
+        "FastTandaBillV2.sol": {
+          "blob_sha1": "4d7c2433965afaeb3c476a9bc31e4d3d581b787e",
+          "worktree_matches_blob": true,
+          "bytes_raw": 24395,
+          "bytes_normLF": 23957,
+          "sha256_LF": "63ea3bd18cd05e67fbec37be85d3e80ef7a15079519fd74b1f493bbd37ed54d8"
+        }
+      }
+    },
+    "2_forge_suite": {
+      "main_position": {
+        "local_main": "94ac167c0f0590769713ee0e757a9bed2ce6b5d4",
+        "origin_main": "94ac167c0f0590769713ee0e757a9bed2ce6b5d4",
+        "ff_result": "no-op (already at origin/main)",
+        "tip_subject": "docs(ux3): category-leader benchmark matrix + top-10 proposals (Harley research lane) (#174)"
+      },
+      "forge_version_probe": "forge 1.9.0 toolchain at C:/Users/dbvis/.foundry/bin/forge.exe",
+      "result": "199 passed; 0 failed; 0 skipped across 13 suites",
+      "per_suite": [
+        {
+          "file": "test/XixiDesign02CeiGolden.t.sol",
+          "suite": "CeiReentrancyGoldenTest",
+          "passed": 1
+        },
+        {
+          "file": "test/XixiDesign02Q2StrandingFast.t.sol",
+          "suite": "FastTwinStrandingTest",
+          "passed": 3
+        },
+        {
+          "file": "test/ClaimableViewLadder.t.sol",
+          "suite": "ClaimableViewLadderTest",
+          "passed": 4
+        },
+        {
+          "file": "test/SafeERC20FalseReturnMatrix.t.sol",
+          "suite": "SafeERC20FalseReturnMatrixTest",
+          "passed": 6
+        },
+        {
+          "file": "test/Permit2Funding.t.sol",
+          "suite": "Permit2FundingTest",
+          "passed": 13
+        },
+        {
+          "file": "test/FastTwinConfirmLadder.t.sol",
+          "suite": "FastTwinConfirmLadderTest",
+          "passed": 6
+        },
+        {
+          "file": "test/TandaBill.t.sol",
+          "suite": "TandaBillTest",
+          "passed": 27
+        },
+        {
+          "file": "test/MainlineRefundBranchOrder.t.sol",
+          "suite": "MainlineRefundBranchOrderTest",
+          "passed": 4
+        },
+        {
+          "file": "test/P13SplitLockCoverage.t.sol",
+          "suite": "P13SplitLockCoverageTest",
+          "passed": 15
+        },
+        {
+          "file": "test/XixiDesign02Q2Stranding.t.sol",
+          "suite": "SafeERC20StrandingTest",
+          "passed": 3
+        },
+        {
+          "file": "test/FastTwinMatrixParity.t.sol",
+          "suite": "FastTwinMatrixParityTest",
+          "passed": 31
+        },
+        {
+          "file": "test/FastTwinGuardLadder.t.sol",
+          "suite": "FastTwinGuardLadderTest",
+          "passed": 15
+        },
+        {
+          "file": "test/TandaBillV2.t.sol",
+          "suite": "TandaBillV2Test",
+          "passed": 71
+        }
+      ],
+      "log": {
+        "file": "forge_suite_94ac167c0.log",
+        "bytes": 15017,
+        "bytes_normLF": 15017,
+        "sha256_LF": "8f8b597fa870219acbb300f655a9ff34d52f3bd79805220b110af9e551dbc914",
+        "newline": "pure LF (0 CR)"
+      },
+      "ci_corroboration": "GitHub latest CI run on 94ac167c0 = success (independent runner, same tip)"
+    },
+    "3_gh_census": {
+      "repos_censused": [
+        "FluxNimbusAi/tanda",
+        "FluxNimbusAi/tanda-miniapp",
+        "FluxNimbusAi/tandabill-website"
+      ],
+      "open_prs": "ZERO across all three repos",
+      "per_repo": {
+        "tanda": {
+          "open_prs": [],
+          "merged_pr_count": 66,
+          "branches": [
+            "main",
+            "nimbus/design02-grade-courier",
+            "nimbus/m4p01a-courier",
+            "nimbus/waiver-record",
+            "p01/pull-claim-settlement",
+            "w6-contract-v2",
+            "w8-repin-draft",
+            "w10-p01-rotation"
+          ],
+          "branch_debris": [
+            {
+              "branch": "nimbus/design02-grade-courier",
+              "ahead_of_main": 0,
+              "from_merged_pr": false,
+              "contained_in_main": false
+            },
+            {
+              "branch": "nimbus/m4p01a-courier",
+              "ahead_of_main": 2,
+              "from_merged_pr": true,
+              "contained_in_main": false
+            },
+            {
+              "branch": "nimbus/waiver-record",
+              "ahead_of_main": 1,
+              "from_merged_pr": true,
+              "contained_in_main": false
+            },
+            {
+              "branch": "p01/pull-claim-settlement",
+              "ahead_of_main": 0,
+              "from_merged_pr": true,
+              "contained_in_main": false
+            },
+            {
+              "branch": "w6-contract-v2",
+              "ahead_of_main": 0,
+              "from_merged_pr": false,
+              "contained_in_main": false
+            },
+            {
+              "branch": "w8-repin-draft",
+              "ahead_of_main": 0,
+              "from_merged_pr": false,
+              "contained_in_main": false
+            },
+            {
+              "branch": "w10-p01-rotation",
+              "ahead_of_main": 0,
+              "from_merged_pr": false,
+              "contained_in_main": false
+            }
+          ],
+          "workflows": [
+            {
+              "name": "CI",
+              "path": ".github/workflows/ci.yml",
+              "state": "active"
+            }
+          ]
+        },
+        "tanda-miniapp": {
+          "open_prs": [],
+          "merged_pr_count": 33,
+          "branches": [
+            "main",
+            "qt/https-proof-t_b3e207f9",
+            "w2-f1a/verify-client-join"
+          ],
+          "branch_debris": [
+            {
+              "branch": "qt/https-proof-t_b3e207f9",
+              "ahead_of_main": 1,
+              "from_merged_pr": false,
+              "contained_in_main": false
+            },
+            {
+              "branch": "w2-f1a/verify-client-join",
+              "ahead_of_main": 1,
+              "from_merged_pr": false,
+              "contained_in_main": false
+            }
+          ],
+          "workflows": [
+            {
+              "name": "CI",
+              "path": ".github/workflows/ci.yml",
+              "state": "active"
+            }
+          ]
+        },
+        "tandabill-website": {
+          "open_prs": [],
+          "merged_pr_count": 6,
+          "branches": [
+            "main"
+          ],
+          "branch_debris": [],
+          "workflows": [
+            {
+              "name": "static-site",
+              "path": ".github/workflows/static.yml",
+              "state": "active"
+            }
+          ]
+        }
+      },
+      "badge_urls": {
+        "tanda": "https://github.com/FluxNimbusAi/tanda/actions/workflows/ci.yml/badge.svg -> 'CI - passing'",
+        "tanda-miniapp": "https://github.com/FluxNimbusAi/tanda-miniapp/actions/workflows/ci.yml/badge.svg -> 'CI - passing'",
+        "tandabill-website": "NO badge in README (static.yml workflow exists; badge gap - showroom finding, not fixed in this tick)"
+      },
+      "latest_runs": {
+        "tanda": {
+          "workflow": "CI (ci.yml)",
+          "head_sha": "94ac167c0",
+          "conclusion": "success",
+          "created_at": "2026-11-24T05:05:07Z",
+          "note": "matches current main tip"
+        },
+        "tanda-miniapp": {
+          "workflow": "CI (ci.yml)",
+          "head_sha": "f459c09a3",
+          "conclusion": "success",
+          "created_at": "2026-11-24T05:08:27Z",
+          "note": "ci.yml last touched by 14d173cd4 recovery(p0) [t_5edca9f0] after 7c359b3 tree-nuke"
+        },
+        "tandabill-website": {
+          "workflow": "static-site (static.yml)",
+          "head_sha": "bfe10429a",
+          "conclusion": "success",
+          "created_at": "2026-11-24T05:02:01Z",
+          "note": "Pages deploy workflow"
+        }
+      },
+      "debris_classification": {
+        "tanda_fully_merged_safe_to_delete": [
+          "nimbus/design02-grade-courier",
+          "p01/pull-claim-settlement",
+          "w6-contract-v2",
+          "w8-repin-draft",
+          "w10-p01-rotation"
+        ],
+        "tanda_squash_merged_orphan_commits": {
+          "nimbus/m4p01a-courier": 2,
+          "nimbus/waiver-record": 1
+        },
+        "tanda_miniapp_unmerged_drafted_not_debris": {
+          "qt/https-proof-t_b3e207f9": 1,
+          "w2-f1a/verify-client-join": 1
+        },
+        "tandabill-website": "clean - main only",
+        "action": "DELIBERATELY NOT DELETED - census-only scope; deletion needs owner nod (unique commits + no live PR on 2 miniapp branches)"
+      }
+    },
+    "4_this_receipt": "committed via PR to tanda:proofs/ on branch nimbus/eng-20261124-t1-census; commit carries Receipt-SHA256 = sha256 of LF-normalized canonical diff (git show --format= --no-color); this file's own content hash stated in PR/commit, not inlined here"
+  }
+}
