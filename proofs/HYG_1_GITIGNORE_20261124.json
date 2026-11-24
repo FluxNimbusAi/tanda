@@ -1,0 +1,72 @@
+{
+  "card": "t_c92b5237",
+  "task": "HYG-1 .gitignore hardening + stray disposition",
+  "generated_utc": "2026-11-24T07:35:20.0399948-05:00",
+  "repo": "FluxNimbusAi/tanda",
+  "base_commit": "1b68c802f4ea7d83cd8f78e6782abd08cc069bb2",
+  "gitignore": {
+    "before_sha256_raw": "1ee7ab3a0e4f0fb0c79fb5158c9e0232f4146854d3ed599c5b98f119c45f90ef",
+    "before_bytes": 182,
+    "after_sha256_raw": "8dcf0e16fe1ccfdc14b5b713587f1f778b9d1883a270f761682eb89c620b65bd",
+    "after_bytes": 357,
+    "line_endings": "LF-normalized",
+    "patterns_added": [
+      "*.log",
+      "bill_index.db",
+      "broadcast/",
+      "lcov.info",
+      "scratch/",
+      "solc-*.exe",
+      "tanda_solc_json_input.json"
+    ]
+  },
+  "content_preservation_moves": [
+    {
+      "from": "verify_prod_pair.py",
+      "to": "scripts/verify_prod_pair.py",
+      "bytes": 6796,
+      "sha256_raw": "58bcc88a3b5853a952522a5ab104771670d89bd5df58094801db359047ebd410"
+    }
+  ],
+  "untracked_census_before": [
+    "bill_index.db",
+    "bill_index_1237.log",
+    "bill_index_1409.log",
+    "bill_index_1533.log",
+    "bill_index_restart.log",
+    "broadcast/",
+    "lcov.info",
+    "scratch/",
+    "services/bill_index.db",
+    "solc-0.8.3.exe",
+    "solc-0.8.30.exe",
+    "solc-0.8.31.exe",
+    "solc-0.8.32.exe",
+    "solc-0.8.33.exe",
+    "solc-0.8.34.exe",
+    "solc-0.8.35.exe",
+    "solc-0.8.36.exe",
+    "solc-0.8.37.exe",
+    "solc-0.8.38.exe",
+    "solc-0.8.4.exe",
+    "tanda_solc_json_input.json",
+    "verify_prod_pair.py"
+  ],
+  "untracked_count_before": 22,
+  "disposition": {
+    "ignore_runtime_artifacts": [
+      "bill_index.db",
+      "services/bill_index.db",
+      "*.log",
+      "broadcast/",
+      "lcov.info",
+      "scratch/",
+      "solc-0.8.*.exe (12)",
+      "tanda_solc_json_input.json"
+    ],
+    "track_to_repo": [
+      "verify_prod_pair.py -> scripts/verify_prod_pair.py"
+    ],
+    "deleted": []
+  }
+}

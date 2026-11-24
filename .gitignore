@@ -9,3 +9,11 @@ __pycache__/
 # stray pre-w10 root copy (Flux housekeeping 2026-11-19): canonical indexer is services/bill_index.py
 bill_index.py
 .worktrees/
+# HYG-1 engine-tick 2026-11-24: runtime artifacts + build residue (FF-collision root cause)
+*.log
+bill_index.db
+broadcast/
+lcov.info
+scratch/
+solc-*.exe
+tanda_solc_json_input.json
