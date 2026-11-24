@@ -1139,4 +1139,85 @@ contract TandaBillV2Test is Test {
         vm.prank(owner);
         bill.refundSettlement(0);
     }
+
+    // ─── Refund terminal-state guard matrix (t_1bfd4ee5) ─────────────────
+    // A refunded settlement must be inert across EVERY mutating surface, and the
+    // bill itself must stay alive for a fresh settlement round. Prior coverage hit
+    // the settledAt route only; these close the s.refunded / last.refunded routes.
+
+    function test_confirm_afterRefund_revertsAlreadySettled() public {
+        // s.refunded branch of the AlreadySettled guard in confirmSettlement
+        // (settledAt stays 0 forever post-refund, so this is the ONLY thing
+        // standing between a seat and resurrecting a dead leg).
+        TandaBillV2 bill = _initiatedBill(100e6);
+        vm.warp(block.timestamp + 72 hours);
+        vm.prank(owner);
+        bill.refundSettlement(0);
+        vm.expectRevert(TandaBillV2.AlreadySettled.selector);
+        _confirmAs(alice, bill, 0);
+    }
+
+    function test_refund_twice_revertsAlreadySettled() public {
+        // Branch-order proof on the refunded route: L379 AlreadySettled fires
+        // before the RefundNotAvailable require even though MAX_HOLD is past.
+        TandaBillV2 bill = _initiatedBill(100e6);
+        vm.warp(block.timestamp + 72 hours);
+        vm.startPrank(owner);
+        bill.refundSettlement(0);
+        vm.expectRevert(TandaBillV2.AlreadySettled.selector);
+        bill.refundSettlement(0);
+        vm.stopPrank();
+    }
+
+    function test_rotate_afterRefund_revertsSeatRotationClosed() public {
+        // last.refunded branch (L214) of the rotation guard — settledAt route
+        // covered by test_rotate_afterExecute_reverts; refunded leg is the twin.
+        TandaBillV2 bill = _initiatedBill(100e6);
+        vm.warp(block.timestamp + 72 hours);
+        vm.prank(owner);
+        bill.refundSettlement(0);
+        // alice (seat 2) trying to cure her payout wallet post-refund
+        vm.prank(alice);
+        vm.expectRevert(TandaBillV2.SeatRotationClosed.selector);
+        bill.rotateSeatWallet(1, carol);
+    }
+
+    function test_reinitiate_afterRefund_secondSettlementFullLifecycle() public {
+        // The bill survives the refund escape: fresh expense round opens
+        // settlement 1, which runs confirm -> window -> execute -> drain while
+        // settlement 0 stays terminal and id-scoped inert.
+        uint256 amount = 100e6;
+        TandaBillV2 bill = _initiatedBill(amount);
+        uint256 ownerBefore = token.balanceOf(owner);
+        vm.warp(block.timestamp + 72 hours);
+        vm.prank(owner);
+        bill.refundSettlement(0);
+        assertEq(token.balanceOf(owner), ownerBefore + amount); // Gap-3: funds back to owner-funder
+        assertEq(token.balanceOf(address(bill)), 0);
+
+        vm.startPrank(owner);
+        bill.addExpense(amount);
+        token.approve(address(bill), amount);
+        bill.fundEscrow(amount);
+        bill.initiateSettlement();
+        vm.stopPrank();
+
+        SView memory v0 = _s(bill, 0);
+        SView memory v1 = _s(bill, 1);
+        assertTrue(v0.refunded && !v1.refunded, "refund flag must not leak across legs");
+        assertEq(v1.expectedMask, v0.expectedMask); // same 3-seat roster snapshot shape
+
+        _confirmAs(owner, bill, 1);
+        _confirmAs(alice, bill, 1);
+        _confirmAs(bob, bill, 1);
+        // id-scoping interlude: settlement 1 ripe does NOT revive settlement 0
+        vm.expectRevert(TandaBillV2.AlreadySettled.selector);
+        bill.executeSettlement(0);
+        vm.warp(_s(bill, 1).fullyConfirmedAt + 3600);
+        bill.executeSettlement(1); // anyone may open claims on the live leg
+        _claimAs(owner, bill, 1);
+        _claimAs(alice, bill, 1);
+        _claimAs(bob, bill, 1);
+        assertEq(token.balanceOf(address(bill)), 0); // escrow fully drained on leg 1
+    }
 }
