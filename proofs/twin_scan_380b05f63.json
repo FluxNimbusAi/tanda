@@ -1,0 +1,58 @@
+{
+ "head": "380b05f631235bdf27fef7d81a51ed2227e2f979",
+ "files": {
+  "contracts/FastTandaBillV2.sol": {
+   "blob_sha256": "63ea3bd18cd05e67fbec37be85d3e80ef7a15079519fd74b1f493bbd37ed54d8",
+   "blob_bytes": 23957,
+   "disk_bytes": 24395,
+   "disk_eq_lf": true,
+   "uses_safe": true
+  },
+  "contracts/SafeERC20Minimal.sol": {
+   "blob_sha256": "7e08fc51e49bef1173ac60b4d08a9c4f28b129427ed10c315a4b6c8ea8e8e1d8",
+   "blob_bytes": 2532,
+   "disk_bytes": 2576,
+   "disk_eq_lf": true,
+   "uses_safe": true
+  },
+  "contracts/TandaBill.sol": {
+   "blob_sha256": "645c2fc34715a25704b1fa4ac9327752cda08aa95ad5f43b0d16cac2cfa5bfec",
+   "blob_bytes": 13255,
+   "disk_bytes": 13518,
+   "disk_eq_lf": true,
+   "uses_safe": true
+  },
+  "contracts/TandaBillFactory.sol": {
+   "blob_sha256": "4121af0521ff554b64bf54c0ae87dc87bc751428e569e340c3af65cbcaa979ea",
+   "blob_bytes": 3368,
+   "disk_bytes": 3439,
+   "disk_eq_lf": true,
+   "uses_safe": false
+  },
+  "contracts/TandaBillV2.sol": {
+   "blob_sha256": "6ea3a1dc430848b524fe6ac0e9706ed44589b531083bfd45fedfe26303db6e0a",
+   "blob_bytes": 26490,
+   "disk_bytes": 26969,
+   "disk_eq_lf": true,
+   "uses_safe": true
+  }
+ },
+ "hits": [
+  {
+   "file": "contracts/SafeERC20Minimal.sol",
+   "line": 11,
+   "recv": "token",
+   "meth": "transfer",
+   "safe_in_file": true,
+   "ctx": "/// @dev  Why bare `require(token.transfer(...), bool)` is unsafe (HIGH-2, STRANDED):"
+  },
+  {
+   "file": "contracts/TandaBill.sol",
+   "line": 217,
+   "recv": "token",
+   "meth": "transfer",
+   "safe_in_file": true,
+   "ctx": "// The old bare require(token.transfer(...), TokenTransferFailed())"
+  }
+ ]
+}
