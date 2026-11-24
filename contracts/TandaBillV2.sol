@@ -85,6 +85,21 @@ contract TandaBillV2 {
     ///         msg.sender, so W5-era bills keep exact semantics.
     address public factory;
 
+    // ─── UGLY-2 seat gate (World ID Sybil defense) ──────────────────────────
+    /// @notice Per-bill nullifier burn ledger: a World ID nullifier used for a seat is
+    ///         permanently un-reusable on this bill. The nullifier is deterministic per
+    ///         (rp_id, action), so a per-bill ledger is the right scope - one human
+    ///         holds at most one seat per bill, and may still join other bills. Zero
+    ///         address = unused. Declared after `factory` so existing clone storage
+    ///         slots keep their layout (append-only).
+    mapping(bytes32 => address) public seatNullifierOf;
+    /// @notice keccak256(signal) recorded at grant time - forensic binding of the
+    ///         proof signal ("0x<bill>:0x<wallet>" lowercase, canonical) to the grant.
+    ///         The contract stores the hash and never re-checks the format; the
+    ///         verifier route enforces exact-match law (indexer seat_grants precedent).
+    mapping(bytes32 => bytes32) public seatNullifierSignalHash;
+
+
     uint64 public constant SETTLEMENT_WINDOW = 1 hours; // hold after full confirmation
     uint64 public constant MAX_HOLD = 72 hours;         // refund escape if never confirmed
     uint256 public constant MAX_SEATS = 256;            // roster cap = uint256 mask width
@@ -95,6 +110,10 @@ contract TandaBillV2 {
     event SeatAdded(uint256 indexed seatId, address indexed wallet, uint64 joinedAt);
     event SeatRemoved(uint256 indexed seatId, address indexed wallet);
     event SeatWalletRotated(uint256 indexed seatId, address indexed from, address indexed to);
+    /// @notice Emitted by registerSeat when a World ID nullifier is burned into a seat.
+    event SeatGranted(uint256 indexed seatId, address indexed wallet, bytes32 indexed nullifier,
+                      bytes32 signalHash);
+
     event ExpenseAdded(uint256 indexed expenseId, address indexed paidBy, uint256 amount);
     event EscrowFunded(address indexed funder, uint256 amount);
     event SettlementInitiated(uint256 indexed settlementId, uint256 totalAmount, uint256 expectedSeats);
@@ -130,6 +149,9 @@ contract TandaBillV2 {
     error NoActiveSeats();
     error TokenTransferFailed();
     error SettlementInitiatedAlready();
+    error ZeroNullifier();
+    error NullifierUsed(bytes32 nullifier);
+
 
     // ─── Initializer (clone-compatible; replaces constructor) ─────────────
 
@@ -181,6 +203,38 @@ contract TandaBillV2 {
         seatIdOf[wallet] = seatId + 1;
         // forge-lint: disable-next-line(unsafe-typecast)
         emit SeatAdded(seatId, wallet, uint64(block.timestamp));
+    }
+
+    /// @notice World ID Sybil gate (UGLY-2): grants a seat only to a human whose proof
+    ///         nullifier has never been used on this bill - one human, one seat,
+    ///         enforced by contract. Off-chain (WorldIDVerifier proxy + verify route)
+    ///         authenticates the proof; the burn ledger ensures even a malicious or
+    ///         compromised grant path can never double-seat the same human here.
+    /// @dev    Owner-gated like every seat mutation (addSeat/removeSeat precedent,
+    ///         Gap-3 MVP ruling). Roster freezes after settlement initiation exactly as
+    ///         removeSeat does. signal = exact proof signal bytes; storage binds
+    ///         keccak256(signal). Revert order pinned by goldens:
+    ///         owner -> freeze -> zero nullifier -> zero wallet -> replay -> duplicate -> capacity.
+    function registerSeat(bytes32 nullifier, address wallet, bytes calldata signal) external {
+        require(_caller() == owner, NotOwner());
+        require(!settlementInitiated, SettlementInitiatedAlready());
+        if (nullifier == bytes32(0)) revert ZeroNullifier();
+        if (wallet == address(0)) revert ZeroWallet();
+        if (seatNullifierOf[nullifier] != address(0)) revert NullifierUsed(nullifier);
+        if (seatIdOf[wallet] != 0) revert DuplicateSeat(wallet);
+        if (seats.length >= MAX_SEATS) revert TooManySeats();
+        bytes32 signalHash = keccak256(signal);
+        // CEI: burn-ledger writes complete before any roster mutation
+        seatNullifierOf[nullifier] = wallet;
+        seatNullifierSignalHash[nullifier] = signalHash;
+        uint256 seatId = seats.length;
+        // casting to 'uint64' is safe because block.timestamp < 2^64 until year 584 billion
+        // forge-lint: disable-next-line(unsafe-typecast)
+        seats.push(Seat({wallet: wallet, joinedAt: uint64(block.timestamp), active: true}));
+        seatIdOf[wallet] = seatId + 1;
+        // forge-lint: disable-next-line(unsafe-typecast)
+        emit SeatAdded(seatId, wallet, uint64(block.timestamp));
+        emit SeatGranted(seatId, wallet, nullifier, signalHash);
     }
 
     /// @dev Forbidden after any settlement initiation (roster freeze — W5 ruling stands).
