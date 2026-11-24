@@ -14,7 +14,11 @@ Frames: [1](docs/demo/contract-loop_01.png) · [2](docs/demo/contract-loop_02.pn
 
 A real proof run, not a mock: `initiate → confirm (both seats) → execute → indexer read-back` against the
 deployed fast-twin contract on World Chain Sepolia (`chainId 4801`), bill `0x2032cc313c5b115e8aaa1ae7615d60aa3a199810` —
-**41/41 assertions PASS**, settlement `settledAt=1795175836`, masks 3/3, escrow drained. The raw transcript,
+**41/41 assertions PASS**, settlement `settledAt=1795175836`, masks 3/3, escrow drained. (Pinned coords,
+reconciled 2026-11-24: this cites bill `0x2032cc31…` settlement **0** on the **fast-twin variant** —
+7-field `settlements(0)` getter, no on-chain claimedMask; live-viem-decoded at block 37495k. Distinct
+from the V2 loop-proof bill `0xd1b746ee…` settlement 0, `settledAt=1795303266` / verified_utc
+2026-11-21T23:21:12Z. Both anchors are real; every receipt must name its bill.) The raw transcript,
 structured receipt, and live indexer read-back are committed beside the frames; the GIF is a viewport scroll of
 the raw log (nothing added or removed) and the renderer ships for reproduction. Full chain-of-custody:
 [`docs/demo/PROVENANCE.md`](docs/demo/PROVENANCE.md) (source card `t_74cde67e`, run 266, 2026-11-20).
