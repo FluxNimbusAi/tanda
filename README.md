@@ -2,9 +2,9 @@
 
 # Tanda
 
-On-chain split-bill settlement circles for verified humans. One World ID = one seat. Members record shared expenses; the contract settles equal shares on settlement — short hold, no custody of keys, no pots.
+**Proof-escrow settlement for real-world deals, between provably-unique humans.** Every seat is a World ID (one human = one seat, burned into the contract); funds sit in escrow and every payout is a pull-claim event — debts are enforceable on-chain artifacts, not chat promises. Splitwise can't prove your counterparty is a human, and its debts aren't enforceable. TandaBill both.
 
-**Why:** split-bills are a recurring, non-terminal ritual (the daily hook). Personhood-as-seat is the moat: identity is the collateral that off-chain trust circles lack. ROSCA pots are deferred until collateral + compliance mechanics are designed — see `docs/killpass-adjudication.md`.
+Group bills — trips, roommates, shared expenses — run the same settlement law as a **feature**, not the identity: a recurring, non-terminal ritual that brings people back to the escrow rails (the daily hook). Personhood-as-seat is the moat: identity is the collateral off-chain trust circles lack. ROSCA pots remain deferred until collateral + compliance mechanics are designed — see `docs/killpass-adjudication.md`.
 
 ## Demo — the full contract loop, proven live on World Chain Sepolia
 
