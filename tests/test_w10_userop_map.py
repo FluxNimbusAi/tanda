@@ -54,7 +54,7 @@ class TestMapping(unittest.TestCase):
         self.assertEqual(extract_user_op_hash({"userOpHash": h}), h)
 
 
-def test_bare_string_hash_accepted(self):
+    def test_bare_string_hash_accepted(self):
         self.assertEqual(extract_user_op_hash("0x" + "ab" * 32), "0x" + "ab" * 32)
 
     def test_bare_string_uuid_rejected(self):
