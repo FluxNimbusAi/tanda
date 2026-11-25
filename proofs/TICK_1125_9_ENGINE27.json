@@ -1,0 +1,33 @@
+{
+  "card": "t_076cf674",
+  "tick": "TICK-1125-9 ENGINE 27",
+  "head_before": "145bec72ff398fab5dc02f6dc1bfd7341d76cce8",
+  "file_test": "test/XixiDesign02Q2Stranding.t.sol",
+  "file_test_bytes_raw": 7783,
+  "file_test_bytes_norm": 7616,
+  "file_test_sha256_LF": "5a9685528c4f9837249ccfe5f9f246c4a17d2c8e9ccdf1fbb892cf834300b517",
+  "edits": {
+    "dedupe": "dead ReentrantToken (was :57-80, byte-identical to CeiGolden.t.sol:14-37 live locus) removed; single-locus comment pinned",
+    "new_golden": "test_fund_escrow_reverting_token_surfaces_typed_golden - REVERT-BUBBLE class: token require-revert inside safeTransferFrom(V2:302) must surface typed SafeERC20Failed(t, Error(\"no\"))",
+    "dead_defense_pinned": "NoReturnToken.transfer require-false arm (harness-unreachable: escrow>=amount by construction, no burn path); FalseReturnToken.transfer arm (unreachable: fundEscrow reverts first)"
+  },
+  "coverage_after": [
+    "  --> test/XixiDesign02CeiGolden.t.sol:54:49:",
+    "  --> test/XixiDesign02CeiGolden.t.sol:54:75:",
+    "  --> test/XixiDesign02Q2Stranding.t.sol:77:49:",
+    "  --> test/XixiDesign02Q2Stranding.t.sol:77:75:",
+    "  --> test/XixiDesign02Q2Stranding.t.sol:38:5:",
+    "  --> test/XixiDesign02Q2Stranding.t.sol:39:5:",
+    "  --> test/XixiDesign02Q2StrandingFast.t.sol:46:5:",
+    "  --> test/XixiDesign02Q2StrandingFast.t.sol:47:5:",
+    "Ran 1 test for test/XixiDesign02CeiGolden.t.sol:CeiReentrancyGoldenTest",
+    "Ran 4 tests for test/XixiDesign02Q2Stranding.t.sol:SafeERC20StrandingTest",
+    "Ran 3 tests for test/XixiDesign02Q2StrandingFast.t.sol:FastTwinStrandingTest",
+    "| contracts/SafeERC20Minimal.sol         | 100.00% (8/8)     | 100.00% (10/10)   | 100.00% (2/2)    | 100.00% (2/2)    |",
+    "| test/XixiDesign02CeiGolden.t.sol       | 100.00% (31/31)   | 100.00% (37/37)   | 60.00% (3/5)     | 100.00% (11/11)  |",
+    "| test/XixiDesign02Q2Stranding.t.sol     | 97.22% (35/36)    | 97.67% (42/43)    | 75.00% (3/4)     | 94.74% (18/19)   |",
+    "| test/XixiDesign02Q2StrandingFast.t.sol | 91.67% (11/12)    | 92.86% (13/14)    | 50.00% (2/4)     | 87.50% (7/8)     |"
+  ],
+  "forge_full_suite": "rc=0 green=True",
+  "verdict": "harness dedupe + unproven revert-bubble class now golden-covered"
+}

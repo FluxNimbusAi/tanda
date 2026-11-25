@@ -53,31 +53,11 @@ contract FeeToken {
     function transferFrom(address f, address t, uint256 a) external returns (bool) { _move(f, t, a); return true; }
 }
 
-/// @notice Q1 golden: reentering token - transfer() calls bill.claimSettlement again.
-contract ReentrantToken {
-    mapping(address => uint256) public balanceOf;
-    mapping(address => mapping(address => uint256)) public allowance;
-    bool public entered;
-    bool public innerClaimReverted;
-    address public bill;
-    function setBill(address b) external { bill = b; }
-    function mint(address to, uint256 a) external { balanceOf[to] += a; }
-    function approve(address sp, uint256 a) external returns (bool) { allowance[msg.sender][sp] = a; return true; }
-    function transferFrom(address f, address t, uint256 a) external returns (bool) {
-        require(balanceOf[f] >= a && allowance[f][msg.sender] >= a, "no");
-        balanceOf[f] -= a; balanceOf[t] += a; allowance[f][msg.sender] -= a; return true;
-    }
-    function transfer(address to, uint256 a) external returns (bool) {
-        if (!entered) {
-            entered = true;                    // first real payout only
-                (bool ok2,) = bill.call(abi.encodeWithSignature("claimSettlement(uint256)", 0));
-            innerClaimReverted = !ok2;
-            entered = false;
-        }
-        require(balanceOf[msg.sender] >= a, "insufficient");
-        balanceOf[msg.sender] -= a; balanceOf[to] += a; return true;
-    }
-}
+/// @notice Reentrancy golden lives in XixiDesign02CeiGolden.t.sol:14-37 (executed at :84, assert
+///         innerClaimReverted). The byte-identical local duplicate was removed ENGINE-27:
+///         single adversarial-mock locus, no drift. Dead NoReturnToken.transfer revert arm
+///         (ln 23 branch) is harness-unreachable: bill payout always has escrow >= amount, and
+///         the mock has no burn path - pinned dead-defense, per 26A language.
 
 abstract contract Base3 is Test {
     TandaBillFactory factory;
@@ -159,6 +139,24 @@ contract SafeERC20StrandingTest is Base3 {
         uint256 before = t.balanceOf(alice);
         vm.prank(alice); bill.claimSettlement(0);
         assertEq(t.balanceOf(alice) - before, 99e6);
+    }
+
+    function test_fund_escrow_reverting_token_surfaces_typed_golden() public {
+        // ENGINE-27: revert-bubble class - token reverts INSIDE the low-level call.
+        // SafeERC20Minimal must surface it as SafeERC20Failed(token, Error("no") data),
+        // never as success. Prior goldens proved empty-ret success + explicit-false only.
+        NoReturnToken t = new NoReturnToken();
+        t.mint(owner, 300e6);
+        TandaBillV2 bill = _deployWith(address(t));
+        vm.startPrank(owner);
+        bill.addExpense(300e6);
+        vm.expectRevert(abi.encodeWithSelector(
+            SafeERC20Minimal.SafeERC20Failed.selector,
+            address(t),
+            abi.encodeWithSelector(bytes4(0x08c379a0), "no")
+        ));
+        bill.fundEscrow(300e6);
+        vm.stopPrank();
     }
 
     function _claimed(TandaBillV2 bill, uint256 seat) internal view returns (bool) {
