@@ -1,0 +1,149 @@
+{
+  "card": "t_79ae6a38",
+  "tick_utc": "2026-11-24T22:07:14Z",
+  "repo": "tanda-sync",
+  "head": "8fc56676e4bb7a04dbe409d0046d188292a55424",
+  "service": {
+    "listener_pid": "20204",
+    "uptime_s_sampleB": 1340.2
+  },
+  "chain": {
+    "rpc": "https://worldchain-sepolia.g.alchemy.com/public",
+    "chainId": 4801,
+    "note": "chain-480 mainnet heads must NEVER anchor 4801 lag claims (false-STALL class, 2026-11-24 tick)"
+  },
+  "progress": {
+    "cursor_a": 37505280,
+    "cursor_b": 37505303,
+    "head_a": 37505282,
+    "head_b": 37505304,
+    "lag": 1,
+    "lag_bucket": "OK"
+  },
+  "witness_bill": "0xd1b746eee830b7cd0b9117b33c9d1e20b9456358",
+  "counters": {
+    "bills_indexed": 23,
+    "seat_grants": 13,
+    "verifications": 20
+  },
+  "checks": [
+    {
+      "check": "probe RPC eth_chainId == 4801 (sepolia, NOT mainnet 480)",
+      "got": 4801,
+      "want": 4801,
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "single :8096 LISTENING socket",
+      "got": 1,
+      "want": 1,
+      "pass": true,
+      "detail": "['  TCP    127.0.0.1:8096         0.0.0.0:0              LISTENING       20204']"
+    },
+    {
+      "check": "GET /health -> 200",
+      "got": 200,
+      "want": 200,
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "health.chain_id == 4801",
+      "got": 4801,
+      "want": 4801,
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "GET /health (sample B) -> 200",
+      "got": 200,
+      "want": 200,
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "cursor advances (watch lane live, STALE-LISTENER gate)",
+      "got": true,
+      "want": true,
+      "pass": true,
+      "detail": "37505280 -> 37505303 (+23 in 45s)"
+    },
+    {
+      "check": "chain head advances (RPC live)",
+      "got": true,
+      "want": true,
+      "pass": true,
+      "detail": "37505282 -> 37505304"
+    },
+    {
+      "check": "lag bucket under STALL threshold 4096 (chain-correct anchor)",
+      "got": true,
+      "want": true,
+      "pass": true,
+      "detail": "lag=1 bucket=OK (BILL_INDEX_LAG_OK=64)"
+    },
+    {
+      "check": "witness bill exists (settlements table)",
+      "got": true,
+      "want": true,
+      "pass": true,
+      "detail": "0xd1b746eee830b7cd0b9117b33c9d1e20b9456358"
+    },
+    {
+      "check": "bills_indexed == COUNT(*) bill_index",
+      "got": 23,
+      "want": 23,
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "seat_grants == COUNT(*) seat_grants",
+      "got": 13,
+      "want": 13,
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "verifications == COUNT(*) idkit_verifications",
+      "got": 20,
+      "want": 20,
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "GET /api/settlements?bill=<witness> -> 200",
+      "got": 200,
+      "want": 200,
+      "pass": true,
+      "detail": "{\"bill\": \"0xd1b746eee830b7cd0b9117b33c9d1e20b9456358\", \"page\": 1, \"page_size\": 20, \"total_settlements\": 1, \"total_events\": 7, \"settlements\": [{\"bill_id\": \"0xd1b"
+    },
+    {
+      "check": "GET /settlements/<bill> -> 200",
+      "got": 200,
+      "want": 200,
+      "pass": true,
+      "detail": "{\"bill\": \"0xd1b746eee830b7cd0b9117b33c9d1e20b9456358\", \"settlements\": [{\"bill_id\": \"0xd1b746eee830b7cd0b9117b33c9d1e20b9456358\", \"settlement_id\": 0, \"user_op_ha"
+    },
+    {
+      "check": "bare GET /settlements -> 404 BY DESIGN on indexer (host-exact law)",
+      "got": 404,
+      "want": 404,
+      "pass": true,
+      "detail": "{'error': 'not found'}"
+    },
+    {
+      "check": "POST /bills '{}' -> 400 bad user_op_hash (W8 ingest gate intact)",
+      "got": true,
+      "want": true,
+      "pass": true,
+      "detail": "{'error': 'bad user_op_hash'}"
+    }
+  ],
+  "totals": {
+    "checks": 16,
+    "passed": 16,
+    "failed": 0
+  },
+  "verdict": "PASS"
+}

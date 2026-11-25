@@ -1,0 +1,45 @@
+{
+  "cards": "t_57f4bdec",
+  "date_utc": "2026-11-24T23:57:19Z",
+  "files": {
+    "FastTandaBillV2.sol": {
+      "bare_transfer_sites": [],
+      "bytes_lf": 24101,
+      "safe_transfer_uses": 3,
+      "sha256_LF": "699bab40f222e79fb5916f111b74d0a0276661ab6151ffb6ba554d26feacdbd8",
+      "using_directives": []
+    },
+    "SafeERC20Minimal.sol": {
+      "bare_transfer_sites": [],
+      "bytes_lf": 2532,
+      "safe_transfer_uses": 0,
+      "sha256_LF": "7e08fc51e49bef1173ac60b4d08a9c4f28b129427ed10c315a4b6c8ea8e8e1d8",
+      "using_directives": []
+    },
+    "TandaBill.sol": {
+      "bare_transfer_sites": [],
+      "bytes_lf": 13255,
+      "safe_transfer_uses": 2,
+      "sha256_LF": "645c2fc34715a25704b1fa4ac9327752cda08aa95ad5f43b0d16cac2cfa5bfec",
+      "using_directives": []
+    },
+    "TandaBillFactory.sol": {
+      "bare_transfer_sites": [],
+      "bytes_lf": 3368,
+      "safe_transfer_uses": 0,
+      "sha256_LF": "4121af0521ff554b64bf54c0ae87dc87bc751428e569e340c3af65cbcaa979ea",
+      "using_directives": []
+    },
+    "TandaBillV2.sol": {
+      "bare_transfer_sites": [],
+      "bytes_lf": 31681,
+      "safe_transfer_uses": 3,
+      "sha256_LF": "1e965cad728ad23e278024eda248e6b5483c16d0689cc0239824259a32c28cfa",
+      "using_directives": []
+    }
+  },
+  "head": "c468fda2a800809a2c92aa122e20607ab0e66822",
+  "open_defects": [],
+  "scan": "TWIN_CONTRACT_SAFEERC20",
+  "verdict": "CLEAN"
+}
