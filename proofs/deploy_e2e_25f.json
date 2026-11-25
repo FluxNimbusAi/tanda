@@ -1,0 +1,57 @@
+{
+  "card": "t_6f761d2d",
+  "tick": "ENGINE 25F",
+  "ran_utc": "2026-11-25T17:11:59Z",
+  "head": "4072fc724f3feb9c62dc174b01cfe305d4362888",
+  "toolchain": "forge/anvil 1.9.0 (6056c5845)",
+  "chain_id": 31337,
+  "purpose": "anvil leg promised by TICK-1125-5 (commit 4072fc724): forge script --broadcast exercises the 8 residual harness-unreachable production arms (7x script/TandaDeploy.s.sol L45/46/47/49/50, 1x script/TandaDeployV2.s.sol L28) on a live node. forge coverage is test-path-only, so the gaps_after ledger is UNCHANGED by this run; this file is E2E proof of the deploy surface.",
+  "deploy_param": {
+    "USDC_ADDRESS": "0x66145f38cBAC35Ca6F1Dfb4914dF98F1614aeA88",
+    "note": "canonical 4801 USDC address as constructor param only; no fork state"
+  },
+  "legs": {
+    "TandaDeploy.s.sol": {
+      "receipts": [
+        {
+          "contract": "TandaBill",
+          "address": "0x5fbdb2315678afecb367f032d93f642f64180aa3",
+          "tx": "0xac0ead8df84f225a28969c894612e8b8942f0b620ac904eadd9422bea81666c3",
+          "block": 1,
+          "gasUsed": 1115225,
+          "status": "0x1"
+        }
+      ],
+      "sender": "0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266 (anvil acct0, public demo key)",
+      "all_success": true
+    },
+    "TandaDeployV2.s.sol": {
+      "receipts": [
+        {
+          "contract": "TandaBillV2",
+          "address": "0xe7f1725e7734ce288f8367e1bb143e90bb3f0512",
+          "tx": "0x1e15eaab90eebe0a3ec44690da4e569f70f3859c6efb61b8fdd84327777d915e",
+          "block": 2,
+          "gasUsed": 2436535,
+          "status": "0x1"
+        },
+        {
+          "contract": "TandaBillFactory",
+          "address": "0x9fe46736679d2d9a65f0992f2272de9f3c7fa6e0",
+          "tx": "0x1f44c7ccdb5d56ee2fb18c4bd271ea13bfe92306593b732a9b25fa50c19ed454",
+          "block": 3,
+          "gasUsed": 357917,
+          "status": "0x1"
+        }
+      ],
+      "sender": "0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266 (anvil acct0, public demo key)",
+      "all_success": true
+    }
+  },
+  "commands": [
+    "anvil --port 8545 --chain-id 31337",
+    "USDC_ADDRESS=0x66145f38cBAC35Ca6F1Dfb4914dF98F1614aeA88 forge script script/TandaDeploy.s.sol   --rpc-url http://127.0.0.1:8545 --private-key <ANVIL_ACCT0_PUBLIC_DEMO_KEY> --broadcast --slow --json",
+    "USDC_ADDRESS=0x66145f38cBAC35Ca6F1Dfb4914dF98F1614aeA88 forge script script/TandaDeployV2.s.sol --rpc-url http://127.0.0.1:8545 --private-key <ANVIL_ACCT0_PUBLIC_DEMO_KEY> --broadcast --slow --json"
+  ],
+  "verdict": "GREEN"
+}
