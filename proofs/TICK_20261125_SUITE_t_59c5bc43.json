@@ -1,0 +1,38 @@
+{
+  "board_census": {
+    "note": "all gated/blocked: t_5d8189f1 SEAT-GATE dark until portal trio; t_b520db33 DESIGN-E ordering; 3 AgentMail cards + t_a146b4d8 in default lane",
+    "open_cards": 6
+  },
+  "card": "t_59c5bc43",
+  "forge_version": "1.9.0 commit 6056c5845d34205a83cf7108042adb137325c9df",
+  "head": "fd28c983ee83ee6ef98f6b26981f0cd317d46584",
+  "origin_main": "fd28c983ee83ee6ef98f6b26981f0cd317d46584",
+  "per_suite_results": 18,
+  "suite_summary": {
+    "failed": 0,
+    "passed": 243,
+    "rc": 0,
+    "skipped": 0,
+    "suites": 18,
+    "total": 243
+  },
+  "sync": true,
+  "tick_utc": "2026-11-25T06:44:37Z",
+  "twin_contract_recheck": {
+    "bare_call_sites": 0,
+    "comment_only_mentions": [
+      {
+        "file": "contracts/SafeERC20Minimal.sol",
+        "kind": "/// @dev doc",
+        "line": 11
+      },
+      {
+        "file": "contracts/TandaBill.sol",
+        "kind": "// comment",
+        "line": 217
+      }
+    ],
+    "scan_scope": "git-tracked .sol excluding lib/ (25 project files)",
+    "verdict": "CLEAN - no open defect lines; consistent with landed receipt 612c09f93"
+  }
+}
