@@ -1,0 +1,73 @@
+{
+ "base_sha_for_delta": "df155635",
+ "card": "t_d1647c1b",
+ "ci_readback_head": [
+  {
+   "conclusion": "success",
+   "name": "CI",
+   "status": "completed"
+  }
+ ],
+ "delta_files": [
+  "proofs/TICK_20261125_ENG3_t_6b638b55.json",
+  "test/SeatLedgerIntegrity25D.t.sol"
+ ],
+ "head_sha": "d3785ef7998e38421b16353eafc5c4db94d293d9",
+ "indexer_hb1": {
+  "bucket": "idx:lag",
+  "chain_id": 4801,
+  "cursor": "MOVING",
+  "cursor_samples": [
+   37533361,
+   37533363
+  ],
+  "lag_blocks": 2,
+  "note": "head-lag <= LAG_OK=64",
+  "port": 8096,
+  "status": "UP"
+ },
+ "prior_proof_baseline": {
+  "card": "t_6b638b55",
+  "head": "df155635",
+  "note": "250 @ df155635 (TICK-1125-3); 25D added 4 -> expected 254",
+  "passed": 250
+ },
+ "python_suite": {
+  "errors": 0,
+  "failures": 0,
+  "ran": 188,
+  "rc": 0,
+  "runner": "python -m unittest discover -s tests",
+  "skipped": 0,
+  "verdict": "OK"
+ },
+ "repo": "FluxNimbusAi/tanda",
+ "run_utc": "2026-11-25T13:43:00Z",
+ "secret_sweep_delta": {
+  "bytes_scanned": 16443,
+  "classified_hits": [
+   [
+    "proofs/TICK_20261125_ENG3_t_6b638b55.json",
+    "git-sha1 prose"
+   ],
+   [
+    "proofs/TICK_20261125_ENG3_t_6b638b55.json",
+    "sha256-class receipt"
+   ]
+  ],
+  "files": 2,
+  "vault_path_excluded": true,
+  "verdict": "clean (all hits classified legitimate)"
+ },
+ "suite": {
+  "failed": 0,
+  "log": "forge_25e.log",
+  "log_bytes_LF": 25171,
+  "log_native_LF": true,
+  "log_sha256_LF": "d08852d447a63bff907f33f07b605eed30e033d121484774a85dde2c4d994bda",
+  "passed": 254,
+  "skipped": 0,
+  "suites": 22,
+  "total": 254
+ }
+}
