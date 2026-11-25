@@ -1,0 +1,15 @@
+{
+ "bytes_scanned": 16109616,
+ "card": "t_4bc6a3fa",
+ "family": "security-sweep",
+ "files_scanned": 1091,
+ "head": "0e329018daec2db6e22bb70a0fc411603f73bba4",
+ "hits": [],
+ "hits_total": 0,
+ "method": "os.walk traversal; vault-path components and .git/out/cache/broadcast/node_modules excluded; binary ext + >2MB files skipped; 10 regex classes; hash-context classifier per secret-scan law",
+ "repo": "FluxNimbusAi/tanda (tree tanda-sync)",
+ "review_class_hits": 0,
+ "tick_utc": "2026-11-25T04:49:54Z",
+ "vault_path_components_skipped": 0,
+ "verdict": "CLEAN: zero secret-class hits (all hash-shaped hits classified receipt-context legal)"
+}
