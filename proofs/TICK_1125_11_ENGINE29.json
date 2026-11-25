@@ -1,0 +1,57 @@
+{
+  "arms_adjudication": {
+    "TandaDeploy.run L45": "dead-defense: bill.token() == constructor arg == local usdc by code",
+    "TandaDeploy.run L47": "dead-defense: fresh-bill invariant (0 seats)",
+    "TandaDeployV2.run L28": "dead-defense: factory lineage set in constructor one line above"
+  },
+  "attempt1_corrections": "ProbeEng29.t.sol of attempt 1 never compiled (4 invalid checksums); its verdict superseded by this isolated, control-matched, binary-audited refutation.",
+  "card": "TICK-1125-11 ENGINE 29",
+  "date_utc": "2026-11-25T21:09:18Z",
+  "forge_suite_reverification": {
+    "command": "forge test (full suite, --root tanda-check)",
+    "failed": 0,
+    "head_at_run": "a27a6912d4dd3fa88e165c22be51bc4968730861",
+    "note": "independent re-verification by Nimbus engine tick; tree clean, golden NOT modified by this card (refutation-only close)",
+    "output_bytes": 26672,
+    "output_sha256": "d23b2fc11e47869a4d488829bec315b903c724a3a84191c1c3afd75220ee401b",
+    "passed": 256,
+    "rc": 0,
+    "seconds": 115.6,
+    "skipped": 0,
+    "suites": 23,
+    "total_tests": 256
+  },
+  "handoff_ledger_verbatim": "## ENGINE 29 handoff \u2014 thesis REFUTED with isolated evidence (attempt 2; golden NOT modified; tree clean @ a27a6912d, all probes deleted)\n\n### Measurements this tick (reproducible; probe files removed after verdict)\n1. **Broadcast CREATE slots are position-keyed & deterministic** per deploy-position in a serialized single-suite run (`this` = 0x7FA9385bE102ac3EAc297483Dd6233D62b3e1496 in both ProbeEng29b/c and golden suites \u2014 identical logs):\n   - pos1 = 0x34A1D3fff3958843C43aD80F30b94c510645C316 (= 26A \"MEASURED\", case-3 bill, V2 impl in case-5 \u2014 reproduced 4\u00d7 across 2 files, 4 runs)\n   - pos2 = 0x90193C961A926261B756D1E5bb255e67ff9498A1 (V2 factory, golden case-5)\n   - pos3 = 0xA8452Ec99ce0C64f20701dB7dD3abDb607c00496 (26A delegatecall bill)\n   - pos4 = 0xBb2180ebd78ce97360503434eD37fcf4a1Df61c3 (next CALL-shape bill)\n2. **expectRevert rolls back both the created code AND the position counter** \u2192 arms could chain on reclaimed slots. snapshot/revertTo also rewinds the counter (stage-2 logs) but contaminated arm ordering \u2014 not the real blocker.\n3. **THE WALL (isolated, minimal, control-matched):** `vm.mockCall(NEXT_CREATE_SLOT, \u2026)` installed before `run()` makes the broadcast CREATE itself revert **empty data** (~1.04B gas; dies before the \"deployed at\" L40 log). Control: identical position without the pre-mock \u2192 normal \"Owner mismatch\" revert. So the thesis lever \"CALL-shape predicted-CREATE address + vm.mockCall on the getter\" is mechanically infeasible: Foundry treats a mock-registered address as occupied \u2192 deploy collision. Probe stage-3b = 15-line proof.\n4. **No escape cheat in this binary** \u2014 byte audit of forge.exe 1.9.0: `mockCallInit` \u00d70, `deployMock` \u00d70 (controls: `mockCall` \u00d741, `clearMockedCalls` \u00d73). Vendored `lib/forge-std/src/Vm.sol` also lacks both + `clearMockCall` (only global `clearMockedCalls` @L2506, useless for same-tx ordering). Per 1125-5 precedent (transact arities audit), declaring missing cheats in Vm.sol just yields \"unknown cheatcode\".\n5. L45 `bill.token()` \u2261 constructor-arg \u2261 local `usdc` by code; L47 fresh-bill invariant; V2-L28 factory lineage set in constructor one line above \u2014 FAIL arms remain **dead-defense, unreachable in forge test @1.9.0**. 26A classification stands, now with receipts.\n\n### Attempt-1 misdirections corrected\n- Its `ProbeEng29.t.sol` NEVER COMPILED (4 invalid checksums \u2014 fixed & reran). Its \"unverified\" verdict lacked evidence; mine is isolated + control-matched + binary-audited.\n- Its \"dead-defense even in CALL-shape\" conclusion is now actually TRUE, but for the mock-CREATE-collision reason above, not the RLP-formula reason.\n\n### Decision gate (why blocked)\nBody deliverables (golden extension + coverage re-sweep) presume reachable arms. Options for Flux/owner:\n- **(A recommended)** Close as REFUTED: I land `proofs/TICK_1125_11_ENGINE29.json` (this ledger, sha256-LF from disk, no code change \u2192 suite stays 256/256 @a27a6912d) + commit/push w/ Swarm-Card trailer. 26A pins get a one-line amendment (\"refutation receipts in ENGINE 29 proof\").\n- **(B)** Toolchain lane: upgrade foundry/forge-std to a build exporting `mockCallInit`, then pos-slot goldens are ~20 lines (arm A/B/C code already drafted, verified syntactically in probe c up to the wall).\n- (C) untested marginal: `mockCall(...,injectCode=true)` on the slot \u2014 expected same collision; 1 probe run if B rejected.",
+  "head": "a27a6912d4dd3fa88e165c22be51bc4968730861",
+  "kanban_id": "t_8c772a64",
+  "law_refs": [
+    "swarm-default-action-loop closing law (honest refuted close is valid)",
+    "26A gaps_after_26a.json stands",
+    "amendment of 26A pins deferred to Flux anchor lane (do not silently edit committed receipts)"
+  ],
+  "measurements": {
+    "binary_audit_forge_1_9_0": {
+      "clearMockedCalls": 3,
+      "deployMock": 0,
+      "mockCall": 41,
+      "mockCallInit": 0,
+      "vendored_Vm_sol": "no mockCallInit/deployMock/clearMockCall; only global clearMockedCalls @L2506 (useless for same-tx ordering)"
+    },
+    "broadcast_create_slots": {
+      "law": "position-keyed & deterministic per deploy-position in serialized single-suite run; this = 0x7FA9385bE102ac3EAc297483Dd6233D62b3e1496 reproduced in both probe files and golden suite",
+      "pos1": "0x34A1D3fff3958843C43aD80F30b94c510645C316",
+      "pos2": "0x90193C961A926261B756D1E5bb255e67ff9498A1",
+      "pos3": "0xA8452Ec99ce0C64f20701dB7dD3abDb607c00496",
+      "pos4": "0xBb2180ebd78ce97360503434eD37fcf4a1Df61c3"
+    },
+    "revert_slot_semantics": "expectRevert rolls back created code AND the position counter; snapshot/revertTo also rewinds but contaminates arm ordering (not the blocker)",
+    "wall": "vm.mockCall(NEXT_CREATE_SLOT, ...) installed before run() -> broadcast CREATE reverts empty data, dies before L40 log; control at same position without pre-mock -> normal Owner-mismatch revert. Isolated stage-3b 15-line proof."
+  },
+  "options_disposition": {
+    "A_close_as_refuted": "EXECUTED by this commit (receipt-only landing, no code change, suite stays 256/256)",
+    "B_toolchain_upgrade_for_mockCallInit": "DEFERRED - new card candidate if commander wants pos-slot goldens; arm A/B/C code drafted in probe c",
+    "C_injectCode_mock_on_slot": "REJECTED untested-expected-same-collision"
+  },
+  "summary": "The 3 production FAIL arms (TandaDeploy.run L45 Token-mismatch, L47 Should-start-with-0-seats, TandaDeployV2.run L28 Impl-mismatch) remain dead-defense, unreachable-by-construction in forge 1.9.0. 26A classification stands. Proposed lever (CALL-shape predicted-CREATE address + vm.mockCall on immutables getter) is mechanically infeasible: Foundry treats a mock-registered address as occupied, so the broadcast CREATE at that predicted slot reverts with empty data (~1.04B gas) before any arm logic.",
+  "verdict": "THESIS_REFUTED"
+}
