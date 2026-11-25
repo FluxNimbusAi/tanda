@@ -1,0 +1,769 @@
+{
+  "version": 1,
+  "files": {
+    "script/TandaDeploy.s.sol": [
+      {
+        "kind": "branch",
+        "contract": "TandaDeploy",
+        "function": "run",
+        "line_start": 45,
+        "line_end": 45,
+        "byte_start": 2290,
+        "byte_end": 2346,
+        "snippet": "require(address(bill.token()) == usdc, \"Token mismatch\")",
+        "branch_id": 1,
+        "path_id": 0
+      },
+      {
+        "kind": "branch",
+        "contract": "TandaDeploy",
+        "function": "run",
+        "line_start": 47,
+        "line_end": 47,
+        "byte_start": 2419,
+        "byte_end": 2484,
+        "snippet": "require(bill.activeSeatCount() == 0, \"Should start with 0 seats\")",
+        "branch_id": 3,
+        "path_id": 0
+      }
+    ],
+    "script/TandaDeployV2.s.sol": [
+      {
+        "kind": "branch",
+        "contract": "TandaDeployV2",
+        "function": "run",
+        "line_start": 28,
+        "line_end": 28,
+        "byte_start": 1140,
+        "byte_end": 1216,
+        "snippet": "require(address(factory.implementation()) == address(impl), \"Impl mismatch\")",
+        "branch_id": 1,
+        "path_id": 0
+      }
+    ],
+    "test/AbiSelectorLock25C.t.sol": [
+      {
+        "kind": "branch",
+        "contract": "Mock25C",
+        "function": "transfer",
+        "line_start": 20,
+        "line_end": 20,
+        "byte_start": 1108,
+        "byte_end": 1164,
+        "snippet": "require(balanceOf[msg.sender] >= amount, \"insufficient\")",
+        "branch_id": 0,
+        "path_id": 0
+      },
+      {
+        "kind": "branch",
+        "contract": "Mock25C",
+        "function": "transferFrom",
+        "line_start": 24,
+        "line_end": 24,
+        "byte_start": 1353,
+        "byte_end": 1403,
+        "snippet": "require(balanceOf[from] >= amount, \"insufficient\")",
+        "branch_id": 1,
+        "path_id": 0
+      },
+      {
+        "kind": "branch",
+        "contract": "Mock25C",
+        "function": "transferFrom",
+        "line_start": 25,
+        "line_end": 25,
+        "byte_start": 1413,
+        "byte_end": 1472,
+        "snippet": "require(allowance[from][msg.sender] >= amount, \"allowance\")",
+        "branch_id": 2,
+        "path_id": 0
+      }
+    ],
+    "test/ClaimableViewLadder.t.sol": [
+      {
+        "kind": "branch",
+        "contract": "LadderMockToken",
+        "function": "transfer",
+        "line_start": 16,
+        "line_end": 16,
+        "byte_start": 631,
+        "byte_end": 682,
+        "snippet": "require(balanceOf[msg.sender] >= a, \"insufficient\")",
+        "branch_id": 0,
+        "path_id": 0
+      },
+      {
+        "kind": "branch",
+        "contract": "LadderMockToken",
+        "function": "transferFrom",
+        "line_start": 23,
+        "line_end": 23,
+        "byte_start": 869,
+        "byte_end": 911,
+        "snippet": "require(balanceOf[f] >= a, \"insufficient\")",
+        "branch_id": 1,
+        "path_id": 0
+      },
+      {
+        "kind": "branch",
+        "contract": "LadderMockToken",
+        "function": "transferFrom",
+        "line_start": 24,
+        "line_end": 24,
+        "byte_start": 921,
+        "byte_end": 972,
+        "snippet": "require(allowance[f][msg.sender] >= a, \"allowance\")",
+        "branch_id": 2,
+        "path_id": 0
+      }
+    ],
+    "test/EscrowInvariant.t.sol": [
+      {
+        "kind": "branch",
+        "contract": "InvMockToken",
+        "function": "transfer",
+        "line_start": 19,
+        "line_end": 19,
+        "byte_start": 714,
+        "byte_end": 770,
+        "snippet": "require(balanceOf[msg.sender] >= amount, \"insufficient\")",
+        "branch_id": 0,
+        "path_id": 0
+      },
+      {
+        "kind": "branch",
+        "contract": "InvMockToken",
+        "function": "transferFrom",
+        "line_start": 26,
+        "line_end": 26,
+        "byte_start": 976,
+        "byte_end": 1026,
+        "snippet": "require(balanceOf[from] >= amount, \"insufficient\")",
+        "branch_id": 1,
+        "path_id": 0
+      },
+      {
+        "kind": "branch",
+        "contract": "InvMockToken",
+        "function": "transferFrom",
+        "line_start": 27,
+        "line_end": 27,
+        "byte_start": 1036,
+        "byte_end": 1095,
+        "snippet": "require(allowance[from][msg.sender] >= amount, \"allowance\")",
+        "branch_id": 2,
+        "path_id": 0
+      }
+    ],
+    "test/MainlineRefundBranchOrder.t.sol": [
+      {
+        "kind": "branch",
+        "contract": "MockTokenRefundOrder",
+        "function": "transfer",
+        "line_start": 21,
+        "line_end": 21,
+        "byte_start": 750,
+        "byte_end": 806,
+        "snippet": "require(balanceOf[msg.sender] >= amount, \"insufficient\")",
+        "branch_id": 0,
+        "path_id": 0
+      },
+      {
+        "kind": "branch",
+        "contract": "MockTokenRefundOrder",
+        "function": "transferFrom",
+        "line_start": 28,
+        "line_end": 28,
+        "byte_start": 1012,
+        "byte_end": 1062,
+        "snippet": "require(balanceOf[from] >= amount, \"insufficient\")",
+        "branch_id": 1,
+        "path_id": 0
+      },
+      {
+        "kind": "branch",
+        "contract": "MockTokenRefundOrder",
+        "function": "transferFrom",
+        "line_start": 29,
+        "line_end": 29,
+        "byte_start": 1072,
+        "byte_end": 1131,
+        "snippet": "require(allowance[from][msg.sender] >= amount, \"allowance\")",
+        "branch_id": 2,
+        "path_id": 0
+      }
+    ],
+    "test/P13SplitLockCoverage.t.sol": [
+      {
+        "kind": "statement",
+        "contract": "SplitLockMockToken",
+        "function": "transfer",
+        "line_start": 21,
+        "line_end": 21,
+        "byte_start": 824,
+        "byte_end": 836,
+        "snippet": "return false"
+      },
+      {
+        "kind": "branch",
+        "contract": "SplitLockMockToken",
+        "function": "transfer",
+        "line_start": 21,
+        "line_end": 21,
+        "byte_start": 788,
+        "byte_end": 836,
+        "snippet": "if (balanceOf[msg.sender] < amount) return false",
+        "branch_id": 0,
+        "path_id": 0
+      },
+      {
+        "kind": "statement",
+        "contract": "SplitLockMockToken",
+        "function": "transferFrom",
+        "line_start": 30,
+        "line_end": 30,
+        "byte_start": 1167,
+        "byte_end": 1179,
+        "snippet": "return false"
+      },
+      {
+        "kind": "branch",
+        "contract": "SplitLockMockToken",
+        "function": "transferFrom",
+        "line_start": 30,
+        "line_end": 30,
+        "byte_start": 1145,
+        "byte_end": 1179,
+        "snippet": "if (allowed < amount) return false",
+        "branch_id": 2,
+        "path_id": 0
+      },
+      {
+        "kind": "statement",
+        "contract": "SplitLockMockToken",
+        "function": "transferFrom",
+        "line_start": 33,
+        "line_end": 33,
+        "byte_start": 1289,
+        "byte_end": 1301,
+        "snippet": "return false"
+      },
+      {
+        "kind": "branch",
+        "contract": "SplitLockMockToken",
+        "function": "transferFrom",
+        "line_start": 33,
+        "line_end": 33,
+        "byte_start": 1259,
+        "byte_end": 1301,
+        "snippet": "if (balanceOf[from] < amount) return false",
+        "branch_id": 3,
+        "path_id": 0
+      }
+    ],
+    "test/Permit2Funding.t.sol": [
+      {
+        "kind": "branch",
+        "contract": "TestToken",
+        "function": "transfer",
+        "line_start": 23,
+        "line_end": 23,
+        "byte_start": 963,
+        "byte_end": 1019,
+        "snippet": "require(balanceOf[msg.sender] >= amount, \"insufficient\")",
+        "branch_id": 0,
+        "path_id": 0
+      },
+      {
+        "kind": "branch",
+        "contract": "TestToken",
+        "function": "transferFrom",
+        "line_start": 30,
+        "line_end": 30,
+        "byte_start": 1225,
+        "byte_end": 1275,
+        "snippet": "require(balanceOf[from] >= amount, \"insufficient\")",
+        "branch_id": 1,
+        "path_id": 0
+      },
+      {
+        "kind": "branch",
+        "contract": "TestToken",
+        "function": "transferFrom",
+        "line_start": 31,
+        "line_end": 31,
+        "byte_start": 1285,
+        "byte_end": 1344,
+        "snippet": "require(allowance[from][msg.sender] >= amount, \"allowance\")",
+        "branch_id": 2,
+        "path_id": 0
+      }
+    ],
+    "test/SafeERC20FalseReturnMatrix.t.sol": [
+      {
+        "kind": "branch",
+        "contract": "FlipFalseToken",
+        "function": "transfer",
+        "line_start": 35,
+        "line_end": 35,
+        "byte_start": 1847,
+        "byte_end": 1898,
+        "snippet": "require(balanceOf[msg.sender] >= a, \"insufficient\")",
+        "branch_id": 1,
+        "path_id": 0
+      },
+      {
+        "kind": "branch",
+        "contract": "FlipFalseToken",
+        "function": "transferFrom",
+        "line_start": 42,
+        "line_end": 42,
+        "byte_start": 2109,
+        "byte_end": 2174,
+        "snippet": "require(balanceOf[f] >= a && allowance[f][msg.sender] >= a, \"no\")",
+        "branch_id": 3,
+        "path_id": 0
+      }
+    ],
+    "test/SeatGateLatchGolden.t.sol": [
+      {
+        "kind": "branch",
+        "contract": "LatchMockToken",
+        "function": "transfer",
+        "line_start": 24,
+        "line_end": 24,
+        "byte_start": 1256,
+        "byte_end": 1312,
+        "snippet": "require(balanceOf[msg.sender] >= amount, \"insufficient\")",
+        "branch_id": 0,
+        "path_id": 0
+      },
+      {
+        "kind": "branch",
+        "contract": "LatchMockToken",
+        "function": "transferFrom",
+        "line_start": 28,
+        "line_end": 28,
+        "byte_start": 1497,
+        "byte_end": 1572,
+        "snippet": "require(balanceOf[f] >= amount && allowance[f][msg.sender] >= amount, \"no\")",
+        "branch_id": 1,
+        "path_id": 0
+      }
+    ],
+    "test/SeatLedgerIntegrity25D.t.sol": [
+      {
+        "kind": "branch",
+        "contract": "D25MockToken",
+        "function": "transfer",
+        "line_start": 19,
+        "line_end": 19,
+        "byte_start": 978,
+        "byte_end": 1034,
+        "snippet": "require(balanceOf[msg.sender] >= amount, \"insufficient\")",
+        "branch_id": 0,
+        "path_id": 0
+      },
+      {
+        "kind": "branch",
+        "contract": "D25MockToken",
+        "function": "transferFrom",
+        "line_start": 23,
+        "line_end": 23,
+        "byte_start": 1219,
+        "byte_end": 1294,
+        "snippet": "require(balanceOf[f] >= amount && allowance[f][msg.sender] >= amount, \"no\")",
+        "branch_id": 1,
+        "path_id": 0
+      }
+    ],
+    "test/TandaBill.t.sol": [
+      {
+        "kind": "branch",
+        "contract": "MockToken",
+        "function": "transfer",
+        "line_start": 21,
+        "line_end": 21,
+        "byte_start": 727,
+        "byte_end": 783,
+        "snippet": "require(balanceOf[msg.sender] >= amount, \"insufficient\")",
+        "branch_id": 0,
+        "path_id": 0
+      },
+      {
+        "kind": "branch",
+        "contract": "MockToken",
+        "function": "transferFrom",
+        "line_start": 28,
+        "line_end": 28,
+        "byte_start": 989,
+        "byte_end": 1039,
+        "snippet": "require(balanceOf[from] >= amount, \"insufficient\")",
+        "branch_id": 1,
+        "path_id": 0
+      },
+      {
+        "kind": "branch",
+        "contract": "MockToken",
+        "function": "transferFrom",
+        "line_start": 29,
+        "line_end": 29,
+        "byte_start": 1049,
+        "byte_end": 1108,
+        "snippet": "require(allowance[from][msg.sender] >= amount, \"allowance\")",
+        "branch_id": 2,
+        "path_id": 0
+      }
+    ],
+    "test/TandaBillV2.t.sol": [
+      {
+        "kind": "branch",
+        "contract": "MockToken",
+        "function": "transfer",
+        "line_start": 22,
+        "line_end": 22,
+        "byte_start": 807,
+        "byte_end": 863,
+        "snippet": "require(balanceOf[msg.sender] >= amount, \"insufficient\")",
+        "branch_id": 0,
+        "path_id": 0
+      },
+      {
+        "kind": "branch",
+        "contract": "MockToken",
+        "function": "transferFrom",
+        "line_start": 29,
+        "line_end": 29,
+        "byte_start": 1069,
+        "byte_end": 1119,
+        "snippet": "require(balanceOf[from] >= amount, \"insufficient\")",
+        "branch_id": 1,
+        "path_id": 0
+      },
+      {
+        "kind": "branch",
+        "contract": "MockToken",
+        "function": "transferFrom",
+        "line_start": 30,
+        "line_end": 30,
+        "byte_start": 1129,
+        "byte_end": 1188,
+        "snippet": "require(allowance[from][msg.sender] >= amount, \"allowance\")",
+        "branch_id": 2,
+        "path_id": 0
+      },
+      {
+        "kind": "branch",
+        "contract": "BlockableToken",
+        "function": "transfer",
+        "line_start": 54,
+        "line_end": 54,
+        "byte_start": 1995,
+        "byte_end": 2051,
+        "snippet": "require(balanceOf[msg.sender] >= amount, \"insufficient\")",
+        "branch_id": 4,
+        "path_id": 0
+      }
+    ],
+    "test/Ugly2SeatGateGolden.t.sol": [
+      {
+        "kind": "line",
+        "contract": "SeatGateMockToken",
+        "function": "transfer",
+        "line_start": 23,
+        "line_end": 23,
+        "byte_start": 1185,
+        "byte_end": 1256,
+        "snippet": "function transfer(address to, uint256 amount) external returns (bool) {"
+      },
+      {
+        "kind": "function",
+        "contract": "SeatGateMockToken",
+        "function": "transfer",
+        "line_start": 23,
+        "line_end": 26,
+        "byte_start": 1185,
+        "byte_end": 1407,
+        "snippet": "function transfer(address to, uint256 amount) external returns (bool) {"
+      },
+      {
+        "kind": "line",
+        "contract": "SeatGateMockToken",
+        "function": "transfer",
+        "line_start": 24,
+        "line_end": 24,
+        "byte_start": 1265,
+        "byte_end": 1321,
+        "snippet": "require(balanceOf[msg.sender] >= amount, \"insufficient\")"
+      },
+      {
+        "kind": "branch",
+        "contract": "SeatGateMockToken",
+        "function": "transfer",
+        "line_start": 24,
+        "line_end": 24,
+        "byte_start": 1265,
+        "byte_end": 1321,
+        "snippet": "require(balanceOf[msg.sender] >= amount, \"insufficient\")",
+        "branch_id": 0,
+        "path_id": 0
+      },
+      {
+        "kind": "branch",
+        "contract": "SeatGateMockToken",
+        "function": "transfer",
+        "line_start": 24,
+        "line_end": 24,
+        "byte_start": 1265,
+        "byte_end": 1321,
+        "snippet": "require(balanceOf[msg.sender] >= amount, \"insufficient\")",
+        "branch_id": 0,
+        "path_id": 1
+      },
+      {
+        "kind": "line",
+        "contract": "SeatGateMockToken",
+        "function": "transfer",
+        "line_start": 25,
+        "line_end": 25,
+        "byte_start": 1331,
+        "byte_end": 1362,
+        "snippet": "balanceOf[msg.sender] -= amount"
+      },
+      {
+        "kind": "statement",
+        "contract": "SeatGateMockToken",
+        "function": "transfer",
+        "line_start": 25,
+        "line_end": 25,
+        "byte_start": 1364,
+        "byte_end": 1387,
+        "snippet": "balanceOf[to] += amount"
+      },
+      {
+        "kind": "statement",
+        "contract": "SeatGateMockToken",
+        "function": "transfer",
+        "line_start": 25,
+        "line_end": 25,
+        "byte_start": 1389,
+        "byte_end": 1400,
+        "snippet": "return true"
+      },
+      {
+        "kind": "branch",
+        "contract": "SeatGateMockToken",
+        "function": "transferFrom",
+        "line_start": 28,
+        "line_end": 28,
+        "byte_start": 1506,
+        "byte_end": 1581,
+        "snippet": "require(balanceOf[f] >= amount && allowance[f][msg.sender] >= amount, \"no\")",
+        "branch_id": 1,
+        "path_id": 0
+      }
+    ],
+    "test/V2BoundaryLedgerMatrix.t.sol": [
+      {
+        "kind": "branch",
+        "contract": "BoundaryMockToken",
+        "function": "transfer",
+        "line_start": 16,
+        "line_end": 16,
+        "byte_start": 636,
+        "byte_end": 692,
+        "snippet": "require(balanceOf[msg.sender] >= amount, \"insufficient\")",
+        "branch_id": 0,
+        "path_id": 0
+      },
+      {
+        "kind": "branch",
+        "contract": "BoundaryMockToken",
+        "function": "transferFrom",
+        "line_start": 23,
+        "line_end": 23,
+        "byte_start": 898,
+        "byte_end": 948,
+        "snippet": "require(balanceOf[from] >= amount, \"insufficient\")",
+        "branch_id": 1,
+        "path_id": 0
+      },
+      {
+        "kind": "branch",
+        "contract": "BoundaryMockToken",
+        "function": "transferFrom",
+        "line_start": 24,
+        "line_end": 24,
+        "byte_start": 958,
+        "byte_end": 1017,
+        "snippet": "require(allowance[from][msg.sender] >= amount, \"allowance\")",
+        "branch_id": 2,
+        "path_id": 0
+      }
+    ],
+    "test/V2DefensiveMaskCorners.t.sol": [
+      {
+        "kind": "branch",
+        "contract": "CornerMockToken",
+        "function": "transfer",
+        "line_start": 16,
+        "line_end": 16,
+        "byte_start": 650,
+        "byte_end": 706,
+        "snippet": "require(balanceOf[msg.sender] >= amount, \"insufficient\")",
+        "branch_id": 0,
+        "path_id": 0
+      },
+      {
+        "kind": "branch",
+        "contract": "CornerMockToken",
+        "function": "transferFrom",
+        "line_start": 23,
+        "line_end": 23,
+        "byte_start": 912,
+        "byte_end": 962,
+        "snippet": "require(balanceOf[from] >= amount, \"insufficient\")",
+        "branch_id": 1,
+        "path_id": 0
+      },
+      {
+        "kind": "branch",
+        "contract": "CornerMockToken",
+        "function": "transferFrom",
+        "line_start": 24,
+        "line_end": 24,
+        "byte_start": 972,
+        "byte_end": 1031,
+        "snippet": "require(allowance[from][msg.sender] >= amount, \"allowance\")",
+        "branch_id": 2,
+        "path_id": 0
+      }
+    ],
+    "test/XixiDesign02CeiGolden.t.sol": [
+      {
+        "kind": "branch",
+        "contract": "ReentrantToken",
+        "function": "transferFrom",
+        "line_start": 24,
+        "line_end": 24,
+        "byte_start": 1258,
+        "byte_end": 1323,
+        "snippet": "require(balanceOf[f] >= a && allowance[f][msg.sender] >= a, \"no\")",
+        "branch_id": 0,
+        "path_id": 0
+      },
+      {
+        "kind": "branch",
+        "contract": "ReentrantToken",
+        "function": "transfer",
+        "line_start": 34,
+        "line_end": 34,
+        "byte_start": 1772,
+        "byte_end": 1823,
+        "snippet": "require(balanceOf[msg.sender] >= a, \"insufficient\")",
+        "branch_id": 2,
+        "path_id": 0
+      }
+    ],
+    "test/XixiDesign02Q2Stranding.t.sol": [
+      {
+        "kind": "branch",
+        "contract": "NoReturnToken",
+        "function": "transfer",
+        "line_start": 23,
+        "line_end": 23,
+        "byte_start": 1280,
+        "byte_end": 1331,
+        "snippet": "require(balanceOf[msg.sender] >= a, \"insufficient\")",
+        "branch_id": 0,
+        "path_id": 0
+      },
+      {
+        "kind": "line",
+        "contract": "FalseReturnToken",
+        "function": "transfer",
+        "line_start": 38,
+        "line_end": 38,
+        "byte_start": 2038,
+        "byte_end": 2115,
+        "snippet": "function transfer(address, uint256) external returns (bool) { return false; }"
+      },
+      {
+        "kind": "statement",
+        "contract": "FalseReturnToken",
+        "function": "transfer",
+        "line_start": 38,
+        "line_end": 38,
+        "byte_start": 2100,
+        "byte_end": 2112,
+        "snippet": "return false"
+      },
+      {
+        "kind": "function",
+        "contract": "FalseReturnToken",
+        "function": "transfer",
+        "line_start": 38,
+        "line_end": 38,
+        "byte_start": 2038,
+        "byte_end": 2115,
+        "snippet": "function transfer(address, uint256) external returns (bool) { return false; }"
+      }
+    ],
+    "test/XixiDesign02Q2StrandingFast.t.sol": [
+      {
+        "kind": "branch",
+        "contract": "NoReturnTokenF",
+        "function": "transfer",
+        "line_start": 31,
+        "line_end": 31,
+        "byte_start": 1946,
+        "byte_end": 1997,
+        "snippet": "require(balanceOf[msg.sender] >= a, \"insufficient\")",
+        "branch_id": 0,
+        "path_id": 0
+      },
+      {
+        "kind": "branch",
+        "contract": "NoReturnTokenF",
+        "function": "transferFrom",
+        "line_start": 35,
+        "line_end": 35,
+        "byte_start": 2139,
+        "byte_end": 2204,
+        "snippet": "require(balanceOf[f] >= a && allowance[f][msg.sender] >= a, \"no\")",
+        "branch_id": 1,
+        "path_id": 0
+      },
+      {
+        "kind": "line",
+        "contract": "FalseReturnTokenF",
+        "function": "transfer",
+        "line_start": 46,
+        "line_end": 46,
+        "byte_start": 2705,
+        "byte_end": 2782,
+        "snippet": "function transfer(address, uint256) external returns (bool) { return false; }"
+      },
+      {
+        "kind": "statement",
+        "contract": "FalseReturnTokenF",
+        "function": "transfer",
+        "line_start": 46,
+        "line_end": 46,
+        "byte_start": 2767,
+        "byte_end": 2779,
+        "snippet": "return false"
+      },
+      {
+        "kind": "function",
+        "contract": "FalseReturnTokenF",
+        "function": "transfer",
+        "line_start": 46,
+        "line_end": 46,
+        "byte_start": 2705,
+        "byte_end": 2782,
+        "snippet": "function transfer(address, uint256) external returns (bool) { return false; }"
+      }
+    ]
+  }
+}
