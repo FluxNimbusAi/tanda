@@ -1,0 +1,1393 @@
+{
+  "anchor_ledger_sha256_LF_blob": [
+    {
+      "blob_bytes": 24101,
+      "blob_sha256_LF": "699bab40f222e79fb5916f111b74d0a0276661ab6151ffb6ba554d26feacdbd8",
+      "disk_bytes": 24541,
+      "disk_eq_blob": false,
+      "disk_sha256_raw": "c62ac6372cb41003588858a0dcfbd8c59d4eb3f459cf02e5b02156c645de8e8f",
+      "path": "contracts/FastTandaBillV2.sol"
+    },
+    {
+      "blob_bytes": 2532,
+      "blob_sha256_LF": "7e08fc51e49bef1173ac60b4d08a9c4f28b129427ed10c315a4b6c8ea8e8e1d8",
+      "disk_bytes": 2576,
+      "disk_eq_blob": false,
+      "disk_sha256_raw": "3de6f9e40207fddf1e39585bd8e74f2d3bdd216a6070c8c27531f5c0e0fc13a9",
+      "path": "contracts/SafeERC20Minimal.sol"
+    },
+    {
+      "blob_bytes": 13255,
+      "blob_sha256_LF": "645c2fc34715a25704b1fa4ac9327752cda08aa95ad5f43b0d16cac2cfa5bfec",
+      "disk_bytes": 13518,
+      "disk_eq_blob": false,
+      "disk_sha256_raw": "bf16dd22b0dc7095cf7e21b66bc3c6981dff03422a2cb9bd19e994eaaefe49e1",
+      "path": "contracts/TandaBill.sol"
+    },
+    {
+      "blob_bytes": 3368,
+      "blob_sha256_LF": "4121af0521ff554b64bf54c0ae87dc87bc751428e569e340c3af65cbcaa979ea",
+      "disk_bytes": 3439,
+      "disk_eq_blob": false,
+      "disk_sha256_raw": "4ae7acffdf4fbc20e6953860cc4e9ec2c0daf79df416dada0e3a13d806b80e08",
+      "path": "contracts/TandaBillFactory.sol"
+    },
+    {
+      "blob_bytes": 31681,
+      "blob_sha256_LF": "1e965cad728ad23e278024eda248e6b5483c16d0689cc0239824259a32c28cfa",
+      "disk_bytes": 32240,
+      "disk_eq_blob": false,
+      "disk_sha256_raw": "2a8c609397e981f08207f36051483c5e52c29f9c68b0e2ed47753d91a3aee440",
+      "path": "contracts/TandaBillV2.sol"
+    },
+    {
+      "blob_bytes": 68883,
+      "blob_sha256_LF": "e3647712b1caa50117afe4fbd2c3b9ece4a9fabb9dc5ef97dbb349972e41c83b",
+      "disk_bytes": 70171,
+      "disk_eq_blob": false,
+      "disk_sha256_raw": "60f7076c5b3af31032f796c4c015d3e1003ce69cb632ec828d7790dbb190707a",
+      "path": "services/bill_index.py"
+    }
+  ],
+  "card": "t_b45d97a1",
+  "context": "Twin-scan (SafeERC20 divergence) closed 0-hit @fb2ef5ea same day (t_aeb6a8ba); this sweep covers other danger-pattern families. approve-call and timestamp-arith occurrences are CONTEXTUAL (ledger, not defects) unless unchecked/abused.",
+  "findings": [
+    {
+      "line": 157,
+      "path": "contracts/FastTandaBillV2.sol",
+      "pattern": "timestamp-arith",
+      "text": "// casting to 'uint64' is safe because block.timestamp < 2^64 until year 584 billion"
+    },
+    {
+      "line": 173,
+      "path": "contracts/FastTandaBillV2.sol",
+      "pattern": "inline-assembly",
+      "text": "assembly {"
+    },
+    {
+      "line": 190,
+      "path": "contracts/FastTandaBillV2.sol",
+      "pattern": "timestamp-arith",
+      "text": "// casting to 'uint64' is safe because block.timestamp < 2^64 until year 584 billion"
+    },
+    {
+      "line": 230,
+      "path": "contracts/FastTandaBillV2.sol",
+      "pattern": "timestamp-arith",
+      "text": "bool inWindow = block.timestamp < uint256(last.fullyConfirmedAt) + SETTLEMENT_WINDOW;"
+    },
+    {
+      "line": 249,
+      "path": "contracts/FastTandaBillV2.sol",
+      "pattern": "timestamp-arith",
+      "text": "// casting to 'uint64' is safe because block.timestamp < 2^64 until year 584 billion"
+    },
+    {
+      "line": 313,
+      "path": "contracts/FastTandaBillV2.sol",
+      "pattern": "timestamp-arith",
+      "text": "// casting to 'uint64' is safe because block.timestamp < 2^64 until year 584 billion"
+    },
+    {
+      "line": 356,
+      "path": "contracts/FastTandaBillV2.sol",
+      "pattern": "timestamp-arith",
+      "text": "// casting to 'uint64' is safe because block.timestamp < 2^64 until year 584 billion"
+    },
+    {
+      "line": 374,
+      "path": "contracts/FastTandaBillV2.sol",
+      "pattern": "timestamp-arith",
+      "text": "require(block.timestamp >= uint256(s.fullyConfirmedAt) + SETTLEMENT_WINDOW, WindowNotElapsed());"
+    },
+    {
+      "line": 386,
+      "path": "contracts/FastTandaBillV2.sol",
+      "pattern": "timestamp-arith",
+      "text": "// casting to 'uint64' is safe because block.timestamp < 2^64 until year 584 billion"
+    },
+    {
+      "line": 402,
+      "path": "contracts/FastTandaBillV2.sol",
+      "pattern": "timestamp-arith",
+      "text": "require(s.fullyConfirmedAt == 0 && block.timestamp >= uint256(s.initiatedAt) + MAX_HOLD, RefundNotAvailable());"
+    },
+    {
+      "line": 109,
+      "path": "contracts/TandaBill.sol",
+      "pattern": "timestamp-arith",
+      "text": "// casting to 'uint64' is safe because block.timestamp < 2^64 until year 584 billion"
+    },
+    {
+      "line": 134,
+      "path": "contracts/TandaBill.sol",
+      "pattern": "timestamp-arith",
+      "text": "// casting to 'uint64' is safe because block.timestamp < 2^64 until year 584 billion"
+    },
+    {
+      "line": 177,
+      "path": "contracts/TandaBill.sol",
+      "pattern": "timestamp-arith",
+      "text": "// casting to 'uint64' is safe because block.timestamp < 2^64 until year 584 billion"
+    },
+    {
+      "line": 212,
+      "path": "contracts/TandaBill.sol",
+      "pattern": "timestamp-arith",
+      "text": "require(block.timestamp >= uint256(s.initiatedAt) + SETTLEMENT_WINDOW, SettlementNotReady());"
+    },
+    {
+      "line": 231,
+      "path": "contracts/TandaBill.sol",
+      "pattern": "timestamp-arith",
+      "text": "// casting to 'uint64' is safe because block.timestamp < 2^64 until year 584 billion"
+    },
+    {
+      "line": 44,
+      "path": "contracts/TandaBillFactory.sol",
+      "pattern": "inline-assembly",
+      "text": "assembly {"
+    },
+    {
+      "line": 66,
+      "path": "contracts/TandaBillFactory.sol",
+      "pattern": "inline-assembly",
+      "text": "assembly {"
+    },
+    {
+      "line": 169,
+      "path": "contracts/TandaBillV2.sol",
+      "pattern": "timestamp-arith",
+      "text": "// casting to 'uint64' is safe because block.timestamp < 2^64 until year 584 billion"
+    },
+    {
+      "line": 185,
+      "path": "contracts/TandaBillV2.sol",
+      "pattern": "inline-assembly",
+      "text": "assembly {"
+    },
+    {
+      "line": 203,
+      "path": "contracts/TandaBillV2.sol",
+      "pattern": "timestamp-arith",
+      "text": "// casting to 'uint64' is safe because block.timestamp < 2^64 until year 584 billion"
+    },
+    {
+      "line": 234,
+      "path": "contracts/TandaBillV2.sol",
+      "pattern": "timestamp-arith",
+      "text": "// casting to 'uint64' is safe because block.timestamp < 2^64 until year 584 billion"
+    },
+    {
+      "line": 275,
+      "path": "contracts/TandaBillV2.sol",
+      "pattern": "timestamp-arith",
+      "text": "bool inWindow = block.timestamp < uint256(last.fullyConfirmedAt) + SETTLEMENT_WINDOW;"
+    },
+    {
+      "line": 294,
+      "path": "contracts/TandaBillV2.sol",
+      "pattern": "timestamp-arith",
+      "text": "// casting to 'uint64' is safe because block.timestamp < 2^64 until year 584 billion"
+    },
+    {
+      "line": 357,
+      "path": "contracts/TandaBillV2.sol",
+      "pattern": "timestamp-arith",
+      "text": "// casting to 'uint64' is safe because block.timestamp < 2^64 until year 584 billion"
+    },
+    {
+      "line": 401,
+      "path": "contracts/TandaBillV2.sol",
+      "pattern": "timestamp-arith",
+      "text": "// casting to 'uint64' is safe because block.timestamp < 2^64 until year 584 billion"
+    },
+    {
+      "line": 424,
+      "path": "contracts/TandaBillV2.sol",
+      "pattern": "timestamp-arith",
+      "text": "require(block.timestamp >= uint256(s.fullyConfirmedAt) + SETTLEMENT_WINDOW, WindowNotElapsed());"
+    },
+    {
+      "line": 427,
+      "path": "contracts/TandaBillV2.sol",
+      "pattern": "timestamp-arith",
+      "text": "// casting to 'uint64' is safe because block.timestamp < 2^64 until year 584 billion"
+    },
+    {
+      "line": 478,
+      "path": "contracts/TandaBillV2.sol",
+      "pattern": "timestamp-arith",
+      "text": "require(s.fullyConfirmedAt == 0 && block.timestamp >= uint256(s.initiatedAt) + MAX_HOLD, RefundNotAvailable());"
+    },
+    {
+      "line": 20,
+      "path": "lib/forge-std/src/Base.sol",
+      "pattern": "tx-origin",
+      "text": "/// @dev The default address for tx.origin and msg.sender."
+    },
+    {
+      "line": 210,
+      "path": "lib/forge-std/src/StdCheats.sol",
+      "pattern": "inline-assembly",
+      "text": "assembly {"
+    },
+    {
+      "line": 293,
+      "path": "lib/forge-std/src/StdCheats.sol",
+      "pattern": "lowlevel-call",
+      "return-checked-nearby": true,
+      "text": "(bool success,) = payable(addr).call{value: 1}(\"\");"
+    },
+    {
+      "line": 361,
+      "path": "lib/forge-std/src/StdCheats.sol",
+      "pattern": "inline-assembly",
+      "text": "assembly {"
+    },
+    {
+      "line": 651,
+      "path": "lib/forge-std/src/StdCheats.sol",
+      "pattern": "inline-assembly",
+      "text": "assembly {"
+    },
+    {
+      "line": 661,
+      "path": "lib/forge-std/src/StdCheats.sol",
+      "pattern": "inline-assembly",
+      "text": "assembly {"
+    },
+    {
+      "line": 698,
+      "path": "lib/forge-std/src/StdCheats.sol",
+      "pattern": "tx-origin",
+      "text": "/// @notice Sets up a single-call prank from `msgSender` with `origin` as `tx.origin`, giving `msgSender` `2**128` wei."
+    },
+    {
+      "line": 704,
+      "path": "lib/forge-std/src/StdCheats.sol",
+      "pattern": "tx-origin",
+      "text": "/// @notice Sets up a single-call prank from `msgSender` with `origin` as `tx.origin`, giving `msgSender` `give` wei."
+    },
+    {
+      "line": 722,
+      "path": "lib/forge-std/src/StdCheats.sol",
+      "pattern": "tx-origin",
+      "text": "/// @notice Starts a persistent prank from `msgSender` with `origin` as `tx.origin`, giving `msgSender` `2**128` wei."
+    },
+    {
+      "line": 728,
+      "path": "lib/forge-std/src/StdCheats.sol",
+      "pattern": "tx-origin",
+      "text": "/// @notice Starts a persistent prank from `msgSender` with `origin` as `tx.origin`, giving `msgSender` `give` wei."
+    },
+    {
+      "line": 742,
+      "path": "lib/forge-std/src/StdCheats.sol",
+      "pattern": "tx-origin",
+      "text": "/// @notice Changes the active prank to `msgSender` with `txOrigin` as `tx.origin`."
+    },
+    {
+      "line": 913,
+      "path": "lib/forge-std/src/StdCheats.sol",
+      "pattern": "lowlevel-call",
+      "return-checked-nearby": true,
+      "text": "(bool success, bytes memory runtimeBytecode) = where.call{value: value}(\"\");"
+    },
+    {
+      "line": 17,
+      "path": "lib/forge-std/src/StdConstants.sol",
+      "pattern": "tx-origin",
+      "text": "/// @dev The default address for tx.origin and msg.sender."
+    },
+    {
+      "line": 425,
+      "path": "lib/forge-std/src/StdStorage.sol",
+      "pattern": "inline-assembly",
+      "text": "assembly {"
+    },
+    {
+      "line": 179,
+      "path": "lib/forge-std/src/StdUtils.sol",
+      "pattern": "inline-assembly",
+      "text": "assembly {"
+    },
+    {
+      "line": 218,
+      "path": "lib/forge-std/src/StdUtils.sol",
+      "pattern": "inline-assembly",
+      "text": "assembly {"
+    },
+    {
+      "line": 10,
+      "path": "lib/forge-std/src/Vm.sol",
+      "pattern": "tx-origin",
+      "text": "/// A modification applied to either `msg.sender` or `tx.origin`. Returned by `readCallers`."
+    },
+    {
+      "line": 28,
+      "path": "lib/forge-std/src/Vm.sol",
+      "pattern": "delegatecall",
+      "text": "// The account was called via delegatecall."
+    },
+    {
+      "line": 30,
+      "path": "lib/forge-std/src/Vm.sol",
+      "pattern": "delegatecall",
+      "text": "// The account was called via callcode."
+    },
+    {
+      "line": 2553,
+      "path": "lib/forge-std/src/Vm.sol",
+      "pattern": "prevrandao",
+      "text": "/// Not available on EVM versions from Paris onwards. Use `prevrandao` instead."
+    },
+    {
+      "line": 2667,
+      "path": "lib/forge-std/src/Vm.sol",
+      "pattern": "tx-origin",
+      "text": "/// Sets the *next* call's `msg.sender` to be the input address, and the `tx.origin` to be the second input."
+    },
+    {
+      "line": 2673,
+      "path": "lib/forge-std/src/Vm.sol",
+      "pattern": "tx-origin",
+      "text": "/// Sets the *next* delegate call's `msg.sender` to be the input address, and the `tx.origin` to be the second input."
+    },
+    {
+      "line": 2676,
+      "path": "lib/forge-std/src/Vm.sol",
+      "pattern": "prevrandao",
+      "text": "/// Sets `block.prevrandao`."
+    },
+    {
+      "line": 2679,
+      "path": "lib/forge-std/src/Vm.sol",
+      "pattern": "prevrandao",
+      "text": "function prevrandao(bytes32 newPrevrandao) external;"
+    },
+    {
+      "line": 2681,
+      "path": "lib/forge-std/src/Vm.sol",
+      "pattern": "prevrandao",
+      "text": "/// Sets `block.prevrandao`."
+    },
+    {
+      "line": 2684,
+      "path": "lib/forge-std/src/Vm.sol",
+      "pattern": "prevrandao",
+      "text": "function prevrandao(uint256 newPrevrandao) external;"
+    },
+    {
+      "line": 2686,
+      "path": "lib/forge-std/src/Vm.sol",
+      "pattern": "tx-origin",
+      "text": "/// Reads the current `msg.sender` and `tx.origin` from state and reports if there is any active caller modification."
+    },
+    {
+      "line": 2706,
+      "path": "lib/forge-std/src/Vm.sol",
+      "pattern": "delegatecall",
+      "text": "/// including when its code runs by delegatecall."
+    },
+    {
+      "line": 2720,
+      "path": "lib/forge-std/src/Vm.sol",
+      "pattern": "delegatecall",
+      "text": "/// including when its code runs by delegatecall."
+    },
+    {
+      "line": 2823,
+      "path": "lib/forge-std/src/Vm.sol",
+      "pattern": "tx-origin",
+      "text": "/// Sets all subsequent calls' `msg.sender` to be the input address until `stopPrank` is called, and the `tx.origin` to be the second input."
+    },
+    {
+      "line": 2829,
+      "path": "lib/forge-std/src/Vm.sol",
+      "pattern": "tx-origin",
+      "text": "/// Sets all subsequent delegate calls' `msg.sender` to be the input address until `stopPrank` is called, and the `tx.origin` to be the second input."
+    },
+    {
+      "line": 19,
+      "path": "lib/forge-std/src/console.sol",
+      "pattern": "inline-assembly",
+      "text": "assembly {"
+    },
+    {
+      "line": 144,
+      "path": "scripts/e2e_route_matrix_probe_t_c80a1cbf.py",
+      "pattern": "shell-true",
+      "text": "shell=True, capture_output=True, text=True).stdout.split()[0]"
+    },
+    {
+      "line": 87,
+      "path": "test/AbiSelectorLock25C.t.sol",
+      "pattern": "approve-call",
+      "text": "token.approve(address(bill), amount);"
+    },
+    {
+      "line": 111,
+      "path": "test/AbiSelectorLock25C.t.sol",
+      "pattern": "timestamp-arith",
+      "text": "vm.warp(block.timestamp + 1 hours + 1);"
+    },
+    {
+      "line": 79,
+      "path": "test/ClaimableViewLadder.t.sol",
+      "pattern": "approve-call",
+      "text": "token.approve(address(bill), 10);"
+    },
+    {
+      "line": 87,
+      "path": "test/ClaimableViewLadder.t.sol",
+      "pattern": "timestamp-arith",
+      "text": "vm.warp(block.timestamp + uint256(bill.SETTLEMENT_WINDOW()) + 1);"
+    },
+    {
+      "line": 131,
+      "path": "test/ClaimableViewLadder.t.sol",
+      "pattern": "approve-call",
+      "text": "token.approve(address(bill), 30);"
+    },
+    {
+      "line": 145,
+      "path": "test/ClaimableViewLadder.t.sol",
+      "pattern": "timestamp-arith",
+      "text": "vm.warp(block.timestamp + uint256(bill.SETTLEMENT_WINDOW()) + 1);"
+    },
+    {
+      "line": 165,
+      "path": "test/ClaimableViewLadder.t.sol",
+      "pattern": "approve-call",
+      "text": "token.approve(address(bill), 10);"
+    },
+    {
+      "line": 171,
+      "path": "test/ClaimableViewLadder.t.sol",
+      "pattern": "timestamp-arith",
+      "text": "vm.warp(block.timestamp + uint256(bill.MAX_HOLD()) + 1);"
+    },
+    {
+      "line": 78,
+      "path": "test/DeployScriptGolden11255.t.sol",
+      "pattern": "delegatecall",
+      "text": "// so L46 could only ever take its FAIL arm. delegatecall collapses the"
+    },
+    {
+      "line": 86,
+      "path": "test/DeployScriptGolden11255.t.sol",
+      "pattern": "delegatecall",
+      "text": "address(v1).delegatecall(abi.encodeWithSignature(\"run()\"));"
+    },
+    {
+      "line": 55,
+      "path": "test/Engine1125FastMaskCorner.t.sol",
+      "pattern": "approve-call",
+      "text": "token.approve(address(bill), 300e6);"
+    },
+    {
+      "line": 101,
+      "path": "test/Engine1125FastMaskCorner.t.sol",
+      "pattern": "approve-call",
+      "text": "t1.approve(address(v1), 100e6);"
+    },
+    {
+      "line": 105,
+      "path": "test/Engine1125FastMaskCorner.t.sol",
+      "pattern": "timestamp-arith",
+      "text": "vm.warp(block.timestamp + 1 hours); // window is inclusive (L210-212)"
+    },
+    {
+      "line": 87,
+      "path": "test/EscrowInvariant.t.sol",
+      "pattern": "approve-call",
+      "text": "token.approve(bill_, maxAmt);"
+    },
+    {
+      "line": 91,
+      "path": "test/EscrowInvariant.t.sol",
+      "pattern": "approve-call",
+      "text": "token.approve(bill_, maxAmt);"
+    },
+    {
+      "line": 182,
+      "path": "test/EscrowInvariant.t.sol",
+      "pattern": "timestamp-arith",
+      "text": "vm.warp(block.timestamp + bound(d, 0, 3 days));"
+    },
+    {
+      "line": 455,
+      "path": "test/EscrowInvariant.t.sol",
+      "pattern": "timestamp-arith",
+      "text": "vm.warp(block.timestamp + 1 hours + 1);"
+    },
+    {
+      "line": 493,
+      "path": "test/EscrowInvariant.t.sol",
+      "pattern": "timestamp-arith",
+      "text": "vm.warp(block.timestamp + 72 hours + 1);"
+    },
+    {
+      "line": 541,
+      "path": "test/EscrowInvariant.t.sol",
+      "pattern": "timestamp-arith",
+      "text": "vm.warp(block.timestamp + 1 hours + 1);"
+    },
+    {
+      "line": 66,
+      "path": "test/FastTwinConfirmLadder.t.sol",
+      "pattern": "approve-call",
+      "text": "token.approve(address(bill), amount);"
+    },
+    {
+      "line": 156,
+      "path": "test/FastTwinConfirmLadder.t.sol",
+      "pattern": "timestamp-arith",
+      "text": "vm.warp(block.timestamp + bill.MAX_HOLD()); // boundary is >=, == passes"
+    },
+    {
+      "line": 70,
+      "path": "test/FastTwinGuardLadder.t.sol",
+      "pattern": "approve-call",
+      "text": "token.approve(address(bill), amount);"
+    },
+    {
+      "line": 164,
+      "path": "test/FastTwinGuardLadder.t.sol",
+      "pattern": "approve-call",
+      "text": "token.approve(address(bill), amount);"
+    },
+    {
+      "line": 66,
+      "path": "test/FastTwinMatrixParity.t.sol",
+      "pattern": "approve-call",
+      "text": "token.approve(address(bill), amount);"
+    },
+    {
+      "line": 122,
+      "path": "test/FastTwinMatrixParity.t.sol",
+      "pattern": "approve-call",
+      "text": "token.approve(billAddr, 200e6); // approve stays direct: spender is the CLONE"
+    },
+    {
+      "line": 138,
+      "path": "test/FastTwinMatrixParity.t.sol",
+      "pattern": "timestamp-arith",
+      "text": "vm.warp(block.timestamp + 61);"
+    },
+    {
+      "line": 199,
+      "path": "test/FastTwinMatrixParity.t.sol",
+      "pattern": "approve-call",
+      "text": "token.approve(address(bill), amount);"
+    },
+    {
+      "line": 296,
+      "path": "test/FastTwinMatrixParity.t.sol",
+      "pattern": "timestamp-arith",
+      "text": "vm.warp(block.timestamp + 61);"
+    },
+    {
+      "line": 310,
+      "path": "test/FastTwinMatrixParity.t.sol",
+      "pattern": "timestamp-arith",
+      "text": "vm.warp(block.timestamp + 61);"
+    },
+    {
+      "line": 329,
+      "path": "test/FastTwinMatrixParity.t.sol",
+      "pattern": "timestamp-arith",
+      "text": "vm.warp(block.timestamp + 61);"
+    },
+    {
+      "line": 346,
+      "path": "test/FastTwinMatrixParity.t.sol",
+      "pattern": "timestamp-arith",
+      "text": "vm.warp(block.timestamp + 61);"
+    },
+    {
+      "line": 356,
+      "path": "test/FastTwinMatrixParity.t.sol",
+      "pattern": "timestamp-arith",
+      "text": "vm.warp(block.timestamp + 120); // MAX_HOLD = 120s"
+    },
+    {
+      "line": 415,
+      "path": "test/FastTwinMatrixParity.t.sol",
+      "pattern": "timestamp-arith",
+      "text": "vm.warp(block.timestamp + 119); // MAX_HOLD = 120s (testnet pace)"
+    },
+    {
+      "line": 425,
+      "path": "test/FastTwinMatrixParity.t.sol",
+      "pattern": "timestamp-arith",
+      "text": "vm.warp(block.timestamp + 120);"
+    },
+    {
+      "line": 440,
+      "path": "test/FastTwinMatrixParity.t.sol",
+      "pattern": "timestamp-arith",
+      "text": "vm.warp(block.timestamp + 120);"
+    },
+    {
+      "line": 448,
+      "path": "test/FastTwinMatrixParity.t.sol",
+      "pattern": "timestamp-arith",
+      "text": "vm.warp(block.timestamp + 120);"
+    },
+    {
+      "line": 464,
+      "path": "test/FastTwinMatrixParity.t.sol",
+      "pattern": "approve-call",
+      "text": "token.approve(address(bill), 75e6);"
+    },
+    {
+      "line": 81,
+      "path": "test/MainlineRefundBranchOrder.t.sol",
+      "pattern": "approve-call",
+      "text": "token.approve(address(bill), amount);"
+    },
+    {
+      "line": 98,
+      "path": "test/MainlineRefundBranchOrder.t.sol",
+      "pattern": "timestamp-arith",
+      "text": "vm.warp(block.timestamp + 72 hours);"
+    },
+    {
+      "line": 132,
+      "path": "test/MainlineRefundBranchOrder.t.sol",
+      "pattern": "timestamp-arith",
+      "text": "vm.warp(block.timestamp + 1 hours + 1);"
+    },
+    {
+      "line": 99,
+      "path": "test/P13SplitLockCoverage.t.sol",
+      "pattern": "approve-call",
+      "text": "token.approve(address(bill), amount);"
+    },
+    {
+      "line": 190,
+      "path": "test/P13SplitLockCoverage.t.sol",
+      "pattern": "timestamp-arith",
+      "text": "vm.warp(block.timestamp + SETTLEMENT_WINDOW + 1);"
+    },
+    {
+      "line": 223,
+      "path": "test/P13SplitLockCoverage.t.sol",
+      "pattern": "timestamp-arith",
+      "text": "vm.warp(block.timestamp + SETTLEMENT_WINDOW + 1);"
+    },
+    {
+      "line": 232,
+      "path": "test/P13SplitLockCoverage.t.sol",
+      "pattern": "timestamp-arith",
+      "text": "vm.warp(block.timestamp + SETTLEMENT_WINDOW + 1);"
+    },
+    {
+      "line": 245,
+      "path": "test/P13SplitLockCoverage.t.sol",
+      "pattern": "timestamp-arith",
+      "text": "vm.warp(block.timestamp + SETTLEMENT_WINDOW + 1);"
+    },
+    {
+      "line": 261,
+      "path": "test/P13SplitLockCoverage.t.sol",
+      "pattern": "timestamp-arith",
+      "text": "vm.warp(block.timestamp + MAX_HOLD + 1);"
+    },
+    {
+      "line": 111,
+      "path": "test/Permit2Funding.t.sol",
+      "pattern": "approve-call",
+      "text": "token.approve(address(permit2), amount);"
+    },
+    {
+      "line": 112,
+      "path": "test/Permit2Funding.t.sol",
+      "pattern": "approve-call",
+      "text": "permit2.approve(address(token), spender, uint160(amount), expiration);"
+    },
+    {
+      "line": 150,
+      "path": "test/Permit2Funding.t.sol",
+      "pattern": "timestamp-arith",
+      "text": "vm.warp(block.timestamp + 1); // next block: captured bundle replay"
+    },
+    {
+      "line": 269,
+      "path": "test/Permit2Funding.t.sol",
+      "pattern": "approve-call",
+      "text": "token.approve(address(bill), 400);"
+    },
+    {
+      "line": 305,
+      "path": "test/Permit2Funding.t.sol",
+      "pattern": "timestamp-arith",
+      "text": "vm.warp(block.timestamp + 1 hours); // V2 SETTLEMENT_WINDOW"
+    },
+    {
+      "line": 334,
+      "path": "test/Permit2Funding.t.sol",
+      "pattern": "timestamp-arith",
+      "text": "vm.warp(block.timestamp + 1 hours);"
+    },
+    {
+      "line": 84,
+      "path": "test/SafeERC20FalseReturnMatrix.t.sol",
+      "pattern": "approve-call",
+      "text": "token.approve(address(bill), 300e6);"
+    },
+    {
+      "line": 104,
+      "path": "test/SafeERC20FalseReturnMatrix.t.sol",
+      "pattern": "timestamp-arith",
+      "text": "vm.warp(block.timestamp + 2 hours); // SETTLEMENT_WINDOW = 1 hours"
+    },
+    {
+      "line": 166,
+      "path": "test/SafeERC20FalseReturnMatrix.t.sol",
+      "pattern": "timestamp-arith",
+      "text": "vm.warp(block.timestamp + 73 hours);      // MAX_HOLD = 72 hours"
+    },
+    {
+      "line": 64,
+      "path": "test/SeatGateLatchGolden.t.sol",
+      "pattern": "approve-call",
+      "text": "token.approve(address(bill), amount);"
+    },
+    {
+      "line": 74,
+      "path": "test/SeatGateLatchGolden.t.sol",
+      "pattern": "timestamp-arith",
+      "text": "vm.warp(block.timestamp + bill.SETTLEMENT_WINDOW());"
+    },
+    {
+      "line": 153,
+      "path": "test/SeatGateLatchGolden.t.sol",
+      "pattern": "approve-call",
+      "text": "token.approve(address(fast), 100);"
+    },
+    {
+      "line": 64,
+      "path": "test/SeatLedgerIntegrity25D.t.sol",
+      "pattern": "approve-call",
+      "text": "token.approve(address(bill), amount);"
+    },
+    {
+      "line": 179,
+      "path": "test/SeatLedgerIntegrity25D.t.sol",
+      "pattern": "timestamp-arith",
+      "text": "vm.warp(block.timestamp + bill.SETTLEMENT_WINDOW());"
+    },
+    {
+      "line": 101,
+      "path": "test/TandaBill.t.sol",
+      "pattern": "approve-call",
+      "text": "token.approve(address(bill), 100e6);"
+    },
+    {
+      "line": 117,
+      "path": "test/TandaBill.t.sol",
+      "pattern": "approve-call",
+      "text": "token.approve(address(bill), 90e6);"
+    },
+    {
+      "line": 124,
+      "path": "test/TandaBill.t.sol",
+      "pattern": "timestamp-arith",
+      "text": "vm.warp(block.timestamp + 1 hours);"
+    },
+    {
+      "line": 141,
+      "path": "test/TandaBill.t.sol",
+      "pattern": "approve-call",
+      "text": "token.approve(address(bill), 100e6);"
+    },
+    {
+      "line": 148,
+      "path": "test/TandaBill.t.sol",
+      "pattern": "timestamp-arith",
+      "text": "vm.warp(block.timestamp + 1 hours);"
+    },
+    {
+      "line": 172,
+      "path": "test/TandaBill.t.sol",
+      "pattern": "approve-call",
+      "text": "token.approve(address(bill), 50e6);"
+    },
+    {
+      "line": 208,
+      "path": "test/TandaBill.t.sol",
+      "pattern": "approve-call",
+      "text": "token.approve(address(bill), 60e6);"
+    },
+    {
+      "line": 212,
+      "path": "test/TandaBill.t.sol",
+      "pattern": "timestamp-arith",
+      "text": "vm.warp(block.timestamp + 1 hours);"
+    },
+    {
+      "line": 239,
+      "path": "test/TandaBill.t.sol",
+      "pattern": "approve-call",
+      "text": "token.approve(address(bill), 100e6);"
+    },
+    {
+      "line": 253,
+      "path": "test/TandaBill.t.sol",
+      "pattern": "timestamp-arith",
+      "text": "vm.warp(block.timestamp + 1 hours);"
+    },
+    {
+      "line": 310,
+      "path": "test/TandaBill.t.sol",
+      "pattern": "timestamp-arith",
+      "text": "vm.warp(block.timestamp + 1 hours);"
+    },
+    {
+      "line": 335,
+      "path": "test/TandaBill.t.sol",
+      "pattern": "approve-call",
+      "text": "token.approve(address(bill), 100e6);"
+    },
+    {
+      "line": 339,
+      "path": "test/TandaBill.t.sol",
+      "pattern": "timestamp-arith",
+      "text": "vm.warp(block.timestamp + 1 hours);"
+    },
+    {
+      "line": 362,
+      "path": "test/TandaBill.t.sol",
+      "pattern": "approve-call",
+      "text": "token.approve(address(bill), 100e6);"
+    },
+    {
+      "line": 381,
+      "path": "test/TandaBill.t.sol",
+      "pattern": "timestamp-arith",
+      "text": "/// (block.timestamp == initiatedAt + SETTLEMENT_WINDOW). This pins the"
+    },
+    {
+      "line": 388,
+      "path": "test/TandaBill.t.sol",
+      "pattern": "approve-call",
+      "text": "token.approve(address(bill), 100e6);"
+    },
+    {
+      "line": 411,
+      "path": "test/TandaBill.t.sol",
+      "pattern": "approve-call",
+      "text": "token.approve(address(bill), 100e6);"
+    },
+    {
+      "line": 436,
+      "path": "test/TandaBill.t.sol",
+      "pattern": "approve-call",
+      "text": "token.approve(address(bill), 100e6);"
+    },
+    {
+      "line": 468,
+      "path": "test/TandaBill.t.sol",
+      "pattern": "approve-call",
+      "text": "token.approve(address(bill), 100e6);"
+    },
+    {
+      "line": 491,
+      "path": "test/TandaBill.t.sol",
+      "pattern": "approve-call",
+      "text": "token.approve(address(bill), 100e6);"
+    },
+    {
+      "line": 495,
+      "path": "test/TandaBill.t.sol",
+      "pattern": "timestamp-arith",
+      "text": "vm.warp(block.timestamp + 1 hours);"
+    },
+    {
+      "line": 526,
+      "path": "test/TandaBill.t.sol",
+      "pattern": "approve-call",
+      "text": "token.approve(address(bill), 100e6);"
+    },
+    {
+      "line": 543,
+      "path": "test/TandaBill.t.sol",
+      "pattern": "approve-call",
+      "text": "token.approve(address(bill), 100e6);"
+    },
+    {
+      "line": 578,
+      "path": "test/TandaBill.t.sol",
+      "pattern": "approve-call",
+      "text": "token.approve(address(bill), 100e6);"
+    },
+    {
+      "line": 611,
+      "path": "test/TandaBill.t.sol",
+      "pattern": "approve-call",
+      "text": "token.approve(address(bill), 100e6);"
+    },
+    {
+      "line": 625,
+      "path": "test/TandaBill.t.sol",
+      "pattern": "timestamp-arith",
+      "text": "vm.warp(block.timestamp + 1 hours);"
+    },
+    {
+      "line": 122,
+      "path": "test/TandaBillV2.t.sol",
+      "pattern": "approve-call",
+      "text": "token.approve(address(bill), amount);"
+    },
+    {
+      "line": 262,
+      "path": "test/TandaBillV2.t.sol",
+      "pattern": "approve-call",
+      "text": "token.approve(address(b1), 100e6);"
+    },
+    {
+      "line": 391,
+      "path": "test/TandaBillV2.t.sol",
+      "pattern": "timestamp-arith",
+      "text": "vm.warp(block.timestamp + 72 hours - 1);"
+    },
+    {
+      "line": 401,
+      "path": "test/TandaBillV2.t.sol",
+      "pattern": "timestamp-arith",
+      "text": "vm.warp(block.timestamp + 72 hours);"
+    },
+    {
+      "line": 418,
+      "path": "test/TandaBillV2.t.sol",
+      "pattern": "timestamp-arith",
+      "text": "vm.warp(block.timestamp + 72 hours);"
+    },
+    {
+      "line": 426,
+      "path": "test/TandaBillV2.t.sol",
+      "pattern": "timestamp-arith",
+      "text": "vm.warp(block.timestamp + 72 hours);"
+    },
+    {
+      "line": 462,
+      "path": "test/TandaBillV2.t.sol",
+      "pattern": "approve-call",
+      "text": "token.approve(address(bill), amount);"
+    },
+    {
+      "line": 506,
+      "path": "test/TandaBillV2.t.sol",
+      "pattern": "approve-call",
+      "text": "token.approve(address(bill), amount);"
+    },
+    {
+      "line": 525,
+      "path": "test/TandaBillV2.t.sol",
+      "pattern": "approve-call",
+      "text": "token.approve(address(bill), 10e6);"
+    },
+    {
+      "line": 539,
+      "path": "test/TandaBillV2.t.sol",
+      "pattern": "approve-call",
+      "text": "token.approve(address(bill), 100e6);"
+    },
+    {
+      "line": 552,
+      "path": "test/TandaBillV2.t.sol",
+      "pattern": "approve-call",
+      "text": "token.approve(address(bill), 100e6);"
+    },
+    {
+      "line": 579,
+      "path": "test/TandaBillV2.t.sol",
+      "pattern": "approve-call",
+      "text": "token.approve(address(bill), 50e6);"
+    },
+    {
+      "line": 599,
+      "path": "test/TandaBillV2.t.sol",
+      "pattern": "approve-call",
+      "text": "token.approve(address(bill), 50e6);"
+    },
+    {
+      "line": 681,
+      "path": "test/TandaBillV2.t.sol",
+      "pattern": "timestamp-arith",
+      "text": "vm.warp(block.timestamp + 1 hours + 1);"
+    },
+    {
+      "line": 702,
+      "path": "test/TandaBillV2.t.sol",
+      "pattern": "timestamp-arith",
+      "text": "vm.warp(block.timestamp + 1 hours + 1);"
+    },
+    {
+      "line": 736,
+      "path": "test/TandaBillV2.t.sol",
+      "pattern": "approve-call",
+      "text": "token.approve(billAddr, 200e6); // approve stays direct: spender is the CLONE"
+    },
+    {
+      "line": 752,
+      "path": "test/TandaBillV2.t.sol",
+      "pattern": "timestamp-arith",
+      "text": "vm.warp(block.timestamp + 1 hours + 1);"
+    },
+    {
+      "line": 793,
+      "path": "test/TandaBillV2.t.sol",
+      "pattern": "timestamp-arith",
+      "text": "vm.warp(block.timestamp + 1 hours + 1);"
+    },
+    {
+      "line": 806,
+      "path": "test/TandaBillV2.t.sol",
+      "pattern": "timestamp-arith",
+      "text": "vm.warp(block.timestamp + 1 hours + 1);"
+    },
+    {
+      "line": 826,
+      "path": "test/TandaBillV2.t.sol",
+      "pattern": "timestamp-arith",
+      "text": "vm.warp(block.timestamp + 1 hours + 1);"
+    },
+    {
+      "line": 844,
+      "path": "test/TandaBillV2.t.sol",
+      "pattern": "timestamp-arith",
+      "text": "vm.warp(block.timestamp + 1 hours + 1);"
+    },
+    {
+      "line": 865,
+      "path": "test/TandaBillV2.t.sol",
+      "pattern": "timestamp-arith",
+      "text": "vm.warp(block.timestamp + 72 hours);"
+    },
+    {
+      "line": 878,
+      "path": "test/TandaBillV2.t.sol",
+      "pattern": "timestamp-arith",
+      "text": "vm.warp(block.timestamp + 1 hours + 1);"
+    },
+    {
+      "line": 889,
+      "path": "test/TandaBillV2.t.sol",
+      "pattern": "timestamp-arith",
+      "text": "vm.warp(block.timestamp + 1 hours + 1);"
+    },
+    {
+      "line": 912,
+      "path": "test/TandaBillV2.t.sol",
+      "pattern": "approve-call",
+      "text": "bt.approve(address(bill), 300e6);"
+    },
+    {
+      "line": 921,
+      "path": "test/TandaBillV2.t.sol",
+      "pattern": "timestamp-arith",
+      "text": "vm.warp(block.timestamp + 1 hours + 1);"
+    },
+    {
+      "line": 943,
+      "path": "test/TandaBillV2.t.sol",
+      "pattern": "approve-call",
+      "text": "bt.approve(address(b2), 300e6);"
+    },
+    {
+      "line": 952,
+      "path": "test/TandaBillV2.t.sol",
+      "pattern": "timestamp-arith",
+      "text": "vm.warp(block.timestamp + 1 hours + 1);"
+    },
+    {
+      "line": 967,
+      "path": "test/TandaBillV2.t.sol",
+      "pattern": "timestamp-arith",
+      "text": "vm.warp(block.timestamp + 1 hours + 1);"
+    },
+    {
+      "line": 1021,
+      "path": "test/TandaBillV2.t.sol",
+      "pattern": "approve-call",
+      "text": "token.approve(address(bill), first);"
+    },
+    {
+      "line": 1036,
+      "path": "test/TandaBillV2.t.sol",
+      "pattern": "approve-call",
+      "text": "token.approve(address(bill), 50e6);"
+    },
+    {
+      "line": 1064,
+      "path": "test/TandaBillV2.t.sol",
+      "pattern": "approve-call",
+      "text": "token.approve(address(bill), amount);"
+    },
+    {
+      "line": 1172,
+      "path": "test/TandaBillV2.t.sol",
+      "pattern": "timestamp-arith",
+      "text": "vm.warp(block.timestamp + 72 hours);"
+    },
+    {
+      "line": 1183,
+      "path": "test/TandaBillV2.t.sol",
+      "pattern": "timestamp-arith",
+      "text": "vm.warp(block.timestamp + 72 hours);"
+    },
+    {
+      "line": 1195,
+      "path": "test/TandaBillV2.t.sol",
+      "pattern": "timestamp-arith",
+      "text": "vm.warp(block.timestamp + 72 hours);"
+    },
+    {
+      "line": 1211,
+      "path": "test/TandaBillV2.t.sol",
+      "pattern": "timestamp-arith",
+      "text": "vm.warp(block.timestamp + 72 hours);"
+    },
+    {
+      "line": 1219,
+      "path": "test/TandaBillV2.t.sol",
+      "pattern": "approve-call",
+      "text": "token.approve(address(bill), amount);"
+    },
+    {
+      "line": 151,
+      "path": "test/Ugly2SeatGateGolden.t.sol",
+      "pattern": "approve-call",
+      "text": "token.approve(address(bill), 1_000_000);"
+    },
+    {
+      "line": 93,
+      "path": "test/V1MainlineBranchMatrix.t.sol",
+      "pattern": "approve-call",
+      "text": "token.approve(address(bill), 100e6);"
+    },
+    {
+      "line": 120,
+      "path": "test/V1MainlineBranchMatrix.t.sol",
+      "pattern": "approve-call",
+      "text": "token.approve(address(bill), 80e6);"
+    },
+    {
+      "line": 125,
+      "path": "test/V1MainlineBranchMatrix.t.sol",
+      "pattern": "timestamp-arith",
+      "text": "vm.warp(block.timestamp + 1 hours);"
+    },
+    {
+      "line": 136,
+      "path": "test/V1MainlineBranchMatrix.t.sol",
+      "pattern": "approve-call",
+      "text": "token.approve(address(bill), 20e6);"
+    },
+    {
+      "line": 141,
+      "path": "test/V1MainlineBranchMatrix.t.sol",
+      "pattern": "timestamp-arith",
+      "text": "vm.warp(block.timestamp + 1 hours);"
+    },
+    {
+      "line": 159,
+      "path": "test/V1MainlineBranchMatrix.t.sol",
+      "pattern": "approve-call",
+      "text": "token.approve(address(bill), 60e6);"
+    },
+    {
+      "line": 163,
+      "path": "test/V1MainlineBranchMatrix.t.sol",
+      "pattern": "timestamp-arith",
+      "text": "vm.warp(block.timestamp + 1 hours);"
+    },
+    {
+      "line": 96,
+      "path": "test/V2BoundaryLedgerMatrix.t.sol",
+      "pattern": "approve-call",
+      "text": "token.approve(address(bill), 10e6);"
+    },
+    {
+      "line": 112,
+      "path": "test/V2BoundaryLedgerMatrix.t.sol",
+      "pattern": "approve-call",
+      "text": "token.approve(address(bill), 1);"
+    },
+    {
+      "line": 128,
+      "path": "test/V2BoundaryLedgerMatrix.t.sol",
+      "pattern": "approve-call",
+      "text": "token.approve(address(bill), funded);"
+    },
+    {
+      "line": 142,
+      "path": "test/V2BoundaryLedgerMatrix.t.sol",
+      "pattern": "timestamp-arith",
+      "text": "vm.warp(block.timestamp + 1 hours + 1);"
+    },
+    {
+      "line": 165,
+      "path": "test/V2BoundaryLedgerMatrix.t.sol",
+      "pattern": "approve-call",
+      "text": "token.approve(address(bill), 101e6 + 1);"
+    },
+    {
+      "line": 179,
+      "path": "test/V2BoundaryLedgerMatrix.t.sol",
+      "pattern": "timestamp-arith",
+      "text": "vm.warp(block.timestamp + 1 hours + 1);"
+    },
+    {
+      "line": 89,
+      "path": "test/V2DefensiveMaskCorners.t.sol",
+      "pattern": "approve-call",
+      "text": "token.approve(address(bill), amount);"
+    },
+    {
+      "line": 124,
+      "path": "test/V2DefensiveMaskCorners.t.sol",
+      "pattern": "timestamp-arith",
+      "text": "vm.warp(block.timestamp + 1 hours + 1);"
+    },
+    {
+      "line": 191,
+      "path": "test/V2DefensiveMaskCorners.t.sol",
+      "pattern": "approve-call",
+      "text": "token.approve(address(bill), 300e6);"
+    },
+    {
+      "line": 199,
+      "path": "test/V2DefensiveMaskCorners.t.sol",
+      "pattern": "timestamp-arith",
+      "text": "vm.warp(block.timestamp + 1 hours + 1);"
+    },
+    {
+      "line": 88,
+      "path": "test/XixiDesign02CeiGolden.t.sol",
+      "pattern": "approve-call",
+      "text": "vm.prank(owner); t.approve(address(bill), 300e6);"
+    },
+    {
+      "line": 91,
+      "path": "test/XixiDesign02CeiGolden.t.sol",
+      "pattern": "timestamp-arith",
+      "text": "vm.warp(block.timestamp + 2 hours);"
+    },
+    {
+      "line": 107,
+      "path": "test/XixiDesign02Q2Stranding.t.sol",
+      "pattern": "approve-call",
+      "text": "vm.prank(owner); t.approve(address(bill), 300e6);"
+    },
+    {
+      "line": 110,
+      "path": "test/XixiDesign02Q2Stranding.t.sol",
+      "pattern": "timestamp-arith",
+      "text": "vm.warp(block.timestamp + 2 hours);"
+    },
+    {
+      "line": 124,
+      "path": "test/XixiDesign02Q2Stranding.t.sol",
+      "pattern": "approve-call",
+      "text": "t.approve(address(bill), 300e6);"
+    },
+    {
+      "line": 134,
+      "path": "test/XixiDesign02Q2Stranding.t.sol",
+      "pattern": "approve-call",
+      "text": "vm.prank(owner); t.approve(address(bill), 300e6);"
+    },
+    {
+      "line": 137,
+      "path": "test/XixiDesign02Q2Stranding.t.sol",
+      "pattern": "timestamp-arith",
+      "text": "vm.warp(block.timestamp + 2 hours);"
+    },
+    {
+      "line": 77,
+      "path": "test/XixiDesign02Q2StrandingFast.t.sol",
+      "pattern": "approve-call",
+      "text": "t.approve(address(bill), 300e6);"
+    },
+    {
+      "line": 94,
+      "path": "test/XixiDesign02Q2StrandingFast.t.sol",
+      "pattern": "approve-call",
+      "text": "t.approve(address(bill), 300e6);"
+    },
+    {
+      "line": 111,
+      "path": "test/XixiDesign02Q2StrandingFast.t.sol",
+      "pattern": "approve-call",
+      "text": "t.approve(address(bill), 300e6);"
+    },
+    {
+      "line": 120,
+      "path": "test/XixiDesign02Q2StrandingFast.t.sol",
+      "pattern": "timestamp-arith",
+      "text": "vm.warp(block.timestamp + 61); // SETTLEMENT_WINDOW = 60s"
+    }
+  ],
+  "findings_by_pattern": {
+    "approve-call": 75,
+    "delegatecall": 6,
+    "inline-assembly": 12,
+    "lowlevel-call": 2,
+    "prevrandao": 5,
+    "shell-true": 1,
+    "timestamp-arith": 99,
+    "tx-origin": 13
+  },
+  "generated_utc": "2026-11-25T23:04:15Z",
+  "head_sha": "d012e86b1d4fab22114977d245dcef7d2264ec02",
+  "repo": "FluxNimbusAi/tanda",
+  "tick": "TICK-1125-13",
+  "traversal": {
+    "excluded_regex": "(vault|\\.hermes-secrets|node_modules|/out/|cache/|broadcast/|\\.git/)",
+    "note": "vault + secrets paths excluded from traversal by tick law",
+    "tracked_files_scanned": 236
+  },
+  "triage": {
+    "inline_assembly_contracts": {
+      "classification": "benign-documented",
+      "count": 4,
+      "sites": [
+        "TandaBillFactory.sol:44 EIP-1167 clone create(0,init) with encodePacked layout",
+        "TandaBillFactory.sol:66 revert-data bubble on unchecked-path callBill",
+        "TandaBillV2.sol:185 / FastTandaBillV2.sol:173 _caller() shr(96,calldataload) caller-tail decode, gated by msg.sender==factory (forged tail cannot spoof; fallback branch ignores it)"
+      ]
+    },
+    "lowlevel_calls_contracts": {
+      "classification": "all-return-checked",
+      "count": 4,
+      "note": "git grep over contracts/ confirms zero unchecked .call( and zero .call{value:} in first-party code",
+      "sites": [
+        "FastTandaBillV2.sol:46",
+        "SafeERC20Minimal.sol:28",
+        "SafeERC20Minimal.sol:37",
+        "TandaBillFactory.sol:64 (bool success + revert bubble)"
+      ]
+    },
+    "method": "manual context review of every first-party hit (non-lib, non-test), same tick",
+    "shell_true_scripts": {
+      "classification": "accepted-low",
+      "count": 1,
+      "note": "fixed-literal git|tr|sha256sum pipeline, no user input interpolated beyond constants defined in same file; test-probe harness only",
+      "site": "scripts/e2e_route_matrix_probe_t_c80a1cbf.py:144"
+    },
+    "third_party_noise": "tx-origin(13)/prevrandao(5)/delegatecall-comment(Vm.sol) hits are forge-std docs/cheatcode decls; delegatecall executable hit is test/DeployScriptGolden11255.t.sol golden-arm test. Not first-party surface.",
+    "timestamp_arith_contracts": {
+      "classification": "protocol-semantics",
+      "count": 7,
+      "note": "SETTLEMENT_WINDOW/MAX_HOLD elapsed checks (window open/close, refund gating). Miner timestamp drift tolerance ~15s vs 3600s windows; no single-block randomness reliance."
+    }
+  },
+  "unchecked_lowlevel_calls": [],
+  "verdict": "CLEAN-NO-FIRST-PARTY-DEFECTS",
+  "verdict_note": "Earned zero-hit states: secret-literals 0 across all tracked files (vault excluded from traversal per tick law); os-system/eval/exec/pickle/yaml-unsafe/tls-verify-off 0; approve-call 0 first-party; unchecked lowlevel 0. Companion twin-scan (SafeERC20 divergence) closed 0-hit @fb2ef5ea earlier same day (t_aeb6a8ba)."
+}
