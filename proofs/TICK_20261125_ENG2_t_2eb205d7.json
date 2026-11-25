@@ -1,0 +1,85 @@
+{
+  "base_sha_for_delta": "fd28c983",
+  "card": "t_2eb205d7",
+  "ci_readback_head": [
+    {
+      "conclusion": "success",
+      "name": "foundry",
+      "status": "completed"
+    },
+    {
+      "conclusion": "success",
+      "name": "provenance",
+      "status": "completed"
+    },
+    {
+      "conclusion": "success",
+      "name": "python",
+      "status": "completed"
+    }
+  ],
+  "head_sha": "d35c7bf467f3ec3ccb8803a154cd3978c0e36022",
+  "indexer_hb1": {
+    "bucket": "idx:lag",
+    "chain_id": 4801,
+    "cursor": "MOVING",
+    "cursor_samples": [
+      37524194,
+      37524200
+    ],
+    "port": 8096,
+    "status": "UP"
+  },
+  "prior_proof_baseline": {
+    "card": "t_59c5bc43",
+    "head": "fd28c983",
+    "passed": 243
+  },
+  "repo": "FluxNimbusAi/tanda",
+  "run_utc": "2026-11-25T08:38:39Z",
+  "secret_sweep_delta": {
+    "bytes_scanned": 100346,
+    "classified_hits": [
+      {
+        "class": "RECEIPT/ABI/BYTES-class (legitimate)",
+        "file": "README.md",
+        "line": 49,
+        "pattern": "private_key_hex"
+      },
+      {
+        "class": "RECEIPT/ABI/BYTES-class (legitimate)",
+        "file": "README.md",
+        "line": 50,
+        "pattern": "private_key_hex"
+      },
+      {
+        "class": "RECEIPT/ABI/BYTES-class (legitimate)",
+        "file": "README.md",
+        "line": 51,
+        "pattern": "private_key_hex"
+      }
+    ],
+    "files_scanned": 6,
+    "pattern_classes": [
+      "private_key_hex",
+      "api_key_assign",
+      "aws_key",
+      "jwt",
+      "mnemonic_words",
+      "private_key_pem"
+    ],
+    "vault_path_excluded": true,
+    "verdict": "CLEAN"
+  },
+  "suite": {
+    "failed": 0,
+    "forge_log_bytes_LF": 19046,
+    "forge_log_bytes_raw": 19046,
+    "forge_log_sha256_LF": "8f2eccda4dc5fac671228edc824ede8c3401a070f39d2c2aafb730833377fc81",
+    "passed": 245,
+    "runner": "forge 1.9.0 (6056c584)",
+    "skipped": 0,
+    "suites_observed": 0,
+    "total": 245
+  }
+}
