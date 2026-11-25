@@ -1,0 +1,63 @@
+{
+ "card": "TWIN-SCAN-1124",
+ "generated_utc": "2026-11-24T21:53:00-05:00",
+ "head": "588413567d37e428615312f7372fb9dfc86cbd82",
+ "v2_anchor": {
+  "blob_sha1": "8ca54af5a79698a61bd36278f577f6e0d3ee99b8",
+  "blob_eq_disk_lf": true,
+  "blob_sha256": "1e965cad728ad23e278024eda248e6b5483c16d0689cc0239824259a32c28cfa",
+  "bytes_blob": 31681,
+  "bytes_disk": 32240,
+  "bytes_disk_lf": 31681
+ },
+ "files": {
+  "FastTandaBillV2.sol": {
+   "sha256_LF": "699bab40f222e79fb5916f111b74d0a0276661ab6151ffb6ba554d26feacdbd8",
+   "bytes": 24101,
+   "bare_hits": [],
+   "safe_wrapped_lines": [
+    258,
+    382,
+    405
+   ],
+   "safeerc20_refs": 1
+  },
+  "SafeERC20Minimal.sol": {
+   "sha256_LF": "7e08fc51e49bef1173ac60b4d08a9c4f28b129427ed10c315a4b6c8ea8e8e1d8",
+   "bytes": 2532,
+   "bare_hits": [],
+   "safe_wrapped_lines": [],
+   "safeerc20_refs": 1
+  },
+  "TandaBill.sol": {
+   "sha256_LF": "645c2fc34715a25704b1fa4ac9327752cda08aa95ad5f43b0d16cac2cfa5bfec",
+   "bytes": 13255,
+   "bare_hits": [],
+   "safe_wrapped_lines": [
+    145,
+    227
+   ],
+   "safeerc20_refs": 1
+  },
+  "TandaBillFactory.sol": {
+   "sha256_LF": "4121af0521ff554b64bf54c0ae87dc87bc751428e569e340c3af65cbcaa979ea",
+   "bytes": 3368,
+   "bare_hits": [],
+   "safe_wrapped_lines": [],
+   "safeerc20_refs": 0
+  },
+  "TandaBillV2.sol": {
+   "sha256_LF": "1e965cad728ad23e278024eda248e6b5483c16d0689cc0239824259a32c28cfa",
+   "bytes": 31681,
+   "bare_hits": [],
+   "safe_wrapped_lines": [
+    302,
+    459,
+    481
+   ],
+   "safeerc20_refs": 1
+  }
+ },
+ "verdict": "CLEAN",
+ "note": "bare ERC20 transfer/transferFrom call sites per file vs SafeERC20 wrapping; native-ETH payable sends excluded by scope"
+}
