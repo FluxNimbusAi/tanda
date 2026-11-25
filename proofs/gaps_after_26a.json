@@ -1,0 +1,49 @@
+{
+  "card": "t_ca59a1ff",
+  "tick": "TICK-1125-7 ENGINE 26A",
+  "head_before": "3a968d712cfbe8ea9e29d0d1f2ef1059d1709293",
+  "file_test": "test/DeployScriptGolden11255.t.sol",
+  "file_test_sha256_LF": "d1292bfb55ae0d759dedecbaed088ac2fd0d50b43e17db8da6768b0e3edbbae3",
+  "file_test_bytes_raw": 6557,
+  "file_test_bytes_norm": 6557,
+  "lever": "address(script).delegatecall(run()) collapses caller/CREATE/owner contexts; executed inside the single serialized golden function (USDC_ADDRESS single-writer law preserved).",
+  "harness_semantics_measured": "CREATEs inside vm.startBroadcast() charge the broadcast recorder, NOT the test-context EVM nonce (measured 12->12); computeCreateAddress(address(this),n) is therefore not the deployed-bill model in-test. Arm proof carried by delOk + forge coverage, not address asserts.",
+  "closed_from_gaps_after_1125_5": [
+    "script/TandaDeploy.s.sol L46 branch SUCCESS arm (Owner mismatch golden flipped)",
+    "script/TandaDeploy.s.sol L47 line",
+    "script/TandaDeploy.s.sol L47 branch SUCCESS arm",
+    "script/TandaDeploy.s.sol L49 console line",
+    "script/TandaDeploy.s.sol L50 console line"
+  ],
+  "dead_defense_remaining": [
+    {
+      "site": "script/TandaDeploy.s.sol:45 FAIL",
+      "why": "bill.token() is the constructor arg echoed; no in-run lever"
+    },
+    {
+      "site": "script/TandaDeploy.s.sol:47 FAIL",
+      "why": "run() never adds seats before the check; fresh-deploy invariant"
+    },
+    {
+      "site": "script/TandaDeployV2.s.sol:28 FAIL",
+      "why": "TandaBillFactory.implementation is `address public immutable` (contracts/TandaBillFactory.sol:13) set from constructor in the line above"
+    }
+  ],
+  "coverage_after": {
+    "script/TandaDeploy.s.sol": {
+      "lines": "100.00% (17/17)",
+      "statements": "100.00% (18/18)",
+      "functions": "100.00% (1/1)",
+      "branches": "75.00% (6/8)  # rem = 2 dead-defense arms"
+    },
+    "script/TandaDeployV2.s.sol": {
+      "lines": "100.00% (11/11)",
+      "statements": "100.00% (13/13)",
+      "functions": "100.00% (1/1)",
+      "branches": "75.00% (3/4)  # rem = 1 dead-defense arm"
+    },
+    "suite_total": "93.39% (805/862) lines / 92.80% statements / 78.96% branches / 91.30% functions"
+  },
+  "forge_full_suite": "255/255 passed, 0 failed, 23 suites (was 254 @d3785ef7)",
+  "verdict": "6 of 8 open production gap items closed by executed work; remaining 3 branch arms structurally unreachable, pinned in-file."
+}

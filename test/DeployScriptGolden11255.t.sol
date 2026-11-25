@@ -71,5 +71,37 @@ contract DeployScriptGolden11255 is Test {
         vm.setEnv("USDC_ADDRESS", vm.toString(USDC_4801));
         v2 = new TandaDeployV2();
         v2.run();
+
+        // ─── TICK-1125-7 / ENGINE 26A: caller==deployer via DELEGATECALL ───
+        // The 1125-5 limit was real for CALL shape: startBroadcast makes the
+        // script contract the CREATE sender while msg.sender stays the test,
+        // so L46 could only ever take its FAIL arm. delegatecall collapses the
+        // script body into THIS contract's context: msg.sender, the CREATE
+        // sender and the owner field all become address(this), unlocking
+        // L46-SUCCESS + L47 line/success + L49/L50 console lines. Still inside
+        // the ONE serialized function (USDC_ADDRESS single-writer law holds).
+        vm.setEnv("USDC_ADDRESS", vm.toString(USDC_4801));
+        v1 = new TandaDeploy();
+        (bool delOk, bytes memory delRet) =
+            address(v1).delegatecall(abi.encodeWithSignature("run()"));
+        assertTrue(delOk, "delegated run(): owner/seats arms must pass");
+        // Empty return data (run() returns nothing) doubles as revert-free proof.
+        assertEq(delRet.length, 0, "delegated run() left revert data");
+        // Measured harness semantics (this tick, twice): delOk==true IS the
+        // L46-SUCCESS + L47-SUCCESS + L49/L50 witness — the call body runs to
+        // completion, and case 3 above proves any owner-arm failure reverts
+        // with "Owner mismatch" and would flip delOk false. The deployed bill
+        // is NOT predictable via computeCreateAddress(address(this), n):
+        // CREATEs executed inside vm.startBroadcast() are charged to the
+        // broadcast recorder, not the test-context EVM nonce (measured 12->12),
+        // so no post-state address assertion belongs here. Arm coverage is
+        // proven by forge coverage on script/TandaDeploy.s.sol (see
+        // proofs/gaps_after_26a.json).
+        // Dead-defense pins (unreachable by construction, NOT harness limits):
+        // - L45 FAIL: token() is the constructor arg echoed back; no lever.
+        // - L47 FAIL: run() never adds seats before the check; invariant.
+        // - V2 L28 FAIL: TandaBillFactory.implementation is `address public
+        //   immutable` (contracts/TandaBillFactory.sol:13), set from the
+        //   constructor; factory is deployed on the line above the require.
     }
 }
