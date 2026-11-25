@@ -1,0 +1,55 @@
+{
+ "base_sha_for_delta": "fb2ef5ea8",
+ "card": "t_6b638b55",
+ "ci_readback_head": [
+  {
+   "conclusion": "success",
+   "name": "CI",
+   "status": "completed"
+  }
+ ],
+ "delta_files": [
+  "test/AbiSelectorLock25C.t.sol",
+  "test/EscrowInvariant.t.sol"
+ ],
+ "head_sha": "df155635dbc92a013c84dff0c2f65da91dfecb8b",
+ "indexer_hb1": {
+  "bucket": "idx:lag",
+  "chain_id": 4801,
+  "cursor": "MOVING",
+  "cursor_samples": [
+   37529817,
+   37529847
+  ],
+  "lag_blocks": 30,
+  "note": "head-30 <= LAG_OK=64",
+  "port": 8096,
+  "status": "UP"
+ },
+ "prior_proof_baseline": {
+  "card": "t_2eb205d7",
+  "head": "d35c7bf46",
+  "note": "25B(+3 EscrowInvariant)+25C(+2 AbiSelectorLock) = 250; first proof at tip after both test commits",
+  "passed": 245
+ },
+ "repo": "FluxNimbusAi/tanda",
+ "run_utc": "2026-11-25T11:48:07Z",
+ "secret_sweep_delta": {
+  "bytes_scanned": 36387,
+  "classified_hits": [],
+  "files": 2,
+  "vault_path_excluded": true,
+  "verdict": "clean (all hits classified legitimate)"
+ },
+ "suite": {
+  "failed": 0,
+  "log": "forge_25d.log",
+  "log_bytes_LF": 21899,
+  "log_native_LF": true,
+  "log_sha256_LF": "342376c6e3eb80d966cb30814d995ee1cbcc94eb0eb669eeb42e9eb41a391593",
+  "passed": 250,
+  "skipped": 0,
+  "suites": 21,
+  "total": 250
+ }
+}
