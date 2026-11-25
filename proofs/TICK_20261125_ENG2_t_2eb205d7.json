@@ -79,7 +79,8 @@
     "passed": 245,
     "runner": "forge 1.9.0 (6056c584)",
     "skipped": 0,
-    "suites_observed": 0,
+    "suite_count_note": "corrected same-tick: per-suite 'Ran N tests for' grep = 18 lines; forge summary line 'Ran 19 test suites ... 245 passed' is authoritative. First landing run's line-matcher bug, disclosed per closing law.",
+    "suites_observed": 19,
     "total": 245
   }
 }
