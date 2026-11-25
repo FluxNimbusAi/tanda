@@ -1,0 +1,61 @@
+{
+  "card": "TICK-1125-10 ENGINE 28",
+  "date_utc": "2026-11-25T19:4xZ",
+  "head": "e91521c18c111d23d0eae419679db25def0101fd",
+  "legs": {
+    "delta_secret_sweep": {
+      "added_lines": 4594,
+      "files": 10,
+      "hits": 0,
+      "patterns": [
+        "private_key",
+        "seed_phrase",
+        "api_key(ghp/sk-/AKIA/xox)",
+        "alchemy_url_key",
+        "bearer",
+        "wallet_json"
+      ],
+      "range": "ab331d083..e91521c18",
+      "vault_path_excluded": true
+    },
+    "forge_full_suite": {
+      "baseline_prev": "254/254 @ TICK-1125-4 (matrix grew +2 via ENGINE 26B/27)",
+      "failed": 0,
+      "output_file_bytes": 25615,
+      "output_sha256": "a47e677f242793764e71f3f7697e23fba2a531353357bdf57f36c55fcb51be8e",
+      "passed": 256,
+      "rc": 0,
+      "suites": 23
+    },
+    "indexer_hb1": {
+      "chain_id": 4801,
+      "health": 200,
+      "lag": 3,
+      "last_indexed_block": 37544336,
+      "listener_pids": [
+        "20204"
+      ],
+      "rpc_chain_verified": 4801,
+      "rpc_head": 37544339,
+      "token": "idx:ok"
+    },
+    "kanban_census": {
+      "actionable": 0,
+      "detail": "t_5d8189f1 portal-trio-gated; t_a146b4d8/t_9012fafd/t_fa0dcb9b/t_b4f64076 default-lane owner-gated (Vercel env); t_b520db33 [HUMAN_GATE] ruling memo w/ evidence complete",
+      "open": 6
+    },
+    "pr_census": {
+      "open_prs": 0,
+      "repos": [
+        "FluxNimbusAi/tanda",
+        "FluxNimbusAi/tanda-miniapp",
+        "FluxNimbusAi/tandabill-website"
+      ],
+      "verdict": "PR lane quiet"
+    },
+    "twin_scan": {
+      "reason": "contracts/ diff vs fb2ef5ea empty; Permit2 exemption t_aeb6a8ba stands",
+      "status": "zero-hit maintained"
+    }
+  }
+}
