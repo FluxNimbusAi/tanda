@@ -1,0 +1,18 @@
+{
+  "card": "t_733e3baa",
+  "command": "forge test (full trunk suite, forge 1.9.0 6056c584)",
+  "date_utc": "2026-11-25T01:42:08Z",
+  "head_commit": "c5cf3fe7a9d049110f2f6c76cd9ad8c379a8d57e",
+  "log_bytes_LF": 22153,
+  "log_sha256_LF": "4d6ecd247355d140c412f94779da2f641083448c4e38584eda66baccec4cb1f9",
+  "rc": 0,
+  "secret_scan": "ran pre-stage on log bytes; pattern class: PEM/API-key/ghp/slack/AWS/40-hex-address; 0 hits (vault path excluded from traversal)",
+  "summary_line": "Ran 17 test suites in 45.51ms (419.14ms CPU time): 236 tests passed, 0 failed, 0 skipped (236 total tests)",
+  "totals": {
+    "failed": 0,
+    "passed": 236,
+    "skipped": 0,
+    "suites": 17,
+    "total": 236
+  }
+}
