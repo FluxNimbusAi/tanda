@@ -1,0 +1,71 @@
+{
+  "card": "t_5fe210e7",
+  "engine": "ENGINE-35",
+  "title": "bounds-guard patch for view-OOB (test-first against golden anchor)",
+  "date": "2026-11-26",
+  "executed_by": "Nimbus",
+  "base_commit": "49e5242357e5aa774d323f6e76c43bcfcf82f060",
+  "base_note": "main tip = ENGINE-34 squash (PR #194); defect golden from pre-squash f16f5d57d",
+  "defect": {
+    "summary": "isSeatConfirmed (V2 L548 / Fast L429) and settlementPayouts (V2 L556 / Fast L437) panicked Panic(0x32) (storage array OOB) for settlementId >= settlements.length, while claimablePayout (V2 L529) was defensive (OOB -> 0). UI/indexer polling before first initiateSettlement received a revert, not a value.",
+    "pinned_by": "test/ViewOobGolden34.t.sol @ fb3893887123c10ac8dd5c0170fa652d74c560ec (ENGINE-34, PR #194)"
+  },
+  "guard": {
+    "files": ["contracts/TandaBillV2.sol", "contracts/FastTandaBillV2.sol"],
+    "behavior": {
+      "isSeatConfirmed": "if (settlementId >= settlements.length) return false; added as first statement; raw==0 short-circuit order preserved (golden g3/g8 pins)",
+      "settlementPayouts": "if (settlementId >= settlements.length) return new uint256[](0); added before the array read",
+      "claimablePayout": "untouched; convention extended, not changed"
+    },
+    "surface_stability": {
+      "isSeatConfirmed(uint256,address)": "0xb659eb82 (recomputed via cast keccak; matches AbiSelectorLock25C pin)",
+      "settlementPayouts(uint256)": "0x44bd4071 (recomputed via cast keccak; matches AbiSelectorLock25C pin)"
+    },
+    "blast_radius": "grep audit: all other isSeatConfirmed/settlementPayouts call sites in test/ use in-range ids (loops bounded by length or ids 0/1); no suite besides ViewOobGolden34 pinned the panic behavior; no other expectRevert-Panic pins in test/ (only permit2-4801.hex bytecode coincidences)"
+  },
+  "test_first": {
+    "order": "golden flipped to post-guard expectations FIRST (RED vs unpatched contracts), then guard patch applied (GREEN)",
+    "red": {
+      "run": "forge test --match-contract ViewOobGolden34Test",
+      "authority_line": "Ran 1 test suite in 11.24ms (10.27ms CPU time): 3 tests passed, 6 failed, 0 skipped (9 total tests)",
+      "failing_legs": [
+        "test_g2_isSeatConfirmed_oobId_seatedWallet_false: panic array out-of-bounds (0x32)",
+        "test_g4_settlementPayouts_oobId_emptyVector: panic array out-of-bounds (0x32)",
+        "test_g6_lengthBoundary_oobId_zero_validId_reads: panic array out-of-bounds (0x32)",
+        "test_g7_postExecute_claimablePayout_oob_stillZero: panic array out-of-bounds (0x32)",
+        "test_g8_fast_isSeatConfirmed_oobId_false_seated: panic array out-of-bounds (0x32)",
+        "test_g9_fast_settlementPayouts_oobId_emptyVector: panic array out-of-bounds (0x32)"
+      ],
+      "passing_legs_still_holding": ["test_g1_claimablePayout_oobId_returnsZero", "test_g3_isSeatConfirmed_oobId_seatlessWallet_false", "test_g5_validId_confirms_readTrue"]
+    },
+    "green_golden": {
+      "run": "forge test --match-contract ViewOobGolden34Test",
+      "authority_line": "Ran 1 test suite in 5.26ms (2.52ms CPU time): 9 tests passed, 0 failed, 0 skipped (9 total tests)"
+    },
+    "green_full_suite": {
+      "run": "forge test",
+      "authority_line": "Ran 26 test suites in 111.01s (137.56s CPU time): 290 tests passed, 0 failed, 0 skipped (290 total tests)",
+      "parity": "identical suite/test count to ENGINE-34 baseline (26 suites, 290 tests) -> zero regressions, no rewritten setup calls needed"
+    }
+  },
+  "artifact_hashes": {
+    "scope": "git blob sha1 = canonical LF blob in object store; sha256-LF = sha256 over CR-stripped bytes",
+    "contracts/TandaBillV2.sol": {
+      "blob_before": "8ca54af5a79698a61bd36278f577f6e0d3ee99b8",
+      "blob_after": "54f1294cab718a7a05ed23a9088e320f38c515f1",
+      "sha256_lf_before": "1e965cad728ad23e278024eda248e6b5483c16d0689cc0239824259a32c28cfa",
+      "sha256_lf_after": "79d7b124fd6ccd3fac1b9274ca95b009c31f81666ed7958a1784e3bc24dfdda7"
+    },
+    "contracts/FastTandaBillV2.sol": {
+      "blob_before": "4c4be23af1afd5019cd662fb17496797e2d081df",
+      "blob_after": "1b391693b5559b2c0e6362c91aa0c4e82c204aee",
+      "sha256_lf_before": "699bab40f222e79fb5916f111b74d0a0276661ab6151ffb6ba554d26feacdbd8",
+      "sha256_lf_after": "2e3c87418c77da2205259c2fa43242ecdddc82a467c29b324258f3af36040ada"
+    },
+    "test/ViewOobGolden34.t.sol": {
+      "blob_before": "fb3893887123c10ac8dd5c0170fa652d74c560ec",
+      "blob_after": "56db40eba58c23cfb58a6d695df4cd51d50eb392"
+    }
+  },
+  "anchor_note": "blob_before 8ca54af5a == canonical V2 anchor (c468fda2 lineage) at base tip - guard patch intentionally rotates the canonical blob; re-pin of 3683cfe0 (== on-chain impl) is the Flux anchor lane. MUST land pre-deploy so blob rotation + seat-gate ship in ONE factory generation (two deploys = two portal entrypoint re-pins = drift risk)."
+}

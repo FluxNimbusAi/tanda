@@ -545,7 +545,11 @@ contract TandaBillV2 {
 
     function activeSeatCount() external view returns (uint256) { return _activeSeatCount(); }
 
+    /// @notice ENGINE-35 bounds guard, mirroring the claimablePayout convention above:
+    ///         OOB settlementId returns false instead of Panic(0x32). The raw==0
+    ///         short-circuit order is preserved (pinned by golden legs g3/g8).
     function isSeatConfirmed(uint256 settlementId, address wallet) external view returns (bool) {
+        if (settlementId >= settlements.length) return false;
         uint256 raw = seatIdOf[wallet];
         if (raw == 0) return false;
         return (settlements[settlementId].confirmedMask & (1 << (raw - 1))) != 0;
@@ -553,7 +557,9 @@ contract TandaBillV2 {
 
     /// @notice Explicit accessor: Solidity's auto-generated struct getter OMITS dynamic
     ///         arrays (payouts), so callers must use this to read the per-seat payout vector.
+    ///         ENGINE-35 bounds guard: OOB settlementId returns an empty vector, not Panic(0x32).
     function settlementPayouts(uint256 settlementId) external view returns (uint256[] memory) {
+        if (settlementId >= settlements.length) return new uint256[](0);
         return settlements[settlementId].payouts;
     }
 }
