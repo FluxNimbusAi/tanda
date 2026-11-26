@@ -1,0 +1,875 @@
+{
+ "proof": "ENGINE48_GRADING_EXT_20261126",
+ "card": "t_84924385",
+ "engine": "ENGINE-48 (family C: new proofs graded via sha256-LF recompute + census revalidation across .gitattributes renorm #207)",
+ "generated_utc": "2026-11-26T23:31:08Z",
+ "repo": "FluxNimbusAi/tanda",
+ "main_tip": "f9dc4eed90c15c460f0af7e1fdd1e11d1c409b32",
+ "baseline_manifest": "proofs/INTEGRITY_MANIFEST_45_20261126.json (89 files, card t_a2761a65)",
+ "method": "whole-file sha256 of CRLF->LF-normalized bytes recomputed from working tree at tip; git_blob via git hash-object; cross-checked vs manifest-45 recorded sha256_lf and origin/main: path tree entries",
+ "summary": {
+  "files_at_tip": 94,
+  "census_files": 89,
+  "new_graded": 5,
+  "new_paths": [
+   "proofs/ENGINE46_GITATTR_LF_20261126.json",
+   "proofs/ENGINE47_DEAD_BRANCH_ADJUDICATION_20261126.json",
+   "proofs/ENGINE47_GAPS_BEFORE_e47.json",
+   "proofs/ENGINE47_VERIFY_fresh.json",
+   "proofs/INTEGRITY_MANIFEST_45_20261126.json"
+  ],
+  "sha256_lf_drift_vs_census": 0,
+  "git_blob_drift_paths": 51,
+  "blob_drift_explanation": "Exact match: 51 = census-recorded count of CRLF files in working tree; PR #207 (eca812028) added text=LF .gitattributes + renormalize, rewriting those blobs CRLF->LF. Content identity (sha256-LF) invariant => grading preserved. Not a defect.",
+  "missing_files": 0
+ },
+ "verdict": "CENSUS_INTEGRITY_CONFIRMED: 0 sha256-LF drifts across all 89 census files post-renorm; 5 new files graded; blob deltas fully explained by #207 renormalization.",
+ "files": [
+  {
+   "path": "proofs/BOUNDS_GUARD_35_20261126.json",
+   "bytes": 4891,
+   "norm_bytes": 4891,
+   "crlf_present": false,
+   "sha256_lf": "1eb8f26976713b4699bf5b99a784d46d24c7ee263f52d4ba06504fb887f99b53",
+   "git_blob": "39dea56aaf43b271ae4130c907bb94809d660b22",
+   "grade": "GRADED"
+  },
+  {
+   "path": "proofs/CARD5A_GRADE_20261122.md",
+   "bytes": 2533,
+   "norm_bytes": 2533,
+   "crlf_present": false,
+   "sha256_lf": "bc12919810c862b9c3aca7753b4ee6d37f4f1e91737f585de3434d531e0da9d2",
+   "git_blob": "6ba56e11d99cc79feb6ec2834a5b75a6bce91ccd",
+   "grade": "GRADED"
+  },
+  {
+   "path": "proofs/CARD5A_PROBE_RECEIPT_20261122.json",
+   "bytes": 1800,
+   "norm_bytes": 1800,
+   "crlf_present": false,
+   "sha256_lf": "87d38580928f7244da8b4b8c4fbbb0600498ea94f80b7ff4a830bf3253398c37",
+   "git_blob": "d3c1211bf3e17c999626486c6f3b8654ab6ad47c",
+   "grade": "GRADED"
+  },
+  {
+   "path": "proofs/CI_HYGIENE_20261124.json",
+   "bytes": 6749,
+   "norm_bytes": 6749,
+   "crlf_present": false,
+   "sha256_lf": "ce12806287dd6ccd0015e6ddcb17fe41e14cd316c9f01bc6a0253ed0631b60ed",
+   "git_blob": "7e3c5127960eeb2e1319b26d70ebd230b29cf8b4",
+   "grade": "GRADED"
+  },
+  {
+   "path": "proofs/CONTRACT_LOOP_STATE_PRE_V3_20261121.json",
+   "bytes": 4197,
+   "norm_bytes": 4197,
+   "crlf_present": false,
+   "sha256_lf": "8ea0e84aefdee7a25a3b47c9ce73a73f39a0b89757951b1e24a6d89d42f2e7ca",
+   "git_blob": "dc06480b2080378e666ac992023ff9a36723eb7f",
+   "grade": "GRADED"
+  },
+  {
+   "path": "proofs/DB_CENSUS_44_20261126.json",
+   "bytes": 8369,
+   "norm_bytes": 8369,
+   "crlf_present": false,
+   "sha256_lf": "2aaea5ba8a7922bcad21adb44433724eb937f594957355323f88258866da839f",
+   "git_blob": "d20a6dfb11c50d6b049b34059cfbcd93a5ebb1b3",
+   "grade": "GRADED"
+  },
+  {
+   "path": "proofs/DEPLOY_RECEIPT_V3_GRADE_20261122.md",
+   "bytes": 1899,
+   "norm_bytes": 1899,
+   "crlf_present": false,
+   "sha256_lf": "89af39d398a3bfab2a77893e867401ba6df598b01c795c282a88c3b8164c5ef1",
+   "git_blob": "1a5050e42d5b0d44bedbd07d903bf1fea5a2cc86",
+   "grade": "GRADED"
+  },
+  {
+   "path": "proofs/DEPLOY_RECEIPT_V3_HARDENED_20261121.json",
+   "bytes": 617,
+   "norm_bytes": 617,
+   "crlf_present": false,
+   "sha256_lf": "5fa1a37b17b23daae2efa63b9230b3de8acf68b77de4f208ccfdd5d4eb5f9e2e",
+   "git_blob": "9bcb8c4ebc6057d2d92d251117963c47e716dfea",
+   "grade": "GRADED"
+  },
+  {
+   "path": "proofs/DISPUTE_ADJ_XIXI_CROSSNODE_20261122.md",
+   "bytes": 873,
+   "norm_bytes": 873,
+   "crlf_present": false,
+   "sha256_lf": "82491add1f40672cfaffe054f10c4dd9692262646b7549c0b68ff1944ea994e6",
+   "git_blob": "502f3a3348af37cbe30592be7e5bebd97b6d0062",
+   "grade": "GRADED"
+  },
+  {
+   "path": "proofs/E2E_HB1_PROGRESSARM_20261124_t_79ae6a38.json",
+   "bytes": 3860,
+   "norm_bytes": 3860,
+   "crlf_present": false,
+   "sha256_lf": "3c26cd27e86dc9f6037addef4093e61b5fbc5143f98a139241a70d83233493d1",
+   "git_blob": "3091cac4eddbf7b8129b663cebafd2d7f62a1213",
+   "grade": "GRADED"
+  },
+  {
+   "path": "proofs/E2E_INDEXER_ROUTE_MATRIX_20261123R2_t_c80a1cbf.json",
+   "bytes": 6853,
+   "norm_bytes": 6853,
+   "crlf_present": false,
+   "sha256_lf": "408cc837bfb109c551641a8c02836c10377e66099f005ca9d52b261481e032f2",
+   "git_blob": "18c3b776df8657c045dea56b4768aaf922adb571",
+   "grade": "GRADED"
+  },
+  {
+   "path": "proofs/E2E_INDEXER_ROUTE_MATRIX_20261123_t_c80a1cbf.json",
+   "bytes": 3975,
+   "norm_bytes": 3975,
+   "crlf_present": false,
+   "sha256_lf": "603ca440c3d6577f8a07d69a086bc11f66d169b75c369a002e5f2fd3fc82a517",
+   "git_blob": "ecc6781ede7ee72177e06848b7dada3357122237",
+   "grade": "GRADED"
+  },
+  {
+   "path": "proofs/ENG42_SIGNER_REPIN_20261126.json",
+   "bytes": 4118,
+   "norm_bytes": 4118,
+   "crlf_present": false,
+   "sha256_lf": "0d3775ceba003da4a6d71391a58b050b69a52e3a7e197bb51478442702580dd0",
+   "git_blob": "4f9a1e498c6ee3106216efaac9407a1e1f3f6898",
+   "grade": "GRADED"
+  },
+  {
+   "path": "proofs/ENGINE31_ANVIL_BROADCAST_20261126.json",
+   "bytes": 4015,
+   "norm_bytes": 4015,
+   "crlf_present": false,
+   "sha256_lf": "3da4bcc3ef4e05e3b29e8b3e85fdbd149bfe1a888cab79e8956ea313c1a450b3",
+   "git_blob": "aa6a7c04ec6311e119b4b419986136e71b63a485",
+   "grade": "GRADED"
+  },
+  {
+   "path": "proofs/ENGINE40_GAPS_AFTER_e40.json",
+   "bytes": 1154,
+   "norm_bytes": 1154,
+   "crlf_present": false,
+   "sha256_lf": "1459b904260be498c1dea0df4fb64e47a6261c70b508a648ff7351733bfa6c6d",
+   "git_blob": "afd178ac40cdab48205d01cdb3624297cf6132f6",
+   "grade": "GRADED"
+  },
+  {
+   "path": "proofs/ENGINE40_GAPS_CENSUS_a279adebc.json",
+   "bytes": 4174,
+   "norm_bytes": 4174,
+   "crlf_present": false,
+   "sha256_lf": "09408a80ff048cc9c96f390158caf57cb8b0281c0263b731d7b86f19ad4807bf",
+   "git_blob": "f7ae64a73511883f2444255f123ffbfb7a576811",
+   "grade": "GRADED"
+  },
+  {
+   "path": "proofs/ENGINE40_GAP_CENSUS_20261126.json",
+   "bytes": 4435,
+   "norm_bytes": 4435,
+   "crlf_present": false,
+   "sha256_lf": "c9218c5160f8defa49f88c258cd0c41967a93b7a4e58910058fb54baf5c55239",
+   "git_blob": "1da17c3464e1f5b9f827dd100a10101863e9d022",
+   "grade": "GRADED"
+  },
+  {
+   "path": "proofs/ENGINE46_GITATTR_LF_20261126.json",
+   "bytes": 29435,
+   "norm_bytes": 29435,
+   "crlf_present": false,
+   "sha256_lf": "499ddda688e336126315cd25292603b1c3edae086421c465bced685b76b561a2",
+   "git_blob": "833104fb4a115b13f90ead11f6272af8afafb109",
+   "grade": "GRADED_NEW_ENGINE48"
+  },
+  {
+   "path": "proofs/ENGINE47_DEAD_BRANCH_ADJUDICATION_20261126.json",
+   "bytes": 2878,
+   "norm_bytes": 2878,
+   "crlf_present": false,
+   "sha256_lf": "1b184fead41406a04b41bad5571756a60c8b54ae6c7241e83e59208de60ee5b6",
+   "git_blob": "1b2a7ab604a71c861a6ee65ebcd805540aa6f51f",
+   "grade": "GRADED_NEW_ENGINE48"
+  },
+  {
+   "path": "proofs/ENGINE47_GAPS_BEFORE_e47.json",
+   "bytes": 1154,
+   "norm_bytes": 1154,
+   "crlf_present": false,
+   "sha256_lf": "1459b904260be498c1dea0df4fb64e47a6261c70b508a648ff7351733bfa6c6d",
+   "git_blob": "afd178ac40cdab48205d01cdb3624297cf6132f6",
+   "grade": "GRADED_NEW_ENGINE48"
+  },
+  {
+   "path": "proofs/ENGINE47_VERIFY_fresh.json",
+   "bytes": 1154,
+   "norm_bytes": 1154,
+   "crlf_present": false,
+   "sha256_lf": "1459b904260be498c1dea0df4fb64e47a6261c70b508a648ff7351733bfa6c6d",
+   "git_blob": "afd178ac40cdab48205d01cdb3624297cf6132f6",
+   "grade": "GRADED_NEW_ENGINE48"
+  },
+  {
+   "path": "proofs/FAST_TWIN_MATRIX_PARITY_20261123_t_df262414.json",
+   "bytes": 2640,
+   "norm_bytes": 2640,
+   "crlf_present": false,
+   "sha256_lf": "d26bd2e6487db05f0d2db8a8fb8cacf66367898ecff196012bf6b1be43468422",
+   "git_blob": "226b19bdd44e19b0b5f5b386ff4be165d661d7da",
+   "grade": "GRADED"
+  },
+  {
+   "path": "proofs/FORGE_SUITE_C5CF3FE7A_20261124_t_733e3baa.json",
+   "bytes": 702,
+   "norm_bytes": 702,
+   "crlf_present": false,
+   "sha256_lf": "bff13087a9ee4aa426e793aeeef40288c6c5408f9fad00a2e8c0fc3f802a1233",
+   "git_blob": "df510bc5afe66bc440dae332eb887ca65e50fb4e",
+   "grade": "GRADED"
+  },
+  {
+   "path": "proofs/GUARD_MATRIX_T555EDBA1_20261123.json",
+   "bytes": 1393,
+   "norm_bytes": 1393,
+   "crlf_present": false,
+   "sha256_lf": "d5b341a66a22ef70fe5b28c11c594ab9dcc0ad5e16f479cd702c75aa7ffb2b0c",
+   "git_blob": "77c2de8c6720217bff4eab3bff8974715b3a7064",
+   "grade": "GRADED"
+  },
+  {
+   "path": "proofs/HIGH1_CEI_GATE_STATUS_20261120.md",
+   "bytes": 4097,
+   "norm_bytes": 4097,
+   "crlf_present": false,
+   "sha256_lf": "63645711633fbe2734666694d9b9f49f387c7aa8588de9be2ba2d1946ca85d0b",
+   "git_blob": "627e951b0c4529097e2a9144770353d83fa556e7",
+   "grade": "GRADED"
+  },
+  {
+   "path": "proofs/HIGH2_CLOSE_RECEIPT_20261121.md",
+   "bytes": 3054,
+   "norm_bytes": 3054,
+   "crlf_present": false,
+   "sha256_lf": "9fa01f10f8d3e128e2a0288381b1e176c7ed5084ecbc68b88168f4ef2de9debb",
+   "git_blob": "8a1fe1e1658f17dd5552020d0ff6f441be063719",
+   "grade": "GRADED"
+  },
+  {
+   "path": "proofs/HIGH2_STRANDING_GROUNDING_20261120.md",
+   "bytes": 7989,
+   "norm_bytes": 7989,
+   "crlf_present": false,
+   "sha256_lf": "8d4f3a4293dc0898eb1e6b875992182dd7810ac19a8e25096111d8658e3d9779",
+   "git_blob": "73be6a2fb470bee068e80cbbfb9d9a98d1370b54",
+   "grade": "GRADED"
+  },
+  {
+   "path": "proofs/HYG_1_GITIGNORE_20261124.json",
+   "bytes": 1903,
+   "norm_bytes": 1903,
+   "crlf_present": false,
+   "sha256_lf": "5fedd6df233d9d325b1af1ba907cfdda1242f16bf84a12484fe9b224c93c6827",
+   "git_blob": "a07b0970a199d79fdf0138cc06c1a0d3da5a61af",
+   "grade": "GRADED"
+  },
+  {
+   "path": "proofs/INTEGRITY_MANIFEST_45_20261126.json",
+   "bytes": 75009,
+   "norm_bytes": 75009,
+   "crlf_present": false,
+   "sha256_lf": "475443d6421a40a6879404138ef16e7bf6f7bff37be9cd91d3f05fe92c9023d9",
+   "git_blob": "ce1225770fdd2d58e8d3fc11ad82f8e2836bc6e1",
+   "grade": "GRADED_NEW_ENGINE48"
+  },
+  {
+   "path": "proofs/M4_HOSTING_DECISION_BRIEF_20261121.md",
+   "bytes": 5237,
+   "norm_bytes": 5237,
+   "crlf_present": false,
+   "sha256_lf": "fb49b624d3a6e3a817e0a78c2639b73b993051d755623dd6a08ea777bc43ce86",
+   "git_blob": "4ac26d236a3ab788d16937882635acbcab06a343",
+   "grade": "GRADED"
+  },
+  {
+   "path": "proofs/M4_P01A_GRADE_VERDICT_20261121.md",
+   "bytes": 2101,
+   "norm_bytes": 2101,
+   "crlf_present": false,
+   "sha256_lf": "b2994626e6f0920a95d13271100433f0e053a2e72516199ebc1476a13addb7c5",
+   "git_blob": "1502d897ff45392bea16efe40cf76aaa5f5831c8",
+   "grade": "GRADED"
+  },
+  {
+   "path": "proofs/ORPHAN_RETIRE_20261123_ENG-20261123-A1.json",
+   "bytes": 3363,
+   "norm_bytes": 3363,
+   "crlf_present": false,
+   "sha256_lf": "d9a47e9d27c2db30bab41678fd01c26e110e6e9feaf96d77dfb5be5ddc7cd05f",
+   "git_blob": "ab97413ef8bff34e2e4a055d773cc35c772fb5ec",
+   "grade": "GRADED"
+  },
+  {
+   "path": "proofs/SEATINACTIVE_COVERAGE_20261123_t_f6e6196c.json",
+   "bytes": 1752,
+   "norm_bytes": 1752,
+   "crlf_present": false,
+   "sha256_lf": "aca900199f322a7b265487b8f07ecc3fc028bb48cbe5e3fe992fad65d4d3cae7",
+   "git_blob": "428ea25ab9a76f771912e398695ef96f1067dabe",
+   "grade": "GRADED"
+  },
+  {
+   "path": "proofs/SECSCAN_UNTRACKED_SCRIPTS_20261123_t_6dd92ed1.json",
+   "bytes": 2060,
+   "norm_bytes": 2060,
+   "crlf_present": false,
+   "sha256_lf": "45c1e96f815b14e1bf6fafc708e41bbc1b8c93b41eab0281b20d398f86b79725",
+   "git_blob": "625cf4e689e7e16f59f1ce38886f55eff6d8cce0",
+   "grade": "GRADED"
+  },
+  {
+   "path": "proofs/SECURITY_SWEEP_20261124.json",
+   "bytes": 642,
+   "norm_bytes": 642,
+   "crlf_present": false,
+   "sha256_lf": "61278f3b13df3d8be55135d596f0e0d806a5b287deb05f51e724a7c14032b3f6",
+   "git_blob": "d279dc07888a9cba75f79f1be13ae1ac93045dbc",
+   "grade": "GRADED"
+  },
+  {
+   "path": "proofs/SECURITY_SWEEP_20261125.json",
+   "bytes": 42943,
+   "norm_bytes": 42943,
+   "crlf_present": false,
+   "sha256_lf": "b88db78f271933279c8c2f39c61aa34db86d1a5c75fd423b32a475cd3193ae3f",
+   "git_blob": "e3001f1c71bedb701e84c0c88e682883ebd42832",
+   "grade": "GRADED"
+  },
+  {
+   "path": "proofs/SEC_SWEEP_41_20261126.json",
+   "bytes": 5850,
+   "norm_bytes": 5850,
+   "crlf_present": false,
+   "sha256_lf": "0a7f567f217b8c4e3314d84e5d5ec170a885ad9579e06cb2741610782427c9e6",
+   "git_blob": "8568e73e9ec4080a82f65576c37db31a9e84d4d2",
+   "grade": "GRADED"
+  },
+  {
+   "path": "proofs/TEST_MATRIX_TOTAL_EXPENSES_REINVITE_20261123_t_2c233e6b.json",
+   "bytes": 1135,
+   "norm_bytes": 1135,
+   "crlf_present": false,
+   "sha256_lf": "41cf3a18ea4e491387e83cb407dce70c39345614976086b478ca0ac234d719be",
+   "git_blob": "312e7da64ce05e1c3c201e1c48d8ad7b06eff3e0",
+   "grade": "GRADED"
+  },
+  {
+   "path": "proofs/TEST_MATRIX_V2_UNTAKEN_ARMS_20261123_t_c82d4e00.json",
+   "bytes": 2582,
+   "norm_bytes": 2582,
+   "crlf_present": false,
+   "sha256_lf": "da0c8826321c2e9a697efb1b8f21dbd39e835e0e1de088c8953550c55dadaf92",
+   "git_blob": "5f6e9b7d5722af71594bccac11b2adfa7becb665",
+   "grade": "GRADED"
+  },
+  {
+   "path": "proofs/TICK_1125_10_ENGINE28.json",
+   "bytes": 1699,
+   "norm_bytes": 1699,
+   "crlf_present": false,
+   "sha256_lf": "4aec4dad35180f453c54cbe862ff01dd9e248278079ffba4473f74f29e8fa871",
+   "git_blob": "de96f8a111a181ea12a31c73b3352e8f4670c5b1",
+   "grade": "GRADED"
+  },
+  {
+   "path": "proofs/TICK_1125_11_ENGINE29.json",
+   "bytes": 7073,
+   "norm_bytes": 7073,
+   "crlf_present": false,
+   "sha256_lf": "34aff653188991c9f7a7b3b4e90d9c5ef16aa11bdd64988826274c2d392b2007",
+   "git_blob": "bb5030e32b4eea16079ce9243b57674143c7f26c",
+   "grade": "GRADED"
+  },
+  {
+   "path": "proofs/TICK_1125_9_ENGINE27.json",
+   "bytes": 2246,
+   "norm_bytes": 2246,
+   "crlf_present": false,
+   "sha256_lf": "a349ad9e8c5c0b002517466da7999600f686d3eaa760adea9337fb62352e6030",
+   "git_blob": "fbd3c813bd8a4f821394debaebe303281727893b",
+   "grade": "GRADED"
+  },
+  {
+   "path": "proofs/TICK_20261123_INDEXER_WATCH_CATCHUP.json",
+   "bytes": 1551,
+   "norm_bytes": 1551,
+   "crlf_present": false,
+   "sha256_lf": "06b2ff4ac71d4da5afe7a2cf865f1e4025167a4b08e63bc10dcc480c95d88a41",
+   "git_blob": "1a77f5b2a43bab531752294aed686dd7b3948078",
+   "grade": "GRADED"
+  },
+  {
+   "path": "proofs/TICK_20261123_SCANCHUNK.json",
+   "bytes": 1421,
+   "norm_bytes": 1421,
+   "crlf_present": false,
+   "sha256_lf": "cf658ab8fd6132d66fbee22424314fe60c70d09e8107aa6ba4f783786727c30f",
+   "git_blob": "495c7c0901faa71c993a609b164d8a82eb4944ca",
+   "grade": "GRADED"
+  },
+  {
+   "path": "proofs/TICK_20261123_TWINSCAN_SUITE.json",
+   "bytes": 1608,
+   "norm_bytes": 1608,
+   "crlf_present": false,
+   "sha256_lf": "673456da5400bd7774af25b89995ed04a6ee83bd0c7e4ab7be62e69cc7f58f57",
+   "git_blob": "1bee89585cd2400ecf32bae1618a98514d748af9",
+   "grade": "GRADED"
+  },
+  {
+   "path": "proofs/TICK_20261124_ENG-20261124-T1.json",
+   "bytes": 9912,
+   "norm_bytes": 9912,
+   "crlf_present": false,
+   "sha256_lf": "d4d5859239a986deb8c7db1b27e82e49fc1e2223b03b9e4052a59e77d4f2cf92",
+   "git_blob": "1841feec9add60daf88c70f9590ccbae980c2e0b",
+   "grade": "GRADED"
+  },
+  {
+   "path": "proofs/TICK_20261125_ENG2_t_2eb205d7.json",
+   "bytes": 2165,
+   "norm_bytes": 2165,
+   "crlf_present": false,
+   "sha256_lf": "c6d53b80477df02c2f67596df4584a4b6572d0c165fa8c7f6ae2f8523d297351",
+   "git_blob": "fcdd2a7dbb88dd6de8f34fb3cdd9ac952c439ad1",
+   "grade": "GRADED"
+  },
+  {
+   "path": "proofs/TICK_20261125_ENG3_t_6b638b55.json",
+   "bytes": 1246,
+   "norm_bytes": 1246,
+   "crlf_present": false,
+   "sha256_lf": "b2a879bd77254bc27342f5af0bea4ca9e2f27b243c5a5917fcd76ae56aca834d",
+   "git_blob": "f19c5b4fdd815d53c1dcfa975ef2cd448af3510d",
+   "grade": "GRADED"
+  },
+  {
+   "path": "proofs/TICK_20261125_ENG4_t_d1647c1b.json",
+   "bytes": 1560,
+   "norm_bytes": 1560,
+   "crlf_present": false,
+   "sha256_lf": "d86908eaf915fecdcb53426bf6d3a282e4c89a3a575c0c6aa32f772106fa8e6f",
+   "git_blob": "7c626e3c54aa1663f865a4fa5c5cc5ae3634a7ff",
+   "grade": "GRADED"
+  },
+  {
+   "path": "proofs/TICK_20261125_SUITE_t_59c5bc43.json",
+   "bytes": 1113,
+   "norm_bytes": 1113,
+   "crlf_present": false,
+   "sha256_lf": "6dcdfabffce80480431dcadda786c5028d13526258cf66e922f257f3e07d67ac",
+   "git_blob": "21a0d95c2b41291a5456f5cb369aa8d582aae56e",
+   "grade": "GRADED"
+  },
+  {
+   "path": "proofs/TWIN_CONTRACT_SCAN_RECEIPT_20261123.md",
+   "bytes": 2016,
+   "norm_bytes": 2016,
+   "crlf_present": false,
+   "sha256_lf": "e7689d10e9cfb16d8fb59a23553cad9adafbae7b399f1e7de8a963ee4767f1a9",
+   "git_blob": "8caa502613badfacb66fd983bc978bcf05cf7b69",
+   "grade": "GRADED"
+  },
+  {
+   "path": "proofs/TWIN_SAFEERC20_SCAN_20261123.json",
+   "bytes": 5545,
+   "norm_bytes": 5545,
+   "crlf_present": false,
+   "sha256_lf": "e53318c544d805434ea5523842c9c18c44c112c57ef7712504136bc57e7ab070",
+   "git_blob": "6e2ccd4669fcc226da79b0148804ffc47df01434",
+   "grade": "GRADED"
+  },
+  {
+   "path": "proofs/TWIN_SAFEERC20_SCAN_20261124_c468fda2_t_57f4bdec.json",
+   "bytes": 1413,
+   "norm_bytes": 1413,
+   "crlf_present": false,
+   "sha256_lf": "54cf5305dc56a7b05506cb7e10779adafba4fb0dc2025851a4d8867fa24d5553",
+   "git_blob": "dd9e7d462720a622286326b370bbc2896d2f0416",
+   "grade": "GRADED"
+  },
+  {
+   "path": "proofs/TWIN_SCAN_1126.json",
+   "bytes": 3622,
+   "norm_bytes": 3622,
+   "crlf_present": false,
+   "sha256_lf": "57c56027d7f984a5febb195434ce711e0c154c0759174cebdef5eeb8f911d496",
+   "git_blob": "a469fa5e2426c5ae13860a323ac0a360bfa7b4ff",
+   "grade": "GRADED"
+  },
+  {
+   "path": "proofs/TWIN_SCAN_1126B.json",
+   "bytes": 3622,
+   "norm_bytes": 3622,
+   "crlf_present": false,
+   "sha256_lf": "0b51eb13324c249f3205877f6fbe26b7613f1a810cf325dee960780035879c10",
+   "git_blob": "8d59fb55a60a53024a56eb97b9e8fdd5550a2633",
+   "grade": "GRADED"
+  },
+  {
+   "path": "proofs/TWIN_SCAN_1126C.json",
+   "bytes": 3622,
+   "norm_bytes": 3622,
+   "crlf_present": false,
+   "sha256_lf": "0b51eb13324c249f3205877f6fbe26b7613f1a810cf325dee960780035879c10",
+   "git_blob": "8d59fb55a60a53024a56eb97b9e8fdd5550a2633",
+   "grade": "GRADED"
+  },
+  {
+   "path": "proofs/TWIN_SCAN_13c19ac53_20261123.json",
+   "bytes": 3353,
+   "norm_bytes": 3353,
+   "crlf_present": false,
+   "sha256_lf": "2aabc74a6d98d34a8abf355e6e009f3c5f11ee1f8bf1e63dde121fce5d9b375e",
+   "git_blob": "88b6a1151a496121e4b8ff14684ac4177b95eeac",
+   "grade": "GRADED"
+  },
+  {
+   "path": "proofs/TWIN_SCAN_CLEAN_20261122_t_0cb7907a.json",
+   "bytes": 1685,
+   "norm_bytes": 1685,
+   "crlf_present": false,
+   "sha256_lf": "ace52be65dc058cc9759559bc5e0066aab1b8fc9230169d6b589599d0babd9d1",
+   "git_blob": "c48c3e57b2ac25b6fe8086fc91ae01212b792795",
+   "grade": "GRADED"
+  },
+  {
+   "path": "proofs/TWIN_SCAN_HEAD_20261123.json",
+   "bytes": 5100,
+   "norm_bytes": 5100,
+   "crlf_present": false,
+   "sha256_lf": "704ac52e723e9f0798e9f86a49df31944ff4b0705fbf34c93e3fc98b692f86f8",
+   "git_blob": "b7a3a4782025201dfda110f19df26814afc93ec9",
+   "grade": "GRADED"
+  },
+  {
+   "path": "proofs/V3_LOOP_RUN_20261121.log",
+   "bytes": 14574,
+   "norm_bytes": 14574,
+   "crlf_present": false,
+   "sha256_lf": "54928a984381edfc52f60880414e0b604ff17acad4a566d2168666af5478a58c",
+   "git_blob": "ec70437cfed28f08c5b41e16e4f5a21e1f02981e",
+   "grade": "GRADED"
+  },
+  {
+   "path": "proofs/V3_LOOP_RUN_20261121.log.gz",
+   "bytes": 3422,
+   "norm_bytes": 3422,
+   "crlf_present": false,
+   "sha256_lf": "c71f8df25bc324f799df8448017edc49d769f06c1c57f63d52be2b286ae51a65",
+   "git_blob": "9b7b499121eec0940c92938c5fea5cd23fe46b36",
+   "grade": "GRADED"
+  },
+  {
+   "path": "proofs/VIEW_OOB_GOLDEN_34_20261126.json",
+   "bytes": 2945,
+   "norm_bytes": 2945,
+   "crlf_present": false,
+   "sha256_lf": "c5d715dcd13ecbe18415a2e51468736c358ba4c5e524b365ebeb2337ec7aadef",
+   "git_blob": "8230bf0c30dc05098bfd72dc13bc3a8acc782ded",
+   "grade": "GRADED"
+  },
+  {
+   "path": "proofs/W10_APP_PATH_GRADE_20261122.md",
+   "bytes": 2679,
+   "norm_bytes": 2679,
+   "crlf_present": false,
+   "sha256_lf": "2942c196ce21da4aa4b301092f59cdb41dc3c84b7e37d80c58fe127129c559ee",
+   "git_blob": "d4eea1e9f66ded77c1d598d9d5fba147a452a434",
+   "grade": "GRADED"
+  },
+  {
+   "path": "proofs/W10_APP_PATH_RECEIPT_20261122.json",
+   "bytes": 305,
+   "norm_bytes": 305,
+   "crlf_present": false,
+   "sha256_lf": "0435c16035e540cc1b4f6f7838b7f132b97c2a1bf865100a1094cfdaaf82816a",
+   "git_blob": "ec8f6fb9107579577cc60726bc9c455bb23cdb51",
+   "grade": "GRADED"
+  },
+  {
+   "path": "proofs/XIXI_ADJ_20261122.md",
+   "bytes": 1079,
+   "norm_bytes": 1079,
+   "crlf_present": false,
+   "sha256_lf": "7323b553cc42ba249953a68178e9a406518c81b81a579eb186b274b90901d590",
+   "git_blob": "2e556a1a2cc4f5c5caa5ee560c8e0f7b7b82cc55",
+   "grade": "GRADED"
+  },
+  {
+   "path": "proofs/XIXI_CARD3_GRADE_20261122.md",
+   "bytes": 1074,
+   "norm_bytes": 1074,
+   "crlf_present": false,
+   "sha256_lf": "36153f27494917c60dcd37cf5aac460eb3efc5fcc3c3225e1e9982321c2bf0bc",
+   "git_blob": "72786d3ed0103397b009d891a29921d197de2f6b",
+   "grade": "GRADED"
+  },
+  {
+   "path": "proofs/XIXI_CARD3_LOCUS_REDERIVE_20261122.md",
+   "bytes": 1602,
+   "norm_bytes": 1602,
+   "crlf_present": false,
+   "sha256_lf": "7ee8b6f060fafddae8af7b4e6c221d943101ca1466b3736e39bf4c8aa371ce4d",
+   "git_blob": "0c23746efb7bfebb2498765ff6bc5242aa919829",
+   "grade": "GRADED"
+  },
+  {
+   "path": "proofs/XIXI_CARD3_xixi_golden_spec.json",
+   "bytes": 23936,
+   "norm_bytes": 23936,
+   "crlf_present": false,
+   "sha256_lf": "086c1b71861fc1e148500be1defe12eb72aaae85ef4e4eea4b511c695919f245",
+   "git_blob": "622812eea9bb297806e3322699da9e33166ef242",
+   "grade": "GRADED"
+  },
+  {
+   "path": "proofs/XIXI_CARD4_GRADE_20261122.md",
+   "bytes": 1450,
+   "norm_bytes": 1450,
+   "crlf_present": false,
+   "sha256_lf": "9a507376a098bb4012566642eed8e17d290e9f24ccbeca4455bf2c6c813d1e5c",
+   "git_blob": "d30167e135866567c8bb6c14a17bd4d0ea42e649",
+   "grade": "GRADED"
+  },
+  {
+   "path": "proofs/XIXI_CARD4_xixi_adversarial_review.json",
+   "bytes": 16722,
+   "norm_bytes": 16722,
+   "crlf_present": false,
+   "sha256_lf": "914e0d269f160980eb8437b4006744c5b3543990fc8cd4a7b77d111fb3f99ee6",
+   "git_blob": "79e30d3f21a9838abfdeb450122764109f76c7ed",
+   "grade": "GRADED"
+  },
+  {
+   "path": "proofs/XIXI_CARD4_xixi_adversarial_review.manifest.json",
+   "bytes": 3729,
+   "norm_bytes": 3729,
+   "crlf_present": false,
+   "sha256_lf": "4c9458d3378ec5144a342cf4cf009f684fa0c06bc3c2d7c8c34fb15829524deb",
+   "git_blob": "3276b102f597b10a9f02dfe25136f0757420fd63",
+   "grade": "GRADED"
+  },
+  {
+   "path": "proofs/XIXI_CARD6_GRADE_20261122.md",
+   "bytes": 1816,
+   "norm_bytes": 1816,
+   "crlf_present": false,
+   "sha256_lf": "978e8039837efa676c5d911abb60a6cd6e455dd2e92e23ecc3bc60133a6819f7",
+   "git_blob": "1aff76d18382af5858b253d8281ef0c553e92b28",
+   "grade": "GRADED"
+  },
+  {
+   "path": "proofs/XIXI_CARD6a_worktree_audit.json",
+   "bytes": 1669,
+   "norm_bytes": 1669,
+   "crlf_present": false,
+   "sha256_lf": "34401d97218b6493ab4f2d808513cba3221d695559efba291332a8942486b028",
+   "git_blob": "1989b69693b2985c29488430197403b2647bb8f3",
+   "grade": "GRADED"
+  },
+  {
+   "path": "proofs/XIXI_CARD6b_secret_leak_audit.json",
+   "bytes": 1855,
+   "norm_bytes": 1855,
+   "crlf_present": false,
+   "sha256_lf": "9931d4f9efb333bfceb871f8533eac8f86b6933ad23e63e0d81342a1d48bc03b",
+   "git_blob": "bbe78d61d8444c6a7b02ad1a1a7473952bcdf2af",
+   "grade": "GRADED"
+  },
+  {
+   "path": "proofs/XIXI_DESIGN_02_GRADE_20261122.md",
+   "bytes": 1696,
+   "norm_bytes": 1696,
+   "crlf_present": false,
+   "sha256_lf": "d56c5332c28768d9619ef82a66d812600ec348edd4cd36d2e5fe206117d01e49",
+   "git_blob": "fcf7f9fdd30bac7221bf20ede93ae514959aa67f",
+   "grade": "GRADED"
+  },
+  {
+   "path": "proofs/_v3_impl_runtime.hex",
+   "bytes": 19636,
+   "norm_bytes": 19636,
+   "crlf_present": false,
+   "sha256_lf": "3f643129efaa7750a3eea43df7a551a1a88766b5e5ce37a75af77b47965657d5",
+   "git_blob": "80a30db5b193d48a15ebcf1f4ad44ebc1f40efb0",
+   "grade": "GRADED"
+  },
+  {
+   "path": "proofs/_w10_verdict2.txt",
+   "bytes": 267,
+   "norm_bytes": 267,
+   "crlf_present": false,
+   "sha256_lf": "326456a44af6c7203511779e5227bbaebf810c513f5d24d875dadf8da473f7b7",
+   "git_blob": "f881ada8dd1d1d8346ba7183566de06ef5c58e5f",
+   "grade": "GRADED"
+  },
+  {
+   "path": "proofs/deploy_e2e_25f.json",
+   "bytes": 2512,
+   "norm_bytes": 2512,
+   "crlf_present": false,
+   "sha256_lf": "f27ab7531c935bc867ec795afdf4ef905f833051c25c80d0fdf9c11d2b7bceff",
+   "git_blob": "71ee02b2ddfacae5a2135e3683e4feb226ffbe2d",
+   "grade": "GRADED"
+  },
+  {
+   "path": "proofs/gaps_after_1125_12.json",
+   "bytes": 1154,
+   "norm_bytes": 1154,
+   "crlf_present": false,
+   "sha256_lf": "1459b904260be498c1dea0df4fb64e47a6261c70b508a648ff7351733bfa6c6d",
+   "git_blob": "afd178ac40cdab48205d01cdb3624297cf6132f6",
+   "grade": "GRADED"
+  },
+  {
+   "path": "proofs/gaps_after_1125_5.json",
+   "bytes": 33776,
+   "norm_bytes": 33776,
+   "crlf_present": false,
+   "sha256_lf": "aba5c5a5b1c964f2136c2f3c9f019eb39e27c5e086513035bdaf58b1fcdd1829",
+   "git_blob": "1f18c8cd79ee06b88aecaddf22c2693d6bdbb6bb",
+   "grade": "GRADED"
+  },
+  {
+   "path": "proofs/gaps_after_1125_7.json",
+   "bytes": 32212,
+   "norm_bytes": 32212,
+   "crlf_present": false,
+   "sha256_lf": "9e78312aa4567238a1f0edbe7b48f39e4bace3e9820f6ddd8ba31d51f4543d74",
+   "git_blob": "050c539741fde2cb18b52710780c7dc357db1acc",
+   "grade": "GRADED"
+  },
+  {
+   "path": "proofs/gaps_after_26a.json",
+   "bytes": 2453,
+   "norm_bytes": 2453,
+   "crlf_present": false,
+   "sha256_lf": "1d039d57a722adeca71bcf63e1d8d35291beddfe087a9c9f49345d2929f076a6",
+   "git_blob": "e80e252cda6f64ef25bab88e38478c67b358c2f4",
+   "grade": "GRADED"
+  },
+  {
+   "path": "proofs/gaps_after_e32.json",
+   "bytes": 9252,
+   "norm_bytes": 9252,
+   "crlf_present": false,
+   "sha256_lf": "958b3751e7dae2ce69942c0140745616cc2075b13e052b6e4643293a6ec36457",
+   "git_blob": "ed765e17c8038984f72179826e30634730695698",
+   "grade": "GRADED"
+  },
+  {
+   "path": "proofs/gaps_after_e37.json",
+   "bytes": 4174,
+   "norm_bytes": 4174,
+   "crlf_present": false,
+   "sha256_lf": "09408a80ff048cc9c96f390158caf57cb8b0281c0263b731d7b86f19ad4807bf",
+   "git_blob": "f7ae64a73511883f2444255f123ffbfb7a576811",
+   "grade": "GRADED"
+  },
+  {
+   "path": "proofs/gaps_after_measured_1125.json",
+   "bytes": 41969,
+   "norm_bytes": 41969,
+   "crlf_present": false,
+   "sha256_lf": "2fd57d935e2d97adf6dcb56510f1cedc816b7e7115679b122d59aac466f23af8",
+   "git_blob": "3a7c0c7dce1e275b78eb9b7833299fd52337132b",
+   "grade": "GRADED"
+  },
+  {
+   "path": "proofs/gaps_before_1125_12.json",
+   "bytes": 21683,
+   "norm_bytes": 21683,
+   "crlf_present": false,
+   "sha256_lf": "76ebb0b1c20f3a4a94e78cef5e18c44b540977596f8e81a2ff2683c1a4778f75",
+   "git_blob": "9fe31c72c2b477b13254e30615befaf2668b4313",
+   "grade": "GRADED"
+  },
+  {
+   "path": "proofs/gaps_before_1125_5.json",
+   "bytes": 44847,
+   "norm_bytes": 44847,
+   "crlf_present": false,
+   "sha256_lf": "02677c726cfa47ef24391013192f01e0776edebcfa9124d4b57df32ecbe172c2",
+   "git_blob": "d3ed6e6e8905e486e84b3c0675464a1ad07fe8e3",
+   "grade": "GRADED"
+  },
+  {
+   "path": "proofs/gaps_before_e37.json",
+   "bytes": 12272,
+   "norm_bytes": 12272,
+   "crlf_present": false,
+   "sha256_lf": "a86bfae9b50202dd732ad6da12ad3ee2ecf9ce46ddab2a9dcde2096332b62a53",
+   "git_blob": "77922c70197df64af8d2b0271dd9705e93f10595",
+   "grade": "GRADED"
+  },
+  {
+   "path": "proofs/gaps_before_measured_1125.json",
+   "bytes": 43053,
+   "norm_bytes": 43053,
+   "crlf_present": false,
+   "sha256_lf": "717417d50217a41fc5bf987b9b84d900769cbaa4f7104bfce177dac1533aedec",
+   "git_blob": "0a57d8ada9f3ac5369eec78ee2096bf4baabf6ea",
+   "grade": "GRADED"
+  },
+  {
+   "path": "proofs/m4_p01a_receipt_20261119.json",
+   "bytes": 5211,
+   "norm_bytes": 5211,
+   "crlf_present": false,
+   "sha256_lf": "a5557bb6f8c245858b3e88c83e255c95330132f38acbc9408b3c38bdca3122f5",
+   "git_blob": "5ce2b40928281bde266c933bca38b4875075283b",
+   "grade": "GRADED"
+  },
+  {
+   "path": "proofs/tb1_baseline_main_2e8f94757b33.log",
+   "bytes": 10329,
+   "norm_bytes": 10329,
+   "crlf_present": false,
+   "sha256_lf": "7acb315c24aef06d60188036f2626a4e5967f8a6a2412da0f9d6bfd7a98cfc02",
+   "git_blob": "c7bb07c1515eb3bfb324028aad579f1503053813",
+   "grade": "GRADED"
+  },
+  {
+   "path": "proofs/test_skipped_closer_ADAPTED.py",
+   "bytes": 7032,
+   "norm_bytes": 7032,
+   "crlf_present": false,
+   "sha256_lf": "35d6e4057b09218fc7c2fb0b8e17a723f319dea81a91294f14db6e86420b117b",
+   "git_blob": "8fc233fb7e145429b37e2e7fdea5b1f8b4297c0b",
+   "grade": "GRADED"
+  },
+  {
+   "path": "proofs/twin_contract_scan_20261124.json",
+   "bytes": 1665,
+   "norm_bytes": 1665,
+   "crlf_present": false,
+   "sha256_lf": "8a8ad86410527bef5690fc69891d47f91f6c7b35a150097f8ec3841c2271cc37",
+   "git_blob": "81a62617ac385c564734cd467ceeb58f4b42b03c",
+   "grade": "GRADED"
+  },
+  {
+   "path": "proofs/twin_scan_380b05f63.json",
+   "bytes": 1619,
+   "norm_bytes": 1619,
+   "crlf_present": false,
+   "sha256_lf": "5b6f8214e3c5651689d1c44fa3470138721847a53a32d78b4f2ab0d624346ae4",
+   "git_blob": "d36df33d00fa5d8a614386a3e377a90a14fa5804",
+   "grade": "GRADED"
+  }
+ ]
+}
