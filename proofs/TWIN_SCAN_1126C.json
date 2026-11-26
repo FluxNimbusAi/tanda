@@ -1,0 +1,100 @@
+{
+  "call_sites": [
+    {
+      "classification": "SAFE-LIB",
+      "file": "contracts/FastTandaBillV2.sol",
+      "function": "fundEscrow",
+      "kind": "safeTransferFrom",
+      "line": 258,
+      "snippet": "SafeERC20Funding.safeTransferFrom(address(token), _caller(), address(this), amount);"
+    },
+    {
+      "classification": "EXEMPT-VOID-IFACE",
+      "file": "contracts/FastTandaBillV2.sol",
+      "function": "fundEscrowFromPermit2",
+      "kind": "transferFrom",
+      "line": 282,
+      "snippet": "IPermit2Transfer(PERMIT2).transferFrom(payer, address(this), uint160(amount), address(token));"
+    },
+    {
+      "classification": "SAFE-LIB",
+      "file": "contracts/FastTandaBillV2.sol",
+      "function": "executeSettlement",
+      "kind": "safeTransfer",
+      "line": 382,
+      "snippet": "SafeERC20Minimal.safeTransfer(token, seats[i].wallet, s.payouts[idx]);"
+    },
+    {
+      "classification": "SAFE-LIB",
+      "file": "contracts/FastTandaBillV2.sol",
+      "function": "refundSettlement",
+      "kind": "safeTransfer",
+      "line": 405,
+      "snippet": "SafeERC20Minimal.safeTransfer(token, owner, s.totalAmount);"
+    },
+    {
+      "classification": "SAFE-LIB",
+      "file": "contracts/TandaBill.sol",
+      "function": "fundEscrow",
+      "kind": "safeTransferFrom",
+      "line": 145,
+      "snippet": "SafeERC20Minimal.safeTransferFrom(address(token), msg.sender, address(this), amount);"
+    },
+    {
+      "classification": "SAFE-LIB",
+      "file": "contracts/TandaBill.sol",
+      "function": "executeSettlement",
+      "kind": "safeTransfer",
+      "line": 227,
+      "snippet": "SafeERC20Minimal.safeTransfer(address(token), seats[i].wallet, s.payouts[idx]);"
+    },
+    {
+      "classification": "SAFE-LIB",
+      "file": "contracts/TandaBillV2.sol",
+      "function": "fundEscrow",
+      "kind": "safeTransferFrom",
+      "line": 302,
+      "snippet": "SafeERC20Minimal.safeTransferFrom(address(token), _caller(), address(this), amount);"
+    },
+    {
+      "classification": "EXEMPT-VOID-IFACE",
+      "file": "contracts/TandaBillV2.sol",
+      "function": "fundEscrowFromPermit2",
+      "kind": "transferFrom",
+      "line": 326,
+      "snippet": "IPermit2Transfer(PERMIT2).transferFrom(payer, address(this), uint160(amount), address(token));"
+    },
+    {
+      "classification": "SAFE-LIB",
+      "file": "contracts/TandaBillV2.sol",
+      "function": "claimSettlement",
+      "kind": "safeTransfer",
+      "line": 459,
+      "snippet": "SafeERC20Minimal.safeTransfer(address(token), seats[seatId].wallet, amount);"
+    },
+    {
+      "classification": "SAFE-LIB",
+      "file": "contracts/TandaBillV2.sol",
+      "function": "refundSettlement",
+      "kind": "safeTransfer",
+      "line": 481,
+      "snippet": "SafeERC20Minimal.safeTransfer(address(token), owner, s.totalAmount);"
+    }
+  ],
+  "card": "ENGINE-33",
+  "counts": {
+    "EXEMPT-VOID-IFACE": 2,
+    "SAFE-LIB": 8
+  },
+  "files_scanned": 5,
+  "recipe_provenance": "t_921c1849 verdict e743a64de (2026-11-25) encoded as gate",
+  "sha256_lf": {
+    "contracts/FastTandaBillV2.sol": "2e3c87418c77da2205259c2fa43242ecdddc82a467c29b324258f3af36040ada",
+    "contracts/SafeERC20Minimal.sol": "7e08fc51e49bef1173ac60b4d08a9c4f28b129427ed10c315a4b6c8ea8e8e1d8",
+    "contracts/TandaBill.sol": "645c2fc34715a25704b1fa4ac9327752cda08aa95ad5f43b0d16cac2cfa5bfec",
+    "contracts/TandaBillFactory.sol": "4121af0521ff554b64bf54c0ae87dc87bc751428e569e340c3af65cbcaa979ea",
+    "contracts/TandaBillV2.sol": "79d7b124fd6ccd3fac1b9274ca95b009c31f81666ed7958a1784e3bc24dfdda7"
+  },
+  "unexempted_bare": [],
+  "verdict": "CLEAN"
+}
