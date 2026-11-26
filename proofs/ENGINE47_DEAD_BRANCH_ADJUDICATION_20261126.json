@@ -1,0 +1,48 @@
+{
+  "card": "t_28b5fb54",
+  "engine": 47,
+  "date": "2026-11-26",
+  "tip": "eca8120285979e5890578ea52ccd0dfaf737a927",
+  "suite": {
+    "tests_passed": 300,
+    "suites": 29,
+    "failed": 0,
+    "source": "forge coverage full-suite run, rc=0"
+  },
+  "before_census": {
+    "file": "proofs/ENGINE47_GAPS_BEFORE_e47.json",
+    "sha256_lf": "1459b904260be498c1dea0df4fb64e47a6261c70b508a648ff7351733bfa6c6d",
+    "items": 3,
+    "equal_sorted_json_to_ENGINE40_GAPS_AFTER_e40": true,
+    "engine40_sha256_lf": "1459b904260be498c1dea0df4fb64e47a6261c70b508a648ff7351733bfa6c6d"
+  },
+  "paths": [
+    {
+      "file": "script/TandaDeploy.s.sol",
+      "line": 45,
+      "snippet": "require(address(bill.token()) == usdc, \"Token mismatch\")",
+      "verdict": "DEAD_DEFENSE",
+      "rationale": "TandaBill constructor stores token = unique ctor arg; token() is an immutable self-echo. No legitimate lever flips it; vm.mockCall on the deployed address only tests the cheatcode layer, not script logic."
+    },
+    {
+      "file": "script/TandaDeploy.s.sol",
+      "line": 47,
+      "snippet": "require(bill.activeSeatCount() == 0, \"Should start with 0 seats\")",
+      "verdict": "DEAD_DEFENSE",
+      "rationale": "run() performs no seat mutation between CREATE and the require; fresh-deploy invariant by construction."
+    },
+    {
+      "file": "script/TandaDeployV2.s.sol",
+      "line": 28,
+      "snippet": "require(address(factory.implementation()) == address(impl), \"Impl mismatch\")",
+      "verdict": "DEAD_DEFENSE",
+      "rationale": "implementation is `address public immutable` (contracts/TandaBillFactory.sol:13) set from the ctor arg == impl deployed on the immediately preceding line."
+    }
+  ],
+  "harness_measurements": [
+    "iter-1 (CALL shape): vm.mockCall at computeCreateAddress(address(script),1|2) is INERT — V1 probe reverted 'Owner mismatch' (L46), not 'Token mismatch' (L45): broadcast-section CREATEs are NOT anchored at the script contract.",
+    "iter-2 (discovery scan): the persistent 26A delegatecall bill WAS found predictably at computeCreateAddress(0x1804c8AB1F12E6bbf3894d4083f33e07309d1f38, 4) — creator = forge DEFAULT BROADCAST SENDER, nonce consumed cumulatively by prior in-function runs. 26A comment 'not predictable via computeCreateAddress(address(this), n)' is accurate; this file pins the true anchor.",
+    "iter-2 (arm trial): mockCall at the predicted next-nonce address made the delegatecall revert with EMPTY reason data (ret.length==0) — mock intercept collides with the CREATE deploy path itself. Probe budget (2 strikes) spent; no further arm attempts."
+  ],
+  "disposition": "Gap ledger closes: contracts/ = 0-gap, script/ = 3 adjudicated DEAD_DEFENSE pins. Future censuses citing '<=13 path' regression baselines must treat these 3 items as accepted residue; zeroing them requires a coverage exclusion, not tests."
+}
