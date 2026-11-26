@@ -1,0 +1,47 @@
+{
+  "proof": "ENG42_SIGNER_REPIN",
+  "card": "t_d3b102d3",
+  "date": "2026-11-26",
+  "found_by": "ENGINE-41 t_1471a0c0 / proofs/SEC_SWEEP_41_20261126.json (defects D1+D2)",
+  "baseline": "main e335ff178145dff724c4eb9bb51a08a31e13bbbc",
+  "signer_lineage": {
+    "pre_rotation_burned": "0x78dC32 (pre-11-21 rotation; LEAKED lineage per swarm anchor law)",
+    "post_rotation_live": "0x98D238 (deploy_hardened_4801.py L10 + contract_loop_proof_V3.py L57 code pin)",
+    "independent_reverification": "11-26: derived lane key from ~/.hermes-secrets/metamask-cli-wallet.txt (VAULT-MOVED stub -> vault_resolve handle, 12-word mnemonic, path m/44'/60'/0'/0/0) via eth_account on hermes tools python 3.14.9; derived==0x98D238 True, derived==0x78dC32 False. No secret material printed."
+  },
+  "D1": {
+    "defect": "scripts/contract_loop_proof_CLEAN_recovered.py L57 pinned burned SIGNER_ADDR 0x78dC32 while L43-derived keys resolve to 0x98D238: L269 equality assert hard-failed every run; vault-regression path would silently sign with the burned key.",
+    "disposition": "ARCHIVED (not re-pinned): git mv scripts/contract_loop_proof_CLEAN_recovered.py -> archive/retired_lanes_20261126_ENG42/ (byte-unmodified), README.md records rationale.",
+    "why_archive_over_repin": [
+      "lane double-zombie: besides burned signer pin, it targets retired pre-V3 factory pair 0x65Ba0bB/impl 0x52d2b14c; canonical V3 lane pins V3 hardened pair 0x010872d47b/impl 0xd0cc3595 per proofs/DEPLOY_RECEIPT_V3_HARDENED_20261121.json",
+      "V3 lane is canonical per card body parenthetical",
+      "zero references in CI workflows, tests, docs, or scripts (grep tree-wide: only the ENGINE-41 receipt names it)"
+    ]
+  },
+  "D2": {
+    "defect": "scripts/contract_loop_proof_V3.py L23 header docstring named burned signer 0x78dC32; L57 code correctly pinned 0x98D238. 11-21 rotation re-pin missed the docstring block.",
+    "fix": "Targets docstring block synced to code pins: signer 0x98D238; adjacent same-class drift in the same block also corrected (L21 docstring factory line was still pre-V3 0x65Ba0bB; usage lines named contract_loop_proof.py instead of contract_loop_proof_V3.py; receipt-source citation now proofs/DEPLOY_RECEIPT_V3_HARDENED_20261121.json). Code constants untouched.",
+    "note": "D2 extended to the adjacent docstring lines because the whole Targets block was frozen at pre-V3/pre-rotation state; header must match code."
+  },
+  "self_test": {
+    "command": "python scripts/contract_loop_proof_V3.py --self-test",
+    "interpreter": "hermes tools python 3.14.9 (eth_account/eth_abi/eth_hash/eth_utils full stack)",
+    "result": "PASS",
+    "vectors": 17,
+    "failures": [],
+    "includes": "addr.SIGNER vector PASS (keccak-anchored topic table + address pins vs services/bill_index.py)"
+  },
+  "post_fix_scan": {
+    "live_lane_burned_signer_hits": "scripts/|services/|contracts/|tests/: 0 signer-lane hits. Sole remaining site scripts/verify_prod_pair.py L27 DEPLOYER=0x78dC32 = historical deploy-tx from-address (audit fact, no signing use; out of ENGINE-41's 2-site defect count, left intact).",
+    "audit_record_sites_unchanged": "DEPLOY_RECEIPT*.json, docs/demo/evidence/fasttwin_receipt.json, proofs/HIGH1_CEI_GATE_STATUS_20261120.md, proofs/DEPLOY_RECEIPT_V3_*, archive/retired_orphans_20261123_ENG-A1/contract_loop_proof.py = immutable audit record per ENGINE-41 disposition.",
+    "stale_worktree_copies": ".worktrees/* occurrences -> handled by sibling card t_6e2afe71 (ENG-43 reap), not touched here."
+  },
+  "changed_files": [
+    "archive/retired_lanes_20261126_ENG42/contract_loop_proof_CLEAN_recovered.py (renamed from scripts/, byte-unmodified)",
+    "archive/retired_lanes_20261126_ENG42/README.md (new)",
+    "scripts/contract_loop_proof_V3.py (docstring-only edit)",
+    "proofs/ENG42_SIGNER_REPIN_20261126.json (this receipt)"
+  ],
+  "receipt_scope": "whole-file sha256-LF of proofs/ENG42_SIGNER_REPIN_20261126.json pinned in provgate trailer",
+  "value_discipline": "6-char prefixes only; no full addresses beyond already-public 6-char prefixes; no mnemonic/vault material persisted"
+}

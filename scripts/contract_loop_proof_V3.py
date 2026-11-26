@@ -16,17 +16,19 @@ event decoding mirrors artifacts/tanda_v2_abis.json + contracts/TandaBillV2.sol.
 The settlement event-topic table is KECCAK-ANCHORED against services/bill_index.py
 constants in --self-test (SR-003 F12 / #21 parity: same topics, both sides).
 
-Targets (pinned from DEPLOY_RECEIPT_V2.json / e2e_4801_state.json, fast rehearsal
-twin: SETTLEMENT_WINDOW = 60 s so the loop completes in one run):
-  factory   0x65Ba0bB4959c2b6121d9e4Da822452aEEC6e61e6  (impl 0x52d2b14c5f312a1547097df9c266b2047595EFC7)
+Targets (pinned from proofs/DEPLOY_RECEIPT_V3_HARDENED_20261121.json, fast
+rehearsal twin: SETTLEMENT_WINDOW = 60 s so the loop completes in one run):
+  factory   0x010872d47bd7bb001037577a15d090556bfd24c3  (V3 hardened, SafeERC20 #32 + CEI golden #33)
+  impl      0xd0cc3595679a36b64c860568217b623605980e6a  (main TandaBillV2, block 37375560)
   USDC      0x66145f38cBAC35Ca6F1Dfb4914dF98F1614aeA88  (World Chain Sepolia Circle)
-  signer    0x78dC32F6a4edF80c538A75e1F7664505B1969E7A  (mnemonic via ~/.hermes-secrets,
-            path m/44'/60'/0'/0/0; derived address asserted, secrets never printed)
+  signer    0x98D2389C44438DA07D603a148239E706892497D7  (mnemonic via ~/.hermes-secrets,
+            path m/44'/60'/0'/0/0; derived address asserted, secrets never printed;
+            docstring re-synced ENG-42 at the 11-21 key rotation — code pins were correct)
 
 Usage:
-  python scripts/contract_loop_proof.py              # fresh live loop + receipt JSON
-  python scripts/contract_loop_proof.py --resume     # continue a crashed run (idempotent)
-  python scripts/contract_loop_proof.py --self-test  # offline determinism vectors, no net
+  python scripts/contract_loop_proof_V3.py              # fresh live loop + receipt JSON
+  python scripts/contract_loop_proof_V3.py --resume    # continue a crashed run (idempotent)
+  python scripts/contract_loop_proof_V3.py --self-test # offline determinism vectors, no net
 Exit 0 = every hard assertion PASS; receipt JSON is the single stdout block.
 """
 import json
