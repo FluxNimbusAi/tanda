@@ -1,0 +1,94 @@
+{
+  "all_green": true,
+  "anvil_chain_id": 31337,
+  "card": "t_3dae49ae",
+  "claims": [
+    "V1 run(): L45 token-match, L46 owner==msg.sender (caller==deployer TRUE arm, harness-unreachable under forge test per DeployScriptGolden11255.t.sol), L47 zero-seats - green in-script AND re-verified by external eth_call on the live node",
+    "V2 run(): L28 factory.implementation()==impl golden green in-script AND re-verified by external eth_call on the live node",
+    "every broadcast tx independently confirmed via eth_getTransactionReceipt status=0x1 + from==deployer; every deployment via non-empty eth_getCode runtime sha256"
+  ],
+  "deployer": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266 (anvil genesis acct #0, dev-only key)",
+  "deployments": {
+    "v1": {
+      "TandaBill": {
+        "block_number": 1,
+        "contract_address": "0x5FbDB2315678afecb367f032d93F642f64180aa3",
+        "gas_used": 1115225,
+        "receipt_from": "0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266",
+        "receipt_gas_used": "0x110459",
+        "receipt_status": "0x1",
+        "runtime_bytes": 4801,
+        "runtime_sha256": "879f21b931f71d5c7bd3635a77ff30854a3da53b973347c5b5f5dfccb50d55f9",
+        "tx_hash": "0x291cdca27c98aef67131f83c5b7adc9b74ca65cbc31236519a21246bf5a91572"
+      }
+    },
+    "v2": {
+      "TandaBillFactory": {
+        "block_number": 3,
+        "contract_address": "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0",
+        "gas_used": 357917,
+        "receipt_from": "0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266",
+        "receipt_gas_used": "0x5761d",
+        "receipt_status": "0x1",
+        "runtime_bytes": 1402,
+        "runtime_sha256": "58325577a6581ba76c56b29b2b3b132f236f78481c9a752af280f7f4fd2d766e",
+        "tx_hash": "0x1f44c7ccdb5d56ee2fb18c4bd271ea13bfe92306593b732a9b25fa50c19ed454"
+      },
+      "TandaBillV2": {
+        "block_number": 2,
+        "contract_address": "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
+        "gas_used": 2436535,
+        "receipt_from": "0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266",
+        "receipt_gas_used": "0x252db7",
+        "receipt_status": "0x1",
+        "runtime_bytes": 11021,
+        "runtime_sha256": "361df79248ed9f9e19e7ecfd92490fc14b7ff3747824401d1198cd29ad087fd9",
+        "tx_hash": "0x1e15eaab90eebe0a3ec44690da4e569f70f3859c6efb61b8fdd84327777d915e"
+      }
+    }
+  },
+  "engine": "TICK-1125-14 ENGINE 31 anvil broadcast leg",
+  "external_verify": [
+    {
+      "actual": "0x70997970c51812dc3a010c7d01b50e0d17dc79c8",
+      "call": "token()",
+      "expected": "0x70997970C51812dc3A010C7d01b50e0d17dc79C8",
+      "leg": "v1_token",
+      "pass": true,
+      "selector": "0xfc0c546a",
+      "target_contract": "0x5FbDB2315678afecb367f032d93F642f64180aa3"
+    },
+    {
+      "actual": "0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266",
+      "call": "owner()",
+      "expected": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+      "leg": "v1_owner",
+      "pass": true,
+      "selector": "0x8da5cb5b",
+      "target_contract": "0x5FbDB2315678afecb367f032d93F642f64180aa3"
+    },
+    {
+      "actual": "0",
+      "call": "activeSeatCount()",
+      "expected": "0",
+      "leg": "v1_zero_seats",
+      "pass": true,
+      "selector": "0x0d9461ba",
+      "target_contract": "0x5FbDB2315678afecb367f032d93F642f64180aa3"
+    },
+    {
+      "actual": "0xe7f1725e7734ce288f8367e1bb143e90bb3f0512",
+      "call": "implementation()",
+      "expected": "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
+      "leg": "v2_impl_match",
+      "pass": true,
+      "selector": "0x5c60da1b",
+      "target_contract": "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0"
+    }
+  ],
+  "forge_version": "forge Version: 1.9.0",
+  "generated_utc": "2026-11-26T02:06:33+00:00",
+  "git_rev": "e743a64de9d4c02573b1b46a8479cbe6d1b59e1e",
+  "rpc": "http://127.0.0.1:8545",
+  "usdc_standby": "0x70997970C51812dc3A010C7d01b50e0d17dc79C8 (anvil acct #1; constructors store the token address without a code check, so this receipt is an anvil-ecosystem proof, NOT a 4801 mainnet deploy)"
+}
