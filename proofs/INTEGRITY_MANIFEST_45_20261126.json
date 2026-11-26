@@ -1,0 +1,2582 @@
+{
+ "proof": "INTEGRITY_MANIFEST_45",
+ "card": "t_a2761a65",
+ "engine": "ENGINE-45 (family C: ungraded proofs/receipts graded via sha256-LF recompute)",
+ "generated_utc": "2026-11-26T19:49:26Z",
+ "repo": "FluxNimbusAi/tanda",
+ "main_tip": "f43574d7279c21f53edf350f4dcb25e21213d486",
+ "method": {
+  "file_hashes": "sha256 over CRLF-normalized (LF) bytes; git_blob = sha1('blob N\\0' + raw bytes)",
+  "grading": "each proofs/ file's sha256_lf matched against 432 distinct 64-hex tokens harvested from kanban.db (tasks.result/body, task_runs.metadata/summary, task_comments.body)",
+  "orphans": "220 receipt-context tokens not equal to any proofs/ sha256_lf -> resolved against every tracked repo file (sha256_lf or git_blob) -> against kanban task_attachments store (55/55 files present) -> else UNRESOLVED_AT_TIP",
+  "unresolved_disposition": "expected causes: scratch-only receipts never committed, and cross-node (laptop-lane) artifacts NOT traversed on this partition per zero-shared-state law. 0 mismatch class: every resolved token equals its recorded value exactly."
+ },
+ "summary": {
+  "proof_files": 89,
+  "graded": 55,
+  "ungraded": 34,
+  "crlf_present": 51,
+  "kanban_distinct_hex": 432,
+  "receipt_context_tokens": 272,
+  "orphan_resolution": {
+   "UNRESOLVED_AT_TIP": 171,
+   "RESOLVED_OUTSIDE_PROOFS": 41,
+   "ATTACHMENT_RESOLVED": 8
+  },
+  "mismatches": 0
+ },
+ "ungraded_paths": [
+  "proofs/CARD5A_GRADE_20261122.md",
+  "proofs/CARD5A_PROBE_RECEIPT_20261122.json",
+  "proofs/CONTRACT_LOOP_STATE_PRE_V3_20261121.json",
+  "proofs/DEPLOY_RECEIPT_V3_GRADE_20261122.md",
+  "proofs/DEPLOY_RECEIPT_V3_HARDENED_20261121.json",
+  "proofs/DISPUTE_ADJ_XIXI_CROSSNODE_20261122.md",
+  "proofs/E2E_INDEXER_ROUTE_MATRIX_20261123_t_c80a1cbf.json",
+  "proofs/ENGINE40_GAPS_CENSUS_a279adebc.json",
+  "proofs/ENGINE40_GAP_CENSUS_20261126.json",
+  "proofs/GUARD_MATRIX_T555EDBA1_20261123.json",
+  "proofs/M4_P01A_GRADE_VERDICT_20261121.md",
+  "proofs/SEATINACTIVE_COVERAGE_20261123_t_f6e6196c.json",
+  "proofs/TEST_MATRIX_TOTAL_EXPENSES_REINVITE_20261123_t_2c233e6b.json",
+  "proofs/TICK_20261123_SCANCHUNK.json",
+  "proofs/V3_LOOP_RUN_20261121.log",
+  "proofs/V3_LOOP_RUN_20261121.log.gz",
+  "proofs/W10_APP_PATH_GRADE_20261122.md",
+  "proofs/W10_APP_PATH_RECEIPT_20261122.json",
+  "proofs/XIXI_ADJ_20261122.md",
+  "proofs/XIXI_CARD3_GRADE_20261122.md",
+  "proofs/XIXI_CARD3_LOCUS_REDERIVE_20261122.md",
+  "proofs/XIXI_CARD3_xixi_golden_spec.json",
+  "proofs/XIXI_CARD4_GRADE_20261122.md",
+  "proofs/XIXI_CARD4_xixi_adversarial_review.manifest.json",
+  "proofs/XIXI_CARD6_GRADE_20261122.md",
+  "proofs/XIXI_CARD6a_worktree_audit.json",
+  "proofs/XIXI_CARD6b_secret_leak_audit.json",
+  "proofs/XIXI_DESIGN_02_GRADE_20261122.md",
+  "proofs/_v3_impl_runtime.hex",
+  "proofs/gaps_after_e32.json",
+  "proofs/gaps_after_e37.json",
+  "proofs/gaps_before_e37.json",
+  "proofs/tb1_baseline_main_2e8f94757b33.log",
+  "proofs/test_skipped_closer_ADAPTED.py"
+ ],
+ "files": [
+  {
+   "path": "proofs/BOUNDS_GUARD_35_20261126.json",
+   "bytes": 4962,
+   "norm_bytes": 4891,
+   "crlf_present": true,
+   "sha256_lf": "1eb8f26976713b4699bf5b99a784d46d24c7ee263f52d4ba06504fb887f99b53",
+   "git_blob": "1a31ff617c0757198990cd7cbeeb0c8c7b8ffb33",
+   "grade": "GRADED"
+  },
+  {
+   "path": "proofs/CARD5A_GRADE_20261122.md",
+   "bytes": 2553,
+   "norm_bytes": 2533,
+   "crlf_present": true,
+   "sha256_lf": "bc12919810c862b9c3aca7753b4ee6d37f4f1e91737f585de3434d531e0da9d2",
+   "git_blob": "da3a4b7803901a2080b6a9df545b94d3c0e60471",
+   "grade": "UNGRADED"
+  },
+  {
+   "path": "proofs/CARD5A_PROBE_RECEIPT_20261122.json",
+   "bytes": 1849,
+   "norm_bytes": 1800,
+   "crlf_present": true,
+   "sha256_lf": "87d38580928f7244da8b4b8c4fbbb0600498ea94f80b7ff4a830bf3253398c37",
+   "git_blob": "4f49aafd819f7d27e4c5d3134ed8dc6528a65641",
+   "grade": "UNGRADED"
+  },
+  {
+   "path": "proofs/CI_HYGIENE_20261124.json",
+   "bytes": 7079,
+   "norm_bytes": 6749,
+   "crlf_present": true,
+   "sha256_lf": "ce12806287dd6ccd0015e6ddcb17fe41e14cd316c9f01bc6a0253ed0631b60ed",
+   "git_blob": "e122de984ba9c677dedcc70d2903faf55ca051a4",
+   "grade": "GRADED"
+  },
+  {
+   "path": "proofs/CONTRACT_LOOP_STATE_PRE_V3_20261121.json",
+   "bytes": 4376,
+   "norm_bytes": 4197,
+   "crlf_present": true,
+   "sha256_lf": "8ea0e84aefdee7a25a3b47c9ce73a73f39a0b89757951b1e24a6d89d42f2e7ca",
+   "git_blob": "ffcb18e10990e40d6cb9e7ff33655c8cffb91e6b",
+   "grade": "UNGRADED"
+  },
+  {
+   "path": "proofs/DB_CENSUS_44_20261126.json",
+   "bytes": 8478,
+   "norm_bytes": 8369,
+   "crlf_present": true,
+   "sha256_lf": "2aaea5ba8a7922bcad21adb44433724eb937f594957355323f88258866da839f",
+   "git_blob": "613679955107c845a535fd8e23e7ebc7c0273f86",
+   "grade": "GRADED"
+  },
+  {
+   "path": "proofs/DEPLOY_RECEIPT_V3_GRADE_20261122.md",
+   "bytes": 1915,
+   "norm_bytes": 1899,
+   "crlf_present": true,
+   "sha256_lf": "89af39d398a3bfab2a77893e867401ba6df598b01c795c282a88c3b8164c5ef1",
+   "git_blob": "e21280e791637023d13e1559ffdc9b44e9ceea4e",
+   "grade": "UNGRADED"
+  },
+  {
+   "path": "proofs/DEPLOY_RECEIPT_V3_HARDENED_20261121.json",
+   "bytes": 628,
+   "norm_bytes": 617,
+   "crlf_present": true,
+   "sha256_lf": "5fa1a37b17b23daae2efa63b9230b3de8acf68b77de4f208ccfdd5d4eb5f9e2e",
+   "git_blob": "0e4bb1e20cb3d7558de0a5fc720a9746fbfe624f",
+   "grade": "UNGRADED"
+  },
+  {
+   "path": "proofs/DISPUTE_ADJ_XIXI_CROSSNODE_20261122.md",
+   "bytes": 885,
+   "norm_bytes": 873,
+   "crlf_present": true,
+   "sha256_lf": "82491add1f40672cfaffe054f10c4dd9692262646b7549c0b68ff1944ea994e6",
+   "git_blob": "0767468757e1f3195e96fac1a1d3ee50abf47a44",
+   "grade": "UNGRADED"
+  },
+  {
+   "path": "proofs/E2E_HB1_PROGRESSARM_20261124_t_79ae6a38.json",
+   "bytes": 3860,
+   "norm_bytes": 3860,
+   "crlf_present": false,
+   "sha256_lf": "3c26cd27e86dc9f6037addef4093e61b5fbc5143f98a139241a70d83233493d1",
+   "git_blob": "3091cac4eddbf7b8129b663cebafd2d7f62a1213",
+   "grade": "GRADED"
+  },
+  {
+   "path": "proofs/E2E_INDEXER_ROUTE_MATRIX_20261123R2_t_c80a1cbf.json",
+   "bytes": 6853,
+   "norm_bytes": 6853,
+   "crlf_present": false,
+   "sha256_lf": "408cc837bfb109c551641a8c02836c10377e66099f005ca9d52b261481e032f2",
+   "git_blob": "18c3b776df8657c045dea56b4768aaf922adb571",
+   "grade": "GRADED"
+  },
+  {
+   "path": "proofs/E2E_INDEXER_ROUTE_MATRIX_20261123_t_c80a1cbf.json",
+   "bytes": 3975,
+   "norm_bytes": 3975,
+   "crlf_present": false,
+   "sha256_lf": "603ca440c3d6577f8a07d69a086bc11f66d169b75c369a002e5f2fd3fc82a517",
+   "git_blob": "ecc6781ede7ee72177e06848b7dada3357122237",
+   "grade": "UNGRADED"
+  },
+  {
+   "path": "proofs/ENG42_SIGNER_REPIN_20261126.json",
+   "bytes": 4165,
+   "norm_bytes": 4118,
+   "crlf_present": true,
+   "sha256_lf": "0d3775ceba003da4a6d71391a58b050b69a52e3a7e197bb51478442702580dd0",
+   "git_blob": "664aade0e6ce72c5a1027a295281d2ebd2757875",
+   "grade": "GRADED"
+  },
+  {
+   "path": "proofs/ENGINE31_ANVIL_BROADCAST_20261126.json",
+   "bytes": 4015,
+   "norm_bytes": 4015,
+   "crlf_present": false,
+   "sha256_lf": "3da4bcc3ef4e05e3b29e8b3e85fdbd149bfe1a888cab79e8956ea313c1a450b3",
+   "git_blob": "aa6a7c04ec6311e119b4b419986136e71b63a485",
+   "grade": "GRADED"
+  },
+  {
+   "path": "proofs/ENGINE40_GAPS_AFTER_e40.json",
+   "bytes": 1199,
+   "norm_bytes": 1154,
+   "crlf_present": true,
+   "sha256_lf": "1459b904260be498c1dea0df4fb64e47a6261c70b508a648ff7351733bfa6c6d",
+   "git_blob": "83dfd373dfe97566b6242e9a39dc1ea2f6767a35",
+   "grade": "GRADED"
+  },
+  {
+   "path": "proofs/ENGINE40_GAPS_CENSUS_a279adebc.json",
+   "bytes": 4329,
+   "norm_bytes": 4174,
+   "crlf_present": true,
+   "sha256_lf": "09408a80ff048cc9c96f390158caf57cb8b0281c0263b731d7b86f19ad4807bf",
+   "git_blob": "cacd7e34b910a941f6ffbba47697d72fa7f6ac05",
+   "grade": "UNGRADED"
+  },
+  {
+   "path": "proofs/ENGINE40_GAP_CENSUS_20261126.json",
+   "bytes": 4504,
+   "norm_bytes": 4435,
+   "crlf_present": true,
+   "sha256_lf": "c9218c5160f8defa49f88c258cd0c41967a93b7a4e58910058fb54baf5c55239",
+   "git_blob": "8e7c41eed00a1c08a7aee1e006d4de2c4f6ce9ba",
+   "grade": "UNGRADED"
+  },
+  {
+   "path": "proofs/FAST_TWIN_MATRIX_PARITY_20261123_t_df262414.json",
+   "bytes": 2691,
+   "norm_bytes": 2640,
+   "crlf_present": true,
+   "sha256_lf": "d26bd2e6487db05f0d2db8a8fb8cacf66367898ecff196012bf6b1be43468422",
+   "git_blob": "6138fbf1875d82d66b6151e2ffde6366311ccc1d",
+   "grade": "GRADED"
+  },
+  {
+   "path": "proofs/FORGE_SUITE_C5CF3FE7A_20261124_t_733e3baa.json",
+   "bytes": 702,
+   "norm_bytes": 702,
+   "crlf_present": false,
+   "sha256_lf": "bff13087a9ee4aa426e793aeeef40288c6c5408f9fad00a2e8c0fc3f802a1233",
+   "git_blob": "df510bc5afe66bc440dae332eb887ca65e50fb4e",
+   "grade": "GRADED"
+  },
+  {
+   "path": "proofs/GUARD_MATRIX_T555EDBA1_20261123.json",
+   "bytes": 1393,
+   "norm_bytes": 1393,
+   "crlf_present": false,
+   "sha256_lf": "d5b341a66a22ef70fe5b28c11c594ab9dcc0ad5e16f479cd702c75aa7ffb2b0c",
+   "git_blob": "77c2de8c6720217bff4eab3bff8974715b3a7064",
+   "grade": "UNGRADED"
+  },
+  {
+   "path": "proofs/HIGH1_CEI_GATE_STATUS_20261120.md",
+   "bytes": 4132,
+   "norm_bytes": 4097,
+   "crlf_present": true,
+   "sha256_lf": "63645711633fbe2734666694d9b9f49f387c7aa8588de9be2ba2d1946ca85d0b",
+   "git_blob": "926d2ffa922807637556e3ca275db52ecbb9cedf",
+   "grade": "GRADED"
+  },
+  {
+   "path": "proofs/HIGH2_CLOSE_RECEIPT_20261121.md",
+   "bytes": 3054,
+   "norm_bytes": 3054,
+   "crlf_present": false,
+   "sha256_lf": "9fa01f10f8d3e128e2a0288381b1e176c7ed5084ecbc68b88168f4ef2de9debb",
+   "git_blob": "8a1fe1e1658f17dd5552020d0ff6f441be063719",
+   "grade": "GRADED"
+  },
+  {
+   "path": "proofs/HIGH2_STRANDING_GROUNDING_20261120.md",
+   "bytes": 8083,
+   "norm_bytes": 7989,
+   "crlf_present": true,
+   "sha256_lf": "8d4f3a4293dc0898eb1e6b875992182dd7810ac19a8e25096111d8658e3d9779",
+   "git_blob": "d25d7c321f3cdeb5decd63bd60a1da78f3aaef88",
+   "grade": "GRADED"
+  },
+  {
+   "path": "proofs/HYG_1_GITIGNORE_20261124.json",
+   "bytes": 1903,
+   "norm_bytes": 1903,
+   "crlf_present": false,
+   "sha256_lf": "5fedd6df233d9d325b1af1ba907cfdda1242f16bf84a12484fe9b224c93c6827",
+   "git_blob": "a07b0970a199d79fdf0138cc06c1a0d3da5a61af",
+   "grade": "GRADED"
+  },
+  {
+   "path": "proofs/M4_HOSTING_DECISION_BRIEF_20261121.md",
+   "bytes": 5271,
+   "norm_bytes": 5237,
+   "crlf_present": true,
+   "sha256_lf": "fb49b624d3a6e3a817e0a78c2639b73b993051d755623dd6a08ea777bc43ce86",
+   "git_blob": "3a00251cf2165b8f925f091c67d6eba3b65b915c",
+   "grade": "GRADED"
+  },
+  {
+   "path": "proofs/M4_P01A_GRADE_VERDICT_20261121.md",
+   "bytes": 2124,
+   "norm_bytes": 2101,
+   "crlf_present": true,
+   "sha256_lf": "b2994626e6f0920a95d13271100433f0e053a2e72516199ebc1476a13addb7c5",
+   "git_blob": "7c69af402e0c7fadb90637282bd46de22a5e2293",
+   "grade": "UNGRADED"
+  },
+  {
+   "path": "proofs/ORPHAN_RETIRE_20261123_ENG-20261123-A1.json",
+   "bytes": 3363,
+   "norm_bytes": 3363,
+   "crlf_present": false,
+   "sha256_lf": "d9a47e9d27c2db30bab41678fd01c26e110e6e9feaf96d77dfb5be5ddc7cd05f",
+   "git_blob": "ab97413ef8bff34e2e4a055d773cc35c772fb5ec",
+   "grade": "GRADED"
+  },
+  {
+   "path": "proofs/SEATINACTIVE_COVERAGE_20261123_t_f6e6196c.json",
+   "bytes": 1752,
+   "norm_bytes": 1752,
+   "crlf_present": false,
+   "sha256_lf": "aca900199f322a7b265487b8f07ecc3fc028bb48cbe5e3fe992fad65d4d3cae7",
+   "git_blob": "428ea25ab9a76f771912e398695ef96f1067dabe",
+   "grade": "UNGRADED"
+  },
+  {
+   "path": "proofs/SECSCAN_UNTRACKED_SCRIPTS_20261123_t_6dd92ed1.json",
+   "bytes": 2095,
+   "norm_bytes": 2060,
+   "crlf_present": true,
+   "sha256_lf": "45c1e96f815b14e1bf6fafc708e41bbc1b8c93b41eab0281b20d398f86b79725",
+   "git_blob": "8668f564d06dc6e2c48f351903865e824888748e",
+   "grade": "GRADED"
+  },
+  {
+   "path": "proofs/SECURITY_SWEEP_20261124.json",
+   "bytes": 642,
+   "norm_bytes": 642,
+   "crlf_present": false,
+   "sha256_lf": "61278f3b13df3d8be55135d596f0e0d806a5b287deb05f51e724a7c14032b3f6",
+   "git_blob": "d279dc07888a9cba75f79f1be13ae1ac93045dbc",
+   "grade": "GRADED"
+  },
+  {
+   "path": "proofs/SECURITY_SWEEP_20261125.json",
+   "bytes": 42943,
+   "norm_bytes": 42943,
+   "crlf_present": false,
+   "sha256_lf": "b88db78f271933279c8c2f39c61aa34db86d1a5c75fd423b32a475cd3193ae3f",
+   "git_blob": "e3001f1c71bedb701e84c0c88e682883ebd42832",
+   "grade": "GRADED"
+  },
+  {
+   "path": "proofs/SEC_SWEEP_41_20261126.json",
+   "bytes": 6007,
+   "norm_bytes": 5850,
+   "crlf_present": true,
+   "sha256_lf": "0a7f567f217b8c4e3314d84e5d5ec170a885ad9579e06cb2741610782427c9e6",
+   "git_blob": "efbfaca6ac837aaceaa1f6b716be4a6f3e45aaf2",
+   "grade": "GRADED"
+  },
+  {
+   "path": "proofs/TEST_MATRIX_TOTAL_EXPENSES_REINVITE_20261123_t_2c233e6b.json",
+   "bytes": 1158,
+   "norm_bytes": 1135,
+   "crlf_present": true,
+   "sha256_lf": "41cf3a18ea4e491387e83cb407dce70c39345614976086b478ca0ac234d719be",
+   "git_blob": "c625cb65efedd96c0d29e88c412671496da3d09a",
+   "grade": "UNGRADED"
+  },
+  {
+   "path": "proofs/TEST_MATRIX_V2_UNTAKEN_ARMS_20261123_t_c82d4e00.json",
+   "bytes": 2582,
+   "norm_bytes": 2582,
+   "crlf_present": false,
+   "sha256_lf": "da0c8826321c2e9a697efb1b8f21dbd39e835e0e1de088c8953550c55dadaf92",
+   "git_blob": "5f6e9b7d5722af71594bccac11b2adfa7becb665",
+   "grade": "GRADED"
+  },
+  {
+   "path": "proofs/TICK_1125_10_ENGINE28.json",
+   "bytes": 1699,
+   "norm_bytes": 1699,
+   "crlf_present": false,
+   "sha256_lf": "4aec4dad35180f453c54cbe862ff01dd9e248278079ffba4473f74f29e8fa871",
+   "git_blob": "de96f8a111a181ea12a31c73b3352e8f4670c5b1",
+   "grade": "GRADED"
+  },
+  {
+   "path": "proofs/TICK_1125_11_ENGINE29.json",
+   "bytes": 7130,
+   "norm_bytes": 7073,
+   "crlf_present": true,
+   "sha256_lf": "34aff653188991c9f7a7b3b4e90d9c5ef16aa11bdd64988826274c2d392b2007",
+   "git_blob": "f3dc31fe4d6346bc73765ac60a8190f71ccc9aa3",
+   "grade": "GRADED"
+  },
+  {
+   "path": "proofs/TICK_1125_9_ENGINE27.json",
+   "bytes": 2246,
+   "norm_bytes": 2246,
+   "crlf_present": false,
+   "sha256_lf": "a349ad9e8c5c0b002517466da7999600f686d3eaa760adea9337fb62352e6030",
+   "git_blob": "fbd3c813bd8a4f821394debaebe303281727893b",
+   "grade": "GRADED"
+  },
+  {
+   "path": "proofs/TICK_20261123_INDEXER_WATCH_CATCHUP.json",
+   "bytes": 1551,
+   "norm_bytes": 1551,
+   "crlf_present": false,
+   "sha256_lf": "06b2ff4ac71d4da5afe7a2cf865f1e4025167a4b08e63bc10dcc480c95d88a41",
+   "git_blob": "1a77f5b2a43bab531752294aed686dd7b3948078",
+   "grade": "GRADED"
+  },
+  {
+   "path": "proofs/TICK_20261123_SCANCHUNK.json",
+   "bytes": 1472,
+   "norm_bytes": 1421,
+   "crlf_present": true,
+   "sha256_lf": "cf658ab8fd6132d66fbee22424314fe60c70d09e8107aa6ba4f783786727c30f",
+   "git_blob": "dc5c43043749873f6f4cd617d6bdfbe92972b2a8",
+   "grade": "UNGRADED"
+  },
+  {
+   "path": "proofs/TICK_20261123_TWINSCAN_SUITE.json",
+   "bytes": 1608,
+   "norm_bytes": 1608,
+   "crlf_present": false,
+   "sha256_lf": "673456da5400bd7774af25b89995ed04a6ee83bd0c7e4ab7be62e69cc7f58f57",
+   "git_blob": "1bee89585cd2400ecf32bae1618a98514d748af9",
+   "grade": "GRADED"
+  },
+  {
+   "path": "proofs/TICK_20261124_ENG-20261124-T1.json",
+   "bytes": 10195,
+   "norm_bytes": 9912,
+   "crlf_present": true,
+   "sha256_lf": "d4d5859239a986deb8c7db1b27e82e49fc1e2223b03b9e4052a59e77d4f2cf92",
+   "git_blob": "94a20e988f84b837410e4b8e748a101c08a63bde",
+   "grade": "GRADED"
+  },
+  {
+   "path": "proofs/TICK_20261125_ENG2_t_2eb205d7.json",
+   "bytes": 2165,
+   "norm_bytes": 2165,
+   "crlf_present": false,
+   "sha256_lf": "c6d53b80477df02c2f67596df4584a4b6572d0c165fa8c7f6ae2f8523d297351",
+   "git_blob": "fcdd2a7dbb88dd6de8f34fb3cdd9ac952c439ad1",
+   "grade": "GRADED"
+  },
+  {
+   "path": "proofs/TICK_20261125_ENG3_t_6b638b55.json",
+   "bytes": 1246,
+   "norm_bytes": 1246,
+   "crlf_present": false,
+   "sha256_lf": "b2a879bd77254bc27342f5af0bea4ca9e2f27b243c5a5917fcd76ae56aca834d",
+   "git_blob": "f19c5b4fdd815d53c1dcfa975ef2cd448af3510d",
+   "grade": "GRADED"
+  },
+  {
+   "path": "proofs/TICK_20261125_ENG4_t_d1647c1b.json",
+   "bytes": 1560,
+   "norm_bytes": 1560,
+   "crlf_present": false,
+   "sha256_lf": "d86908eaf915fecdcb53426bf6d3a282e4c89a3a575c0c6aa32f772106fa8e6f",
+   "git_blob": "7c626e3c54aa1663f865a4fa5c5cc5ae3634a7ff",
+   "grade": "GRADED"
+  },
+  {
+   "path": "proofs/TICK_20261125_SUITE_t_59c5bc43.json",
+   "bytes": 1113,
+   "norm_bytes": 1113,
+   "crlf_present": false,
+   "sha256_lf": "6dcdfabffce80480431dcadda786c5028d13526258cf66e922f257f3e07d67ac",
+   "git_blob": "21a0d95c2b41291a5456f5cb369aa8d582aae56e",
+   "grade": "GRADED"
+  },
+  {
+   "path": "proofs/TWIN_CONTRACT_SCAN_RECEIPT_20261123.md",
+   "bytes": 2047,
+   "norm_bytes": 2016,
+   "crlf_present": true,
+   "sha256_lf": "e7689d10e9cfb16d8fb59a23553cad9adafbae7b399f1e7de8a963ee4767f1a9",
+   "git_blob": "049a77ace95b4446313635b698666f5ee8c65feb",
+   "grade": "GRADED"
+  },
+  {
+   "path": "proofs/TWIN_SAFEERC20_SCAN_20261123.json",
+   "bytes": 5545,
+   "norm_bytes": 5545,
+   "crlf_present": false,
+   "sha256_lf": "e53318c544d805434ea5523842c9c18c44c112c57ef7712504136bc57e7ab070",
+   "git_blob": "6e2ccd4669fcc226da79b0148804ffc47df01434",
+   "grade": "GRADED"
+  },
+  {
+   "path": "proofs/TWIN_SAFEERC20_SCAN_20261124_c468fda2_t_57f4bdec.json",
+   "bytes": 1413,
+   "norm_bytes": 1413,
+   "crlf_present": false,
+   "sha256_lf": "54cf5305dc56a7b05506cb7e10779adafba4fb0dc2025851a4d8867fa24d5553",
+   "git_blob": "dd9e7d462720a622286326b370bbc2896d2f0416",
+   "grade": "GRADED"
+  },
+  {
+   "path": "proofs/TWIN_SCAN_1126.json",
+   "bytes": 3722,
+   "norm_bytes": 3622,
+   "crlf_present": true,
+   "sha256_lf": "57c56027d7f984a5febb195434ce711e0c154c0759174cebdef5eeb8f911d496",
+   "git_blob": "c14774d0064737835e05de9dc185508280b8acb7",
+   "grade": "GRADED"
+  },
+  {
+   "path": "proofs/TWIN_SCAN_1126B.json",
+   "bytes": 3722,
+   "norm_bytes": 3622,
+   "crlf_present": true,
+   "sha256_lf": "0b51eb13324c249f3205877f6fbe26b7613f1a810cf325dee960780035879c10",
+   "git_blob": "4250edfb7fdac7dd774c89e9c762fc235fb50f56",
+   "grade": "GRADED"
+  },
+  {
+   "path": "proofs/TWIN_SCAN_1126C.json",
+   "bytes": 3722,
+   "norm_bytes": 3622,
+   "crlf_present": true,
+   "sha256_lf": "0b51eb13324c249f3205877f6fbe26b7613f1a810cf325dee960780035879c10",
+   "git_blob": "4250edfb7fdac7dd774c89e9c762fc235fb50f56",
+   "grade": "GRADED"
+  },
+  {
+   "path": "proofs/TWIN_SCAN_13c19ac53_20261123.json",
+   "bytes": 3443,
+   "norm_bytes": 3353,
+   "crlf_present": true,
+   "sha256_lf": "2aabc74a6d98d34a8abf355e6e009f3c5f11ee1f8bf1e63dde121fce5d9b375e",
+   "git_blob": "9d0ac1d910869ec344848ebe7a676cf6a966b3fd",
+   "grade": "GRADED"
+  },
+  {
+   "path": "proofs/TWIN_SCAN_CLEAN_20261122_t_0cb7907a.json",
+   "bytes": 1685,
+   "norm_bytes": 1685,
+   "crlf_present": false,
+   "sha256_lf": "ace52be65dc058cc9759559bc5e0066aab1b8fc9230169d6b589599d0babd9d1",
+   "git_blob": "c48c3e57b2ac25b6fe8086fc91ae01212b792795",
+   "grade": "GRADED"
+  },
+  {
+   "path": "proofs/TWIN_SCAN_HEAD_20261123.json",
+   "bytes": 5237,
+   "norm_bytes": 5100,
+   "crlf_present": true,
+   "sha256_lf": "704ac52e723e9f0798e9f86a49df31944ff4b0705fbf34c93e3fc98b692f86f8",
+   "git_blob": "db0e0a72755343a6c2b36187754aae8035e53a93",
+   "grade": "GRADED"
+  },
+  {
+   "path": "proofs/V3_LOOP_RUN_20261121.log",
+   "bytes": 15141,
+   "norm_bytes": 14574,
+   "crlf_present": true,
+   "sha256_lf": "54928a984381edfc52f60880414e0b604ff17acad4a566d2168666af5478a58c",
+   "git_blob": "5afd5b7072b932530d0d81cbd5859e390af98b1f",
+   "grade": "UNGRADED"
+  },
+  {
+   "path": "proofs/V3_LOOP_RUN_20261121.log.gz",
+   "bytes": 3422,
+   "norm_bytes": 3422,
+   "crlf_present": false,
+   "sha256_lf": "c71f8df25bc324f799df8448017edc49d769f06c1c57f63d52be2b286ae51a65",
+   "git_blob": "9b7b499121eec0940c92938c5fea5cd23fe46b36",
+   "grade": "UNGRADED"
+  },
+  {
+   "path": "proofs/VIEW_OOB_GOLDEN_34_20261126.json",
+   "bytes": 3028,
+   "norm_bytes": 2945,
+   "crlf_present": true,
+   "sha256_lf": "c5d715dcd13ecbe18415a2e51468736c358ba4c5e524b365ebeb2337ec7aadef",
+   "git_blob": "2dd3bd1c3c3f5db77ea8c381bf284cab380ee3a8",
+   "grade": "GRADED"
+  },
+  {
+   "path": "proofs/W10_APP_PATH_GRADE_20261122.md",
+   "bytes": 2713,
+   "norm_bytes": 2679,
+   "crlf_present": true,
+   "sha256_lf": "2942c196ce21da4aa4b301092f59cdb41dc3c84b7e37d80c58fe127129c559ee",
+   "git_blob": "82427a4ff886fc03f61d2f34a9c196727e81c83f",
+   "grade": "UNGRADED"
+  },
+  {
+   "path": "proofs/W10_APP_PATH_RECEIPT_20261122.json",
+   "bytes": 305,
+   "norm_bytes": 305,
+   "crlf_present": false,
+   "sha256_lf": "0435c16035e540cc1b4f6f7838b7f132b97c2a1bf865100a1094cfdaaf82816a",
+   "git_blob": "ec8f6fb9107579577cc60726bc9c455bb23cdb51",
+   "grade": "UNGRADED"
+  },
+  {
+   "path": "proofs/XIXI_ADJ_20261122.md",
+   "bytes": 1093,
+   "norm_bytes": 1079,
+   "crlf_present": true,
+   "sha256_lf": "7323b553cc42ba249953a68178e9a406518c81b81a579eb186b274b90901d590",
+   "git_blob": "fe7966c0bf06c9e8568ff8dd177d097ac0cc1021",
+   "grade": "UNGRADED"
+  },
+  {
+   "path": "proofs/XIXI_CARD3_GRADE_20261122.md",
+   "bytes": 1088,
+   "norm_bytes": 1074,
+   "crlf_present": true,
+   "sha256_lf": "36153f27494917c60dcd37cf5aac460eb3efc5fcc3c3225e1e9982321c2bf0bc",
+   "git_blob": "fa3172f8c560fd61f92a08ba444b1e68e3d667fd",
+   "grade": "UNGRADED"
+  },
+  {
+   "path": "proofs/XIXI_CARD3_LOCUS_REDERIVE_20261122.md",
+   "bytes": 1625,
+   "norm_bytes": 1602,
+   "crlf_present": true,
+   "sha256_lf": "7ee8b6f060fafddae8af7b4e6c221d943101ca1466b3736e39bf4c8aa371ce4d",
+   "git_blob": "106c1cee6bcf30902d4020c15c6e2cc12a8fbbb8",
+   "grade": "UNGRADED"
+  },
+  {
+   "path": "proofs/XIXI_CARD3_xixi_golden_spec.json",
+   "bytes": 24180,
+   "norm_bytes": 23936,
+   "crlf_present": true,
+   "sha256_lf": "086c1b71861fc1e148500be1defe12eb72aaae85ef4e4eea4b511c695919f245",
+   "git_blob": "8a6ef751292fa51c6f9ab68d284eb7abe838c889",
+   "grade": "UNGRADED"
+  },
+  {
+   "path": "proofs/XIXI_CARD4_GRADE_20261122.md",
+   "bytes": 1472,
+   "norm_bytes": 1450,
+   "crlf_present": true,
+   "sha256_lf": "9a507376a098bb4012566642eed8e17d290e9f24ccbeca4455bf2c6c813d1e5c",
+   "git_blob": "05a1145d1ea08f58748d7f598e937ba0684e0aa8",
+   "grade": "UNGRADED"
+  },
+  {
+   "path": "proofs/XIXI_CARD4_xixi_adversarial_review.json",
+   "bytes": 16885,
+   "norm_bytes": 16722,
+   "crlf_present": true,
+   "sha256_lf": "914e0d269f160980eb8437b4006744c5b3543990fc8cd4a7b77d111fb3f99ee6",
+   "git_blob": "8a8f5eeb2313456462d5c783edcd59b8ac183f1b",
+   "grade": "GRADED"
+  },
+  {
+   "path": "proofs/XIXI_CARD4_xixi_adversarial_review.manifest.json",
+   "bytes": 3770,
+   "norm_bytes": 3729,
+   "crlf_present": true,
+   "sha256_lf": "4c9458d3378ec5144a342cf4cf009f684fa0c06bc3c2d7c8c34fb15829524deb",
+   "git_blob": "f54d054ce158eb0542c75c38f74fe1e6b5377f6a",
+   "grade": "UNGRADED"
+  },
+  {
+   "path": "proofs/XIXI_CARD6_GRADE_20261122.md",
+   "bytes": 1836,
+   "norm_bytes": 1816,
+   "crlf_present": true,
+   "sha256_lf": "978e8039837efa676c5d911abb60a6cd6e455dd2e92e23ecc3bc60133a6819f7",
+   "git_blob": "f499689bb48261315c2430a8b4dd71b10254d305",
+   "grade": "UNGRADED"
+  },
+  {
+   "path": "proofs/XIXI_CARD6a_worktree_audit.json",
+   "bytes": 1695,
+   "norm_bytes": 1669,
+   "crlf_present": true,
+   "sha256_lf": "34401d97218b6493ab4f2d808513cba3221d695559efba291332a8942486b028",
+   "git_blob": "120230662de29775cf9fc8c709c03b2d7fa44ff4",
+   "grade": "UNGRADED"
+  },
+  {
+   "path": "proofs/XIXI_CARD6b_secret_leak_audit.json",
+   "bytes": 1889,
+   "norm_bytes": 1855,
+   "crlf_present": true,
+   "sha256_lf": "9931d4f9efb333bfceb871f8533eac8f86b6933ad23e63e0d81342a1d48bc03b",
+   "git_blob": "7f63c834ac644dda43611248a29ba59d1007e0ba",
+   "grade": "UNGRADED"
+  },
+  {
+   "path": "proofs/XIXI_DESIGN_02_GRADE_20261122.md",
+   "bytes": 1711,
+   "norm_bytes": 1696,
+   "crlf_present": true,
+   "sha256_lf": "d56c5332c28768d9619ef82a66d812600ec348edd4cd36d2e5fe206117d01e49",
+   "git_blob": "7d5a789c963ae371183e49d784ea82671359d922",
+   "grade": "UNGRADED"
+  },
+  {
+   "path": "proofs/_v3_impl_runtime.hex",
+   "bytes": 19636,
+   "norm_bytes": 19636,
+   "crlf_present": false,
+   "sha256_lf": "3f643129efaa7750a3eea43df7a551a1a88766b5e5ce37a75af77b47965657d5",
+   "git_blob": "80a30db5b193d48a15ebcf1f4ad44ebc1f40efb0",
+   "grade": "UNGRADED"
+  },
+  {
+   "path": "proofs/_w10_verdict2.txt",
+   "bytes": 267,
+   "norm_bytes": 267,
+   "crlf_present": false,
+   "sha256_lf": "326456a44af6c7203511779e5227bbaebf810c513f5d24d875dadf8da473f7b7",
+   "git_blob": "f881ada8dd1d1d8346ba7183566de06ef5c58e5f",
+   "grade": "GRADED"
+  },
+  {
+   "path": "proofs/deploy_e2e_25f.json",
+   "bytes": 2512,
+   "norm_bytes": 2512,
+   "crlf_present": false,
+   "sha256_lf": "f27ab7531c935bc867ec795afdf4ef905f833051c25c80d0fdf9c11d2b7bceff",
+   "git_blob": "71ee02b2ddfacae5a2135e3683e4feb226ffbe2d",
+   "grade": "GRADED"
+  },
+  {
+   "path": "proofs/gaps_after_1125_12.json",
+   "bytes": 1154,
+   "norm_bytes": 1154,
+   "crlf_present": false,
+   "sha256_lf": "1459b904260be498c1dea0df4fb64e47a6261c70b508a648ff7351733bfa6c6d",
+   "git_blob": "afd178ac40cdab48205d01cdb3624297cf6132f6",
+   "grade": "GRADED"
+  },
+  {
+   "path": "proofs/gaps_after_1125_5.json",
+   "bytes": 33776,
+   "norm_bytes": 33776,
+   "crlf_present": false,
+   "sha256_lf": "aba5c5a5b1c964f2136c2f3c9f019eb39e27c5e086513035bdaf58b1fcdd1829",
+   "git_blob": "1f18c8cd79ee06b88aecaddf22c2693d6bdbb6bb",
+   "grade": "GRADED"
+  },
+  {
+   "path": "proofs/gaps_after_1125_7.json",
+   "bytes": 32212,
+   "norm_bytes": 32212,
+   "crlf_present": false,
+   "sha256_lf": "9e78312aa4567238a1f0edbe7b48f39e4bace3e9820f6ddd8ba31d51f4543d74",
+   "git_blob": "050c539741fde2cb18b52710780c7dc357db1acc",
+   "grade": "GRADED"
+  },
+  {
+   "path": "proofs/gaps_after_26a.json",
+   "bytes": 2453,
+   "norm_bytes": 2453,
+   "crlf_present": false,
+   "sha256_lf": "1d039d57a722adeca71bcf63e1d8d35291beddfe087a9c9f49345d2929f076a6",
+   "git_blob": "e80e252cda6f64ef25bab88e38478c67b358c2f4",
+   "grade": "GRADED"
+  },
+  {
+   "path": "proofs/gaps_after_e32.json",
+   "bytes": 9577,
+   "norm_bytes": 9252,
+   "crlf_present": true,
+   "sha256_lf": "958b3751e7dae2ce69942c0140745616cc2075b13e052b6e4643293a6ec36457",
+   "git_blob": "b8b8d74ef452ac10a6ee7f7a1d71195eb96d59d4",
+   "grade": "UNGRADED"
+  },
+  {
+   "path": "proofs/gaps_after_e37.json",
+   "bytes": 4329,
+   "norm_bytes": 4174,
+   "crlf_present": true,
+   "sha256_lf": "09408a80ff048cc9c96f390158caf57cb8b0281c0263b731d7b86f19ad4807bf",
+   "git_blob": "cacd7e34b910a941f6ffbba47697d72fa7f6ac05",
+   "grade": "UNGRADED"
+  },
+  {
+   "path": "proofs/gaps_after_measured_1125.json",
+   "bytes": 41969,
+   "norm_bytes": 41969,
+   "crlf_present": false,
+   "sha256_lf": "2fd57d935e2d97adf6dcb56510f1cedc816b7e7115679b122d59aac466f23af8",
+   "git_blob": "3a7c0c7dce1e275b78eb9b7833299fd52337132b",
+   "grade": "GRADED"
+  },
+  {
+   "path": "proofs/gaps_before_1125_12.json",
+   "bytes": 21683,
+   "norm_bytes": 21683,
+   "crlf_present": false,
+   "sha256_lf": "76ebb0b1c20f3a4a94e78cef5e18c44b540977596f8e81a2ff2683c1a4778f75",
+   "git_blob": "9fe31c72c2b477b13254e30615befaf2668b4313",
+   "grade": "GRADED"
+  },
+  {
+   "path": "proofs/gaps_before_1125_5.json",
+   "bytes": 44847,
+   "norm_bytes": 44847,
+   "crlf_present": false,
+   "sha256_lf": "02677c726cfa47ef24391013192f01e0776edebcfa9124d4b57df32ecbe172c2",
+   "git_blob": "d3ed6e6e8905e486e84b3c0675464a1ad07fe8e3",
+   "grade": "GRADED"
+  },
+  {
+   "path": "proofs/gaps_before_e37.json",
+   "bytes": 12707,
+   "norm_bytes": 12272,
+   "crlf_present": true,
+   "sha256_lf": "a86bfae9b50202dd732ad6da12ad3ee2ecf9ce46ddab2a9dcde2096332b62a53",
+   "git_blob": "ba22a5992da999d36632cf68d42961328962cf28",
+   "grade": "UNGRADED"
+  },
+  {
+   "path": "proofs/gaps_before_measured_1125.json",
+   "bytes": 43053,
+   "norm_bytes": 43053,
+   "crlf_present": false,
+   "sha256_lf": "717417d50217a41fc5bf987b9b84d900769cbaa4f7104bfce177dac1533aedec",
+   "git_blob": "0a57d8ada9f3ac5369eec78ee2096bf4baabf6ea",
+   "grade": "GRADED"
+  },
+  {
+   "path": "proofs/m4_p01a_receipt_20261119.json",
+   "bytes": 5334,
+   "norm_bytes": 5211,
+   "crlf_present": true,
+   "sha256_lf": "a5557bb6f8c245858b3e88c83e255c95330132f38acbc9408b3c38bdca3122f5",
+   "git_blob": "567735513c03ea613589b2dd65965a98e1dd3e7e",
+   "grade": "GRADED"
+  },
+  {
+   "path": "proofs/tb1_baseline_main_2e8f94757b33.log",
+   "bytes": 10477,
+   "norm_bytes": 10329,
+   "crlf_present": true,
+   "sha256_lf": "7acb315c24aef06d60188036f2626a4e5967f8a6a2412da0f9d6bfd7a98cfc02",
+   "git_blob": "c6f58aa8d4d423b0145b791cd8fac195baf98b86",
+   "grade": "UNGRADED"
+  },
+  {
+   "path": "proofs/test_skipped_closer_ADAPTED.py",
+   "bytes": 7162,
+   "norm_bytes": 7032,
+   "crlf_present": true,
+   "sha256_lf": "35d6e4057b09218fc7c2fb0b8e17a723f319dea81a91294f14db6e86420b117b",
+   "git_blob": "ae515844f97f80ed7f847d7238317f94626bd83b",
+   "grade": "UNGRADED"
+  },
+  {
+   "path": "proofs/twin_contract_scan_20261124.json",
+   "bytes": 1665,
+   "norm_bytes": 1665,
+   "crlf_present": false,
+   "sha256_lf": "8a8ad86410527bef5690fc69891d47f91f6c7b35a150097f8ec3841c2271cc37",
+   "git_blob": "81a62617ac385c564734cd467ceeb58f4b42b03c",
+   "grade": "GRADED"
+  },
+  {
+   "path": "proofs/twin_scan_380b05f63.json",
+   "bytes": 1676,
+   "norm_bytes": 1619,
+   "crlf_present": true,
+   "sha256_lf": "5b6f8214e3c5651689d1c44fa3470138721847a53a32d78b4f2ab0d624346ae4",
+   "git_blob": "8995ef708edbb679b5554f079e8a3f33b46c2c1c",
+   "grade": "GRADED"
+  }
+ ],
+ "orphan_resolution": [
+  {
+   "hex": "000e176da551d7be74fcd4716e90de5acd10dd5e4e1db1c5a1cd81b454bd9e53",
+   "class": "UNRESOLVED_AT_TIP",
+   "sources": [
+    "task_run:320(task t_1e1f7a90)"
+   ]
+  },
+  {
+   "hex": "009e24791f435d677640fa6ba6452c702621f57f5a1d76fbd527316ebbf452b6",
+   "class": "UNRESOLVED_AT_TIP",
+   "sources": [
+    "task_run:300(task t_33f03aaf)"
+   ]
+  },
+  {
+   "hex": "01ca3f42b5669f3abc35b0df64169eae5e3a7007557b6357ec1c50ce792b612a",
+   "class": "UNRESOLVED_AT_TIP",
+   "sources": [
+    "task_run:390(task t_c92b5237)",
+    "tasks:t_c92b5237.result"
+   ]
+  },
+  {
+   "hex": "020a392b0c839fcd72c9d1156e5e7a159ce032bcf67428c348a09b072aa80c8d",
+   "class": "RESOLVED_OUTSIDE_PROOFS",
+   "detail": "test/EscrowInvariant.t.sol:sha256_lf",
+   "sources": [
+    "task_run:445(task t_754021be)",
+    "tasks:t_754021be.result"
+   ]
+  },
+  {
+   "hex": "024a5db8838176f6359c922518ea0ba93bc35e89fa7993187aac0878afe40869",
+   "class": "ATTACHMENT_RESOLVED",
+   "sources": [
+    "task_run:519(task t_57e108a3)"
+   ]
+  },
+  {
+   "hex": "02aafaf635d0675377e53c904ad49bd10d63e8b7a653e2829c006d189e8913e6",
+   "class": "UNRESOLVED_AT_TIP",
+   "sources": [
+    "comment:506(task t_5d8189f1)",
+    "tasks:t_5f43ff93.body"
+   ]
+  },
+  {
+   "hex": "062fcaee75ffe5dc6efa393e32d6e9e6fd7cfadbcfb6d539554bed49e6f4b033",
+   "class": "UNRESOLVED_AT_TIP",
+   "sources": [
+    "comment:245(task ea07e90337)",
+    "tasks:ea07e90337.body"
+   ]
+  },
+  {
+   "hex": "06b8f808e8c1a81e76bb5c0098452a17ab13e711b87366c6ac4e50556279ad15",
+   "class": "UNRESOLVED_AT_TIP",
+   "sources": [
+    "task_run:426(task t_e538b77a)",
+    "tasks:t_e538b77a.result"
+   ]
+  },
+  {
+   "hex": "079671a7e0952cca67e107c49ab51eccf1f69b7a9b482751c1c71baa58967578",
+   "class": "RESOLVED_OUTSIDE_PROOFS",
+   "detail": "test/SafeERC20FalseReturnMatrix.t.sol:sha256_lf",
+   "sources": [
+    "comment:428(task t_669aad01)",
+    "task_run:339(task t_669aad01)"
+   ]
+  },
+  {
+   "hex": "09981e9ca460a80f69c10e931406b8106b776243bc72ca94f523b555d8964239",
+   "class": "UNRESOLVED_AT_TIP",
+   "sources": [
+    "task_run:478(task t_3dae49ae)"
+   ]
+  },
+  {
+   "hex": "0cf09e7a91e641b0c8991102e14577c8936fff263a21db2cbc88ef13de64933d",
+   "class": "UNRESOLVED_AT_TIP",
+   "sources": [
+    "task_run:325(task t_5bb63e0c)",
+    "tasks:t_5bb63e0c.result"
+   ]
+  },
+  {
+   "hex": "0fa2711a7a26ab1bd96167b42c0d63084adf96925e2ca9ced1c63604d32f9ca8",
+   "class": "UNRESOLVED_AT_TIP",
+   "sources": [
+    "task_run:148(task t_e1d85d11)"
+   ]
+  },
+  {
+   "hex": "101c14f5a36445e8f10c9bc571b4ca0a140e85922c8e949a8a63c7c0396ffbf7",
+   "class": "RESOLVED_OUTSIDE_PROOFS",
+   "detail": "docs/bridge/XIXI_DESIGN_02_xixi_verdict.json:sha256_lf",
+   "sources": [
+    "comment:367(task t_f8ade5da)",
+    "comment:368(task t_33f03aaf)"
+   ]
+  },
+  {
+   "hex": "118d3dbbb44782e5ad7db10f79fbd03b597c1a3f6884220d173f895d33a4d825",
+   "class": "UNRESOLVED_AT_TIP",
+   "sources": [
+    "comment:437(task t_5d8189f1)"
+   ]
+  },
+  {
+   "hex": "14d586fafa77e65f997852f04b7ae97a41b9758837c5606911d7297da8584ef1",
+   "class": "UNRESOLVED_AT_TIP",
+   "sources": [
+    "comment:304(task t_sr003_dec)",
+    "task_run:213(task t_sr003_dec)"
+   ]
+  },
+  {
+   "hex": "15dbbd68bd73d96a2934f2c92daf16856170ddc3c4268a43eddd2ddab9c44e3c",
+   "class": "UNRESOLVED_AT_TIP",
+   "sources": [
+    "task_run:272(task t_6843951c)"
+   ]
+  },
+  {
+   "hex": "1752dc366d55ed73ebf07ae11dda8c816baee1ee992bb7a548ef92b73e416da5",
+   "class": "UNRESOLVED_AT_TIP",
+   "sources": [
+    "task_run:352(task t_5e52a099)",
+    "tasks:t_5e52a099.result"
+   ]
+  },
+  {
+   "hex": "17af98b6a53af7b8d880b288f7adef77fb0681519fe392b3cf9adbcaa335381c",
+   "class": "UNRESOLVED_AT_TIP",
+   "sources": [
+    "task_run:195(task t_29a168e1)"
+   ]
+  },
+  {
+   "hex": "194da00b3dcd00d15739be8129ccc862735bba95a0b6dd55bb65cba0bce3a03d",
+   "class": "UNRESOLVED_AT_TIP",
+   "sources": [
+    "tasks:t_flux_b15.result"
+   ]
+  },
+  {
+   "hex": "1a00ce0fdb4c8fef2f3f56f7179560c196e5cc80a263e5ebafab1419f173b1a0",
+   "class": "UNRESOLVED_AT_TIP",
+   "sources": [
+    "task_run:215(task t_39c137ad)",
+    "task_run:216(task t_1392cfb5)",
+    "tasks:t_1392cfb5.result"
+   ]
+  },
+  {
+   "hex": "1a2de80115f9a5899533659d9058beb7dcdd8161528ce186f8b0c32e534357a5",
+   "class": "UNRESOLVED_AT_TIP",
+   "sources": [
+    "comment:75(task t_ab12b17a)"
+   ]
+  },
+  {
+   "hex": "1a431cf90e76e7ad93f2e2d1e0409de46be81daf74a3f3b0456b17dc8c1c233e",
+   "class": "UNRESOLVED_AT_TIP",
+   "sources": [
+    "comment:527(task t_6e2afe71)",
+    "task_run:517(task t_6e2afe71)"
+   ]
+  },
+  {
+   "hex": "1a475c0f61174233c9b8b58a22af429cba195dd0616a5b4394d5ee66e071250a",
+   "class": "UNRESOLVED_AT_TIP",
+   "sources": [
+    "task_run:214(task t_8ad3fbf8)"
+   ]
+  },
+  {
+   "hex": "1bfb5f26a36870aacf4e4636927db4f02768063454fe65913bdabd7135279395",
+   "class": "UNRESOLVED_AT_TIP",
+   "sources": [
+    "task_run:375(task t_2f84bafb)",
+    "tasks:t_2f84bafb.result"
+   ]
+  },
+  {
+   "hex": "1c2e2252eb46586a85b7fdfd4a770ab5eba45427b79324d3a762f2308a1b6e6d",
+   "class": "UNRESOLVED_AT_TIP",
+   "sources": [
+    "comment:280(task t_5824a67a)",
+    "task_run:201(task t_5824a67a)"
+   ]
+  },
+  {
+   "hex": "1d59ec956f326703de48ea2e765252a88fc078b899208153341c639da8fb1612",
+   "class": "UNRESOLVED_AT_TIP",
+   "sources": [
+    "task_run:195(task t_29a168e1)",
+    "tasks:t_29a168e1.body",
+    "tasks:t_92a43849.body"
+   ]
+  },
+  {
+   "hex": "1e34703785671114d53b70d84212981d2b306379c20137efb4fabfa4efe934fb",
+   "class": "RESOLVED_OUTSIDE_PROOFS",
+   "detail": "test/Engine37GateMockArmSweep.t.sol:sha256_lf",
+   "sources": [
+    "task_run:506(task t_2812bb4a)",
+    "tasks:t_2812bb4a.result"
+   ]
+  },
+  {
+   "hex": "1e6782ccae911c6a361d1e4c07a74448a3e44c1d1db0cb9035369c8f16db0b43",
+   "class": "UNRESOLVED_AT_TIP",
+   "sources": [
+    "comment:146(task t_7202bb74)",
+    "tasks:t_7202bb74.body",
+    "tasks:t_7202bb74.result"
+   ]
+  },
+  {
+   "hex": "1e77816fbb02a4492555d577dd7debc8d2a01d5b6802a7845bea37bd33097ce0",
+   "class": "UNRESOLVED_AT_TIP",
+   "sources": [
+    "task_run:443(task t_100df692)",
+    "tasks:t_100df692.result"
+   ]
+  },
+  {
+   "hex": "1e965cad728ad23e278024eda248e6b5483c16d0689cc0239824259a32c28cfa",
+   "class": "UNRESOLVED_AT_TIP",
+   "sources": [
+    "comment:485(task t_921c1849)",
+    "task_run:417(task t_24618da8)",
+    "task_run:475(task t_921c1849)"
+   ]
+  },
+  {
+   "hex": "1ef4e95269ff8d0945b808e80114edaba085528060c162923875930f7700ba6c",
+   "class": "UNRESOLVED_AT_TIP",
+   "sources": [
+    "comment:220(task t_b851e50c)",
+    "task_run:182(task t_b851e50c)"
+   ]
+  },
+  {
+   "hex": "23776f556e7358ab19c5519271dbf09b4cc8513ebd6331c7a87eef4c5d331c7d",
+   "class": "UNRESOLVED_AT_TIP",
+   "sources": [
+    "comment:416(task t_f274f603)",
+    "tasks:t_f274f603.result"
+   ]
+  },
+  {
+   "hex": "242721bf280f69398099ab80727c4a0d0a7737c896c7ca8d6a468d8ab3631229",
+   "class": "ATTACHMENT_RESOLVED",
+   "sources": [
+    "task_run:101(task t_2fb0c9e6)"
+   ]
+  },
+  {
+   "hex": "2563679fb4a1d00103f1d5423a0692d125ab65f1da177cfafbf62830b926deb1",
+   "class": "UNRESOLVED_AT_TIP",
+   "sources": [
+    "task_run:237(task t_14b21fee)"
+   ]
+  },
+  {
+   "hex": "2579d8edfc86aa11a6cf13fa42a4446d2f101d763df8eb2cd01b7aeea6291556",
+   "class": "RESOLVED_OUTSIDE_PROOFS",
+   "detail": "test/V1MainlineBranchMatrix.t.sol:sha256_lf",
+   "sources": [
+    "task_run:387(task t_fac715f0)",
+    "tasks:t_fac715f0.result"
+   ]
+  },
+  {
+   "hex": "25ae3c5797b0481765022c4a3793248cd770ff86d7b8e807059281eb06482797",
+   "class": "UNRESOLVED_AT_TIP",
+   "sources": [
+    "task_run:119(task t_0d4fb7c5)",
+    "task_run:124(task t_p11a_nudge_contract)"
+   ]
+  },
+  {
+   "hex": "25b55d03fc145fa6c9848f78b88af417b0007fa8020fedc56aba53c15bf5b6e0",
+   "class": "UNRESOLVED_AT_TIP",
+   "sources": [
+    "task_run:456(task t_e290694f)"
+   ]
+  },
+  {
+   "hex": "26fb5e88aa384aa761ae5889b8ab419afc019f811e5960663a3db2067fed145e",
+   "class": "UNRESOLVED_AT_TIP",
+   "sources": [
+    "task_run:259(task t_7f0f9775)"
+   ]
+  },
+  {
+   "hex": "28e406f6aa32b602714ad6cc93e28d0ed7dd8e53c2dd522c7e1e3b921905c45d",
+   "class": "UNRESOLVED_AT_TIP",
+   "sources": [
+    "task_run:446(task t_5b099e51)"
+   ]
+  },
+  {
+   "hex": "29b0657a7dc883c97fd511b9e28f030c5042276afa231efd6c4c288fd619d9a1",
+   "class": "UNRESOLVED_AT_TIP",
+   "sources": [
+    "comment:451(task t_07151fab)",
+    "task_run:406(task t_aed92940)",
+    "tasks:t_aed92940.result"
+   ]
+  },
+  {
+   "hex": "29c30e2f9cd46c770cb009f03e5401f1baf5ee3c1bfc940730ba62364587eb64",
+   "class": "UNRESOLVED_AT_TIP",
+   "sources": [
+    "comment:426(task t_2d23c091)"
+   ]
+  },
+  {
+   "hex": "2bdafcaa44d62957515a73d5addd462a23c6e6de043a62a4d1c422523ee370af",
+   "class": "UNRESOLVED_AT_TIP",
+   "sources": [
+    "task_run:150(task t_00f69509)"
+   ]
+  },
+  {
+   "hex": "2c06a3345bc6b37d0e544cf3be673eaf6b0865dc007e0a2aa8fb33d956b097ba",
+   "class": "UNRESOLVED_AT_TIP",
+   "sources": [
+    "task_run:336(task t_555edba1)"
+   ]
+  },
+  {
+   "hex": "2c0b8c32ab3933f01d0415f89c393ddf948f095ac5e3c53a0bc8b1c621489622",
+   "class": "RESOLVED_OUTSIDE_PROOFS",
+   "detail": "archive/retired_orphans_20261123_ENG-A1/tests_test_auth_fail_closed.py:sha256_lf",
+   "sources": [
+    "task_run:343(task t_f7249cd2)",
+    "tasks:t_f7249cd2.result"
+   ]
+  },
+  {
+   "hex": "2e3c87418c77da2205259c2fa43242ecdddc82a467c29b324258f3af36040ada",
+   "class": "RESOLVED_OUTSIDE_PROOFS",
+   "detail": "contracts/FastTandaBillV2.sol:sha256_lf",
+   "sources": [
+    "comment:520(task t_ca9d58f3)",
+    "task_run:496(task t_5fe210e7)"
+   ]
+  },
+  {
+   "hex": "2ec26dac9e4e4847c8792dcb8cda5be5db80e0ba421e8aceade24cc11c77f463",
+   "class": "UNRESOLVED_AT_TIP",
+   "sources": [
+    "task_run:412(task t_5d4f6b56)",
+    "tasks:t_5d4f6b56.result"
+   ]
+  },
+  {
+   "hex": "2f385fd02d75e5f7b4c8a0dca255c65e92c2f26feea58d2cfcd1b535bb0d4e75",
+   "class": "ATTACHMENT_RESOLVED",
+   "sources": [
+    "task_run:356(task t_f10101dd)",
+    "tasks:t_f10101dd.body"
+   ]
+  },
+  {
+   "hex": "3160d21f716aa813cd4db1e72a069c93ad7e1215eca57660f2664eb651bc0fd6",
+   "class": "RESOLVED_OUTSIDE_PROOFS",
+   "detail": "docs/adr/ADR-0012a-data-plane-db-residue-20261126.md:sha256_lf",
+   "sources": [
+    "task_run:520(task t_c89c29d7)"
+   ]
+  },
+  {
+   "hex": "35da4e7162bfbbd22a60e60bbbf62aa276616694fc7e751046234e2a40b56321",
+   "class": "UNRESOLVED_AT_TIP",
+   "sources": [
+    "task_run:272(task t_6843951c)"
+   ]
+  },
+  {
+   "hex": "36521d20874a9d3645482cae789cd90378700bd616ec74345f7e8488a144a462",
+   "class": "ATTACHMENT_RESOLVED",
+   "sources": [
+    "task_run:519(task t_57e108a3)"
+   ]
+  },
+  {
+   "hex": "37cc5a1ac61352dab200bdfcea343c1c484afc0ae3d129fefa38f2b006b4f598",
+   "class": "UNRESOLVED_AT_TIP",
+   "sources": [
+    "task_run:401(task t_f0c97f57)",
+    "task_run:405(task t_a9f67ed4)",
+    "tasks:t_a9f67ed4.result"
+   ]
+  },
+  {
+   "hex": "39ee0315c2bd5666c4856634bbeb795aae4dd5c00b59d114d45dc25eb11051b7",
+   "class": "UNRESOLVED_AT_TIP",
+   "sources": [
+    "task_run:223(task m4_p01a)"
+   ]
+  },
+  {
+   "hex": "3ae8a321c6e62940a3163cbe6d98fa06c0d4b855afbbbc42736c4f04e124678a",
+   "class": "UNRESOLVED_AT_TIP",
+   "sources": [
+    "task_run:376(task t_a4905118)",
+    "tasks:t_a4905118.result"
+   ]
+  },
+  {
+   "hex": "3b7031596f859d67a1f2d1ce60f81c749fa8149a1fdbf80c3111152157527a1a",
+   "class": "UNRESOLVED_AT_TIP",
+   "sources": [
+    "tasks:t_6630adeb.result"
+   ]
+  },
+  {
+   "hex": "3bba7568f08179fee0c55f326abb85c606635d919b4dcdddbe1797250f88187b",
+   "class": "UNRESOLVED_AT_TIP",
+   "sources": [
+    "task_run:414(task t_89169e5e)",
+    "task_run:485(task t_b4f64076)"
+   ]
+  },
+  {
+   "hex": "3c2d2ad1359cf95bb304986bd2df85e0e60b52d0d0475f33afa894b0bbe344d0",
+   "class": "UNRESOLVED_AT_TIP",
+   "sources": [
+    "task_run:405(task t_a9f67ed4)",
+    "tasks:t_a9f67ed4.result"
+   ]
+  },
+  {
+   "hex": "3d16e59a6612f85ef8f2c15059360b87a1ee22e6230d00c0c245b5ff1b9f2bc3",
+   "class": "UNRESOLVED_AT_TIP",
+   "sources": [
+    "task_run:195(task t_29a168e1)"
+   ]
+  },
+  {
+   "hex": "3d19688479a756f78dae2679336083415ef99a645bad9cf7648172fd42898e59",
+   "class": "RESOLVED_OUTSIDE_PROOFS",
+   "detail": "docs/demo/evidence/fasttwin_receipt.json:sha256_lf",
+   "sources": [
+    "task_run:488(task t_7bcc9090)",
+    "tasks:t_7bcc9090.result"
+   ]
+  },
+  {
+   "hex": "3e12b946504152e65f65437870647b2829630ab73decf6f136485e22aa00a8da",
+   "class": "UNRESOLVED_AT_TIP",
+   "sources": [
+    "comment:249(task t_6de76304)",
+    "comment:259(task t_6de76304)",
+    "comment:266(task t_6de76304)"
+   ]
+  },
+  {
+   "hex": "3fa826d4ea880e6a9cc84091ff3ccdde709f160c8293eda6f78380904bc5bdc7",
+   "class": "UNRESOLVED_AT_TIP",
+   "sources": [
+    "tasks:t_d4551ed9.body"
+   ]
+  },
+  {
+   "hex": "4121af0521ff554b64bf54c0ae87dc87bc751428e569e340c3af65cbcaa979ea",
+   "class": "RESOLVED_OUTSIDE_PROOFS",
+   "detail": "contracts/TandaBillFactory.sol:sha256_lf",
+   "sources": [
+    "task_run:388(task t_212d105f)",
+    "tasks:t_212d105f.result"
+   ]
+  },
+  {
+   "hex": "41ca0f395c89564b702b435643541aeb0358c98bf2bcd9a2f390e003236aa12f",
+   "class": "UNRESOLVED_AT_TIP",
+   "sources": [
+    "task_run:332(task t_df262414)",
+    "task_run:333(task t_df262414)",
+    "tasks:t_df262414.result"
+   ]
+  },
+  {
+   "hex": "43e3c1d119d667272ea84ecd055b1a4d97887d9c2efe35573de9d71dc89bec6a",
+   "class": "UNRESOLVED_AT_TIP",
+   "sources": [
+    "tasks:t_6630adeb.body",
+    "tasks:t_7065102b.body"
+   ]
+  },
+  {
+   "hex": "44ed88536c66f1d23bbd5cdd927b39678c1c528cc4f3fd6c2c725a54a4010e99",
+   "class": "ATTACHMENT_RESOLVED",
+   "sources": [
+    "tasks:t_flux_c3.result"
+   ]
+  },
+  {
+   "hex": "46f95515855b9502da2d92ecbe9796dd0f904df15098ab87719567da097aaafe",
+   "class": "UNRESOLVED_AT_TIP",
+   "sources": [
+    "task_run:188(task t_e96f5a16)"
+   ]
+  },
+  {
+   "hex": "494c6d10eb6c571b00dc9583ed20edf3cfb39508092dfbf1d321585ed40410d8",
+   "class": "RESOLVED_OUTSIDE_PROOFS",
+   "detail": "scripts/twin_scan.py:sha256_lf",
+   "sources": [
+    "task_run:488(task t_7bcc9090)"
+   ]
+  },
+  {
+   "hex": "499ec8cb0f2eece4e9695d73b0e9561605aef5444b1bd88cd2174fdbbc92c743",
+   "class": "UNRESOLVED_AT_TIP",
+   "sources": [
+    "task_run:516(task t_d3b102d3)"
+   ]
+  },
+  {
+   "hex": "4cabe2f4382106cc32ce2af2a31253c9586360dd76be4db78b937fafb02007fa",
+   "class": "UNRESOLVED_AT_TIP",
+   "sources": [
+    "tasks:t_cd45f703.result"
+   ]
+  },
+  {
+   "hex": "4d3203d439d1fe7aa512f273f3574e26adbd7a70c9bb53a9a15b8bf85415eb17",
+   "class": "UNRESOLVED_AT_TIP",
+   "sources": [
+    "comment:316(task t_0ec04348)"
+   ]
+  },
+  {
+   "hex": "4dc4e18f553e9bb646536ed149b4c89c19c49d7b40496673d1f5b8457b0247a0",
+   "class": "UNRESOLVED_AT_TIP",
+   "sources": [
+    "comment:389(task card_xixicard5)"
+   ]
+  },
+  {
+   "hex": "4e47493c846b1d083c88dcb1ea1423eec33e6410d13f0202c81fb5b72e395f7a",
+   "class": "UNRESOLVED_AT_TIP",
+   "sources": [
+    "comment:251(task t_c79fa283)",
+    "comment:261(task t_c79fa283)",
+    "comment:268(task t_c79fa283)"
+   ]
+  },
+  {
+   "hex": "4ea50120dd0b013c9912524101d73a38ef0ad42947364e4835b870568c852100",
+   "class": "UNRESOLVED_AT_TIP",
+   "sources": [
+    "task_run:130(task t_7313cbab)",
+    "task_run:131(task t_3cdbb053)"
+   ]
+  },
+  {
+   "hex": "4ec8afd4ce8ef3258856c58c126216cd233e1e8e0add4a930a10330f04dd6272",
+   "class": "UNRESOLVED_AT_TIP",
+   "sources": [
+    "task_run:189(task t_0588553b)"
+   ]
+  },
+  {
+   "hex": "4edb05b34a73abef6077cc7a39bd4443725806fb48d0375414cfe3c6f16e2abf",
+   "class": "UNRESOLVED_AT_TIP",
+   "sources": [
+    "comment:517(task t_89169e5e)",
+    "tasks:t_89169e5e.result"
+   ]
+  },
+  {
+   "hex": "4f7b018381345a2fac32f680420eed906db41476747c84678b2308ed4799c5ed",
+   "class": "UNRESOLVED_AT_TIP",
+   "sources": [
+    "comment:444(task t_a9f67ed4)",
+    "task_run:405(task t_a9f67ed4)",
+    "tasks:t_a9f67ed4.result"
+   ]
+  },
+  {
+   "hex": "540b3e3d3d86afe24adb3fc3a69d8352150bf5eef920144b84e6ab29eea42de0",
+   "class": "UNRESOLVED_AT_TIP",
+   "sources": [
+    "task_run:456(task t_e290694f)"
+   ]
+  },
+  {
+   "hex": "55b1abad88f62b78bafb319caa8ea0aea7f31735ca9f7a2d92be5772b30b09e6",
+   "class": "UNRESOLVED_AT_TIP",
+   "sources": [
+    "comment:302(task t_idkit_pin)"
+   ]
+  },
+  {
+   "hex": "574e66209a6ee16c1054ab84fa1767735d41f203e55078e2694867e26d7f3079",
+   "class": "ATTACHMENT_RESOLVED",
+   "sources": [
+    "comment:523(task t_1ca87557)",
+    "task_run:512(task t_1ca87557)"
+   ]
+  },
+  {
+   "hex": "5845afb7d8a8154110707ecbc63651cc3a3cd9219a400ce499de260493be289e",
+   "class": "UNRESOLVED_AT_TIP",
+   "sources": [
+    "task_run:445(task t_754021be)"
+   ]
+  },
+  {
+   "hex": "587f647f839b873fa43832a49e3ac089bf4490abf82d21d286bd17521a832461",
+   "class": "UNRESOLVED_AT_TIP",
+   "sources": [
+    "task_run:412(task t_5d4f6b56)",
+    "tasks:t_5d4f6b56.result"
+   ]
+  },
+  {
+   "hex": "5891a3191675ec12cc7c7e968b0b8e14f980d783caef4df30a3cfb51a2068610",
+   "class": "RESOLVED_OUTSIDE_PROOFS",
+   "detail": "test/ViewOobGolden34.t.sol:sha256_lf",
+   "sources": [
+    "task_run:496(task t_5fe210e7)"
+   ]
+  },
+  {
+   "hex": "58bcc88a3b5853a952522a5ab104771670d89bd5df58094801db359047ebd410",
+   "class": "RESOLVED_OUTSIDE_PROOFS",
+   "detail": "scripts/verify_prod_pair.py:sha256_lf",
+   "sources": [
+    "task_run:390(task t_c92b5237)",
+    "tasks:t_c92b5237.result"
+   ]
+  },
+  {
+   "hex": "5978d9173313edd02e9ac5c124c6d0e479e6f5659e493d285655497df43d6032",
+   "class": "UNRESOLVED_AT_TIP",
+   "sources": [
+    "task_run:362(task t_54bf54c5)",
+    "tasks:t_54bf54c5.result"
+   ]
+  },
+  {
+   "hex": "5a9685528c4f9837249ccfe5f9f246c4a17d2c8e9ccdf1fbb892cf834300b517",
+   "class": "RESOLVED_OUTSIDE_PROOFS",
+   "detail": "test/XixiDesign02Q2Stranding.t.sol:sha256_lf",
+   "sources": [
+    "task_run:464(task t_076cf674)",
+    "tasks:t_076cf674.result"
+   ]
+  },
+  {
+   "hex": "5cf23543d5bc8700f27edc3d85ef1be1376af9cfad635358f476062ce44d3336",
+   "class": "UNRESOLVED_AT_TIP",
+   "sources": [
+    "task_run:207(task t_74f05aa6)"
+   ]
+  },
+  {
+   "hex": "5e36647110c31f7c9f28386a9354137c8c38f911595f90c3a18ef686f0a86c07",
+   "class": "UNRESOLVED_AT_TIP",
+   "sources": [
+    "task_run:441(task t_aeb6a8ba)",
+    "tasks:t_aeb6a8ba.result"
+   ]
+  },
+  {
+   "hex": "5ecb011b1870cd08783a060e39d1d4854225fdb1766f5fcdd30359c82c798004",
+   "class": "UNRESOLVED_AT_TIP",
+   "sources": [
+    "tasks:t_flux_c7.result"
+   ]
+  },
+  {
+   "hex": "5fc82c18a154abd67e8b295ba3507eaf1f7ebb8eac061aeace9e672964eb9fac",
+   "class": "UNRESOLVED_AT_TIP",
+   "sources": [
+    "task_run:437(task t_1086a045)",
+    "tasks:t_1086a045.result"
+   ]
+  },
+  {
+   "hex": "60da22a88e189ffeab8ec4fc97ba745488b5c55c09f259202ba0451c954a2703",
+   "class": "UNRESOLVED_AT_TIP",
+   "sources": [
+    "task_run:330(task t_2c233e6b)"
+   ]
+  },
+  {
+   "hex": "60faeafa68ba6c8ba4e0268bae1486d97afb0d10c3526e5feee928ad6950f0b6",
+   "class": "UNRESOLVED_AT_TIP",
+   "sources": [
+    "task_run:378(task t_aa9b24d6)"
+   ]
+  },
+  {
+   "hex": "627211e54d11f9285af64dde1334963618d7186a4e39abbd0f61920565a505d3",
+   "class": "RESOLVED_OUTSIDE_PROOFS",
+   "detail": "test/SeatLedgerIntegrity25D.t.sol:sha256_lf",
+   "sources": [
+    "task_run:449(task t_364d9338)"
+   ]
+  },
+  {
+   "hex": "63ea3bd18cd05e67fbec37be85d3e80ef7a15079519fd74b1f493bbd37ed54d8",
+   "class": "UNRESOLVED_AT_TIP",
+   "sources": [
+    "task_run:322(task t_15724978)",
+    "task_run:324(task t_0cb7907a)",
+    "task_run:353(task t_be87126d)"
+   ]
+  },
+  {
+   "hex": "6449a7182c9bd15c8d7ccc86201f5b40761edb3787cca6cee8250711d85e2c0f",
+   "class": "UNRESOLVED_AT_TIP",
+   "sources": [
+    "comment:518(task t_5f43ff93)",
+    "comment:519(task t_5f43ff93)",
+    "tasks:t_5f43ff93.result"
+   ]
+  },
+  {
+   "hex": "645c2fc34715a25704b1fa4ac9327752cda08aa95ad5f43b0d16cac2cfa5bfec",
+   "class": "RESOLVED_OUTSIDE_PROOFS",
+   "detail": "contracts/TandaBill.sol:sha256_lf",
+   "sources": [
+    "task_run:388(task t_212d105f)",
+    "tasks:t_212d105f.result"
+   ]
+  },
+  {
+   "hex": "650304fe09c26c55046cb607c3a377d1bb2b5d69c255accac37469e815e76847",
+   "class": "UNRESOLVED_AT_TIP",
+   "sources": [
+    "task_run:451(task t_7678b4cc)",
+    "tasks:t_7678b4cc.result"
+   ]
+  },
+  {
+   "hex": "654d2384a2ff9518ac6df0ed1cc8f3eba73069e666f3be97206b3c2225dfc92f",
+   "class": "UNRESOLVED_AT_TIP",
+   "sources": [
+    "task_run:489(task t_4aa11532)"
+   ]
+  },
+  {
+   "hex": "66c88385de2b12d27d8dd15b144d6e9a51019982faaac44435892a862a20cc80",
+   "class": "UNRESOLVED_AT_TIP",
+   "sources": [
+    "task_run:392(task t_dc4c1917)",
+    "tasks:t_dc4c1917.result"
+   ]
+  },
+  {
+   "hex": "677afef6a6e5ac0709e6d92e4eb8e0a116ae3c593175477d195d368b68c06e77",
+   "class": "ATTACHMENT_RESOLVED",
+   "sources": [
+    "comment:527(task t_6e2afe71)",
+    "task_run:517(task t_6e2afe71)"
+   ]
+  },
+  {
+   "hex": "6823849e65d74b4a62fa480516eb714ec9c68a4a53678db4a896d32d8a1534a6",
+   "class": "UNRESOLVED_AT_TIP",
+   "sources": [
+    "tasks:t_flux_c7.body"
+   ]
+  },
+  {
+   "hex": "699bab40f222e79fb5916f111b74d0a0276661ab6151ffb6ba554d26feacdbd8",
+   "class": "UNRESOLVED_AT_TIP",
+   "sources": [
+    "task_run:417(task t_24618da8)",
+    "task_run:475(task t_921c1849)",
+    "tasks:t_24618da8.result"
+   ]
+  },
+  {
+   "hex": "6dae186f828fdd1509369386ec281e7ae96dda46fbcae21e82db8020263905bd",
+   "class": "UNRESOLVED_AT_TIP",
+   "sources": [
+    "task_run:323(task t_9e21a7f4)",
+    "tasks:t_9e21a7f4.result"
+   ]
+  },
+  {
+   "hex": "6e7d1d26f53d2e3f36a7f77ca97f03434a71779d891864619dea73484a1ccae4",
+   "class": "UNRESOLVED_AT_TIP",
+   "sources": [
+    "task_run:205(task t_92a43849)"
+   ]
+  },
+  {
+   "hex": "6ea3a1dc430848b524fe6ac0e9706ed44589b531083bfd45fedfe26303db6e0a",
+   "class": "UNRESOLVED_AT_TIP",
+   "sources": [
+    "task_run:325(task t_5bb63e0c)",
+    "task_run:339(task t_669aad01)",
+    "task_run:386(task t_80035b85)"
+   ]
+  },
+  {
+   "hex": "7074dae063e56d7663db76c8734ce7b2166cb1116c55832182523efec26585e2",
+   "class": "UNRESOLVED_AT_TIP",
+   "sources": [
+    "comment:151(task ea07e90337)"
+   ]
+  },
+  {
+   "hex": "72b028a11d64271fc3f5675d8b224ff0d9021ab52ee7049ead9c7ce84846fd2c",
+   "class": "UNRESOLVED_AT_TIP",
+   "sources": [
+    "task_run:359(task t_4f624db2)"
+   ]
+  },
+  {
+   "hex": "74309bfa6c27d4b80295e64bb5517f516ced94fdf035a7133a881c6bc12f2caf",
+   "class": "UNRESOLVED_AT_TIP",
+   "sources": [
+    "task_run:189(task t_0588553b)"
+   ]
+  },
+  {
+   "hex": "7448ed34146edc6f7f7f42e5c98e124fcaeda922bd02b3652dabfbe1641bae8e",
+   "class": "UNRESOLVED_AT_TIP",
+   "sources": [
+    "comment:97(task t_6f65fbe1)"
+   ]
+  },
+  {
+   "hex": "75a2d2b7ba6448177ab3b0053e30b1ec45d919e61feb40051768ace031c287eb",
+   "class": "UNRESOLVED_AT_TIP",
+   "sources": [
+    "task_run:339(task t_669aad01)"
+   ]
+  },
+  {
+   "hex": "77675138607716031ba9a88f275ed67583b928e6060669b0f43e31d7f5d7d054",
+   "class": "UNRESOLVED_AT_TIP",
+   "sources": [
+    "task_run:449(task t_364d9338)"
+   ]
+  },
+  {
+   "hex": "78d363d37845105bbba7946cbaaf4ee0f2a296551cb39fe6841fd6fb3e79ed4b",
+   "class": "UNRESOLVED_AT_TIP",
+   "sources": [
+    "task_run:219(task t_1d3f2f38)"
+   ]
+  },
+  {
+   "hex": "795ebd6fdce3a6e01ead7cfb3b3da6f7e31980108e4180713a50f4f9bc8ba134",
+   "class": "UNRESOLVED_AT_TIP",
+   "sources": [
+    "task_run:358(task t_c82d4e00)",
+    "tasks:t_c82d4e00.result"
+   ]
+  },
+  {
+   "hex": "796c09d582b113926e9e6ca9d111b640e10f5dbc08bb87e91a27e9b15d7ec850",
+   "class": "UNRESOLVED_AT_TIP",
+   "sources": [
+    "tasks:t_cd45f703.result"
+   ]
+  },
+  {
+   "hex": "797d71a744c235029c307d10451f92036d9c2a509023364f43a169b3bc0cac03",
+   "class": "UNRESOLVED_AT_TIP",
+   "sources": [
+    "task_run:386(task t_80035b85)",
+    "tasks:t_80035b85.body",
+    "tasks:t_80035b85.result"
+   ]
+  },
+  {
+   "hex": "79c173cb84bcda2e643af620c43946d42204d60834c91226a3f61f0828d14607",
+   "class": "UNRESOLVED_AT_TIP",
+   "sources": [
+    "task_run:373(task t_2d23c091)"
+   ]
+  },
+  {
+   "hex": "79d7b124fd6ccd3fac1b9274ca95b009c31f81666ed7958a1784e3bc24dfdda7",
+   "class": "RESOLVED_OUTSIDE_PROOFS",
+   "detail": "contracts/TandaBillV2.sol:sha256_lf",
+   "sources": [
+    "task_run:496(task t_5fe210e7)",
+    "tasks:t_5fe210e7.result"
+   ]
+  },
+  {
+   "hex": "7a68c0ceafb03cabf62534202cf69457a7e9820c7882727a614252f400fc1539",
+   "class": "RESOLVED_OUTSIDE_PROOFS",
+   "detail": "provgate.py:sha256_lf",
+   "sources": [
+    "task_run:364(task t_f56b6632)",
+    "tasks:t_f56b6632.result"
+   ]
+  },
+  {
+   "hex": "7c29402078ab41eb81a68722743a31a9f8176d9907b13069df02acda99b79335",
+   "class": "UNRESOLVED_AT_TIP",
+   "sources": [
+    "task_run:239(task t_0222f1e6)"
+   ]
+  },
+  {
+   "hex": "7c6f4c3bdf895739dcb17ff46985f29985ffc70bcfe6705f673ab7bf8b28e4f6",
+   "class": "UNRESOLVED_AT_TIP",
+   "sources": [
+    "comment:252(task t_92a43849)",
+    "comment:262(task t_92a43849)",
+    "comment:269(task t_92a43849)"
+   ]
+  },
+  {
+   "hex": "7e08fc51e49bef1173ac60b4d08a9c4f28b129427ed10c315a4b6c8ea8e8e1d8",
+   "class": "RESOLVED_OUTSIDE_PROOFS",
+   "detail": "contracts/SafeERC20Minimal.sol:sha256_lf",
+   "sources": [
+    "task_run:339(task t_669aad01)",
+    "task_run:388(task t_212d105f)"
+   ]
+  },
+  {
+   "hex": "812c641142cf393e7cac7a0fe8a4705ad9095c66b46aec839611ea76f8c88eda",
+   "class": "UNRESOLVED_AT_TIP",
+   "sources": [
+    "task_run:405(task t_a9f67ed4)",
+    "tasks:t_a9f67ed4.result"
+   ]
+  },
+  {
+   "hex": "81aa36dbf3f516645b1f387b7eaba67e7359925ce93efe9a1733eaaa02d7dd61",
+   "class": "RESOLVED_OUTSIDE_PROOFS",
+   "detail": "tests/test_w10_gate_contract.py:sha256_lf",
+   "sources": [
+    "tasks:t_flux_b5.result"
+   ]
+  },
+  {
+   "hex": "84692d2765c3a268628120cf509bc80ab8aca653aea5aaea803823cf66853e7c",
+   "class": "UNRESOLVED_AT_TIP",
+   "sources": [
+    "task_run:393(task t_b7c72897)",
+    "tasks:t_b7c72897.result"
+   ]
+  },
+  {
+   "hex": "858748bcb58ae415feca98bcc260ff12ebf95b73106a230a9eeca6abb3353940",
+   "class": "UNRESOLVED_AT_TIP",
+   "sources": [
+    "task_run:174(task t_d833aae1)"
+   ]
+  },
+  {
+   "hex": "860458593f3a2ffbf70dc61f9e3a7dd74b4b5c474c8d673a880d2fa073aa5165",
+   "class": "UNRESOLVED_AT_TIP",
+   "sources": [
+    "task_run:326(task t_f6e6196c)"
+   ]
+  },
+  {
+   "hex": "87f062ec714aa711646f07d46cbc4976d88ca05c24ee53739ad85dc7b37b9ec4",
+   "class": "UNRESOLVED_AT_TIP",
+   "sources": [
+    "tasks:t_7202bb74.body"
+   ]
+  },
+  {
+   "hex": "883dcbd1df9c8dda9ba96ea1b085d8358514eac2066ce9a765ce7bf23838daff",
+   "class": "UNRESOLVED_AT_TIP",
+   "sources": [
+    "tasks:t_c8bf2f8b.body"
+   ]
+  },
+  {
+   "hex": "88d5339f62794ef77ef4d170d4afbb01d84e29aee9553610ec99ceb25f109822",
+   "class": "RESOLVED_OUTSIDE_PROOFS",
+   "detail": "tests/test_goldens_shape_b.py:sha256_lf",
+   "sources": [
+    "tasks:t_flux_a9.result"
+   ]
+  },
+  {
+   "hex": "892a1fc0f8657b8f10d59d155638561d2e9f5e08334bf07fe491e58acea448f1",
+   "class": "UNRESOLVED_AT_TIP",
+   "sources": [
+    "task_run:387(task t_fac715f0)",
+    "tasks:t_fac715f0.result"
+   ]
+  },
+  {
+   "hex": "8aaf0c3ae541d57eedd414d3f0d00810c3c0b662aee0997278304b39c4c8a903",
+   "class": "UNRESOLVED_AT_TIP",
+   "sources": [
+    "comment:357(task t_52d57fd7)"
+   ]
+  },
+  {
+   "hex": "8c2b864099e38c21154797409208642c39a56f610206cbd5d11ad48a87d8cb98",
+   "class": "RESOLVED_OUTSIDE_PROOFS",
+   "detail": "test/AbiSelectorLock25C.t.sol:sha256_lf",
+   "sources": [
+    "task_run:446(task t_5b099e51)",
+    "tasks:t_5b099e51.result"
+   ]
+  },
+  {
+   "hex": "8dcf0e16fe1ccfdc14b5b713587f1f778b9d1883a270f761682eb89c620b65bd",
+   "class": "RESOLVED_OUTSIDE_PROOFS",
+   "detail": ".gitignore:sha256_lf",
+   "sources": [
+    "task_run:390(task t_c92b5237)",
+    "tasks:t_c92b5237.result"
+   ]
+  },
+  {
+   "hex": "8e5e2a6b50a645e49948008c35aef83c0f61f79a49aef77c99d17a604fc945a3",
+   "class": "UNRESOLVED_AT_TIP",
+   "sources": [
+    "comment:441(task t_5d8189f1)"
+   ]
+  },
+  {
+   "hex": "8ee2ab1293d71155a56a34fcb5a846c1036ad03557aa2a2fb257700711bda73f",
+   "class": "UNRESOLVED_AT_TIP",
+   "sources": [
+    "task_run:101(task t_2fb0c9e6)"
+   ]
+  },
+  {
+   "hex": "8f214b7f7de11c67f91a604c4066a48c4fb282ad3b51e0e970e30ada846fe6ed",
+   "class": "UNRESOLVED_AT_TIP",
+   "sources": [
+    "comment:358(task t_52d57fd7)"
+   ]
+  },
+  {
+   "hex": "8f2eccda4dc5fac671228edc824ede8c3401a070f39d2c2aafb730833377fc81",
+   "class": "UNRESOLVED_AT_TIP",
+   "sources": [
+    "task_run:439(task t_2eb205d7)",
+    "tasks:t_2eb205d7.result"
+   ]
+  },
+  {
+   "hex": "8f8b597fa870219acbb300f655a9ff34d52f3bd79805220b110af9e551dbc914",
+   "class": "UNRESOLVED_AT_TIP",
+   "sources": [
+    "task_run:378(task t_aa9b24d6)"
+   ]
+  },
+  {
+   "hex": "8ffec4560fd5a0b7305363628db0440e9dca3274e250d4b8f8bc4fe452480961",
+   "class": "RESOLVED_OUTSIDE_PROOFS",
+   "detail": "test/XixiDesign02CeiGolden.t.sol:sha256_lf",
+   "sources": [
+    "tasks:t_e0f3c7d2.result"
+   ]
+  },
+  {
+   "hex": "910f86eead6ba8ceeec30e186a83ded1fc32f36706363189c6b8496fd10c4b94",
+   "class": "RESOLVED_OUTSIDE_PROOFS",
+   "detail": "test/Engine40GapArmSweep.t.sol:sha256_lf",
+   "sources": [
+    "task_run:514(task t_afe7dcc1)"
+   ]
+  },
+  {
+   "hex": "9147a28cc0cb98d67047ed07836c4aff12dcd8ae7d1939171bb4ac968b03db65",
+   "class": "UNRESOLVED_AT_TIP",
+   "sources": [
+    "task_run:195(task t_29a168e1)"
+   ]
+  },
+  {
+   "hex": "94fec6214462677ac0d7754eae65c0c5cece627b505b3555e878f3a3aedeece6",
+   "class": "UNRESOLVED_AT_TIP",
+   "sources": [
+    "task_run:321(task t_dafa1c7b)"
+   ]
+  },
+  {
+   "hex": "9a4e8042da28c4dfaf80009ca29c06c6a3106826addc610c61a121119aef1ec8",
+   "class": "UNRESOLVED_AT_TIP",
+   "sources": [
+    "task_run:379(task t_1bfd4ee5)"
+   ]
+  },
+  {
+   "hex": "9a8c23aeaad10c5574b9fef3e10bfc81ac8312f421ab30dbb4c43a795263e808",
+   "class": "RESOLVED_OUTSIDE_PROOFS",
+   "detail": "tests/test_guard_shape_match.py:sha256_lf",
+   "sources": [
+    "tasks:t_flux_c9.result"
+   ]
+  },
+  {
+   "hex": "9bda78dcaa5ca7eef58a36c3475c947267b8e5de91f2377adb390a27ce9e3ee6",
+   "class": "UNRESOLVED_AT_TIP",
+   "sources": [
+    "comment:250(task t_0edf52f4)",
+    "comment:260(task t_0edf52f4)",
+    "comment:267(task t_0edf52f4)"
+   ]
+  },
+  {
+   "hex": "9c012f55347a269980a06201f6147660bdf33305a0326180fcabed0ba07d9d4c",
+   "class": "UNRESOLVED_AT_TIP",
+   "sources": [
+    "tasks:t_0edf52f4.body",
+    "tasks:t_d4551ed9.body"
+   ]
+  },
+  {
+   "hex": "9c8425bb50b756203c86d5638cf8b3c2b9722e70af334dbb7d10a699ee2c93e9",
+   "class": "UNRESOLVED_AT_TIP",
+   "sources": [
+    "task_run:174(task t_d833aae1)"
+   ]
+  },
+  {
+   "hex": "9d2472719d412343ea83ad5a9bd086479071b0a2e5c7fa87c007c3e51b69cb63",
+   "class": "UNRESOLVED_AT_TIP",
+   "sources": [
+    "tasks:t_7065102b.result"
+   ]
+  },
+  {
+   "hex": "a00ec80266154a2509ed0b9c5e758ca63cb0c7f2cffa0b68909bf713351b6c9c",
+   "class": "UNRESOLVED_AT_TIP",
+   "sources": [
+    "task_run:399(task t_6b3ebec2)",
+    "tasks:t_6b3ebec2.result"
+   ]
+  },
+  {
+   "hex": "a0710d7423932e8ea8343f94d9e2810b4615de42570a2f150a8da73b40cf50bc",
+   "class": "UNRESOLVED_AT_TIP",
+   "sources": [
+    "task_run:24(task t_f709b13d)"
+   ]
+  },
+  {
+   "hex": "a19a8e242a826c7cc6ff0e6d9bf1d0f2d37c367d3d43600875bf4be9bff4e121",
+   "class": "RESOLVED_OUTSIDE_PROOFS",
+   "detail": "test/V2BoundaryLedgerMatrix.t.sol:sha256_lf",
+   "sources": [
+    "task_run:384(task t_16b1e37c)"
+   ]
+  },
+  {
+   "hex": "a3843816e2f42b43ba2e26c7754fab73d6db0936276f35a854934e650cff844d",
+   "class": "UNRESOLVED_AT_TIP",
+   "sources": [
+    "comment:408(task t_5bb63e0c)"
+   ]
+  },
+  {
+   "hex": "a47e677f242793764e71f3f7697e23fba2a531353357bdf57f36c55fcb51be8e",
+   "class": "UNRESOLVED_AT_TIP",
+   "sources": [
+    "task_run:465(task t_efefd101)",
+    "tasks:t_efefd101.result"
+   ]
+  },
+  {
+   "hex": "a4e82333270beb66ad003dd38147cf07cbe62fb2721f5e9b23603e4cf9b6ff4c",
+   "class": "UNRESOLVED_AT_TIP",
+   "sources": [
+    "task_run:358(task t_c82d4e00)",
+    "tasks:t_c82d4e00.result"
+   ]
+  },
+  {
+   "hex": "a51d839806c1d1ae2671a4358cc50743a169e6506c10e0373ef5e854bb625875",
+   "class": "UNRESOLVED_AT_TIP",
+   "sources": [
+    "comment:303(task t_8ad3fbf8)",
+    "task_run:214(task t_8ad3fbf8)"
+   ]
+  },
+  {
+   "hex": "a551d0601904c3250066b5309363d47e38bfd4b23045d636e290f83632face00",
+   "class": "UNRESOLVED_AT_TIP",
+   "sources": [
+    "task_run:330(task t_2c233e6b)"
+   ]
+  },
+  {
+   "hex": "a7951db6f624563dd9120fbd1f49aed84fa68bfbbfcd14e399cf24bcbcbaad67",
+   "class": "UNRESOLVED_AT_TIP",
+   "sources": [
+    "task_run:272(task t_6843951c)"
+   ]
+  },
+  {
+   "hex": "a91d5ff29be8b946d4db353e7889835108818ef62b23dcbb058b344bb9224cb4",
+   "class": "UNRESOLVED_AT_TIP",
+   "sources": [
+    "comment:454(task t_67504aa4)"
+   ]
+  },
+  {
+   "hex": "a9740de3c4d3e55b2b5263836266f5d9d70ccf919c4b38a59a124eb3b5bad370",
+   "class": "UNRESOLVED_AT_TIP",
+   "sources": [
+    "comment:511(task t_a47636c1)",
+    "task_run:508(task t_a47636c1)",
+    "tasks:t_a47636c1.result"
+   ]
+  },
+  {
+   "hex": "adc12c5128e242ea382f535c52f44340c4faa9d8247d44f8f00fdd36cb733218",
+   "class": "UNRESOLVED_AT_TIP",
+   "sources": [
+    "task_run:374(task t_ux2_audit)"
+   ]
+  },
+  {
+   "hex": "adc7e5924466ed58fc786e17e28d20d7e1a1e30c5fda07da0cb5c0442e5c9bb6",
+   "class": "RESOLVED_OUTSIDE_PROOFS",
+   "detail": "docs/bridge/XIXI_DESIGN_02_BRIEF_20261121.md:sha256_lf",
+   "sources": [
+    "comment:346(task t_a215893d)",
+    "comment:347(task t_a215893d)"
+   ]
+  },
+  {
+   "hex": "adf56a640d9ce2a3bf8356b0ad51c45ed3fac38bed65b812b85eeadf909afd2a",
+   "class": "RESOLVED_OUTSIDE_PROOFS",
+   "detail": "test/Engine1125FastMaskCorner.t.sol:sha256_lf",
+   "sources": [
+    "task_run:437(task t_1086a045)",
+    "tasks:t_1086a045.result"
+   ]
+  },
+  {
+   "hex": "b42966e953581ba28df10dc68374b38c9550dc329e8bcc2be1145af90a0ceda3",
+   "class": "UNRESOLVED_AT_TIP",
+   "sources": [
+    "task_run:443(task t_100df692)",
+    "tasks:t_100df692.result"
+   ]
+  },
+  {
+   "hex": "b4509e336d524808da708cccf2304921917995ffc65e80959bdbad03969801fe",
+   "class": "UNRESOLVED_AT_TIP",
+   "sources": [
+    "task_run:101(task t_2fb0c9e6)"
+   ]
+  },
+  {
+   "hex": "b53f9103b64d198adbb8982806f2834ff3807429ded460fbf7fc6353a26e4a45",
+   "class": "UNRESOLVED_AT_TIP",
+   "sources": [
+    "comment:487(task t_b4f64076)",
+    "comment:488(task t_a146b4d8)",
+    "comment:489(task t_9012fafd)"
+   ]
+  },
+  {
+   "hex": "b5f1a486902bcace2e7f50973281f34b74bfac6d7cb7d569ff02164eee3df7be",
+   "class": "UNRESOLVED_AT_TIP",
+   "sources": [
+    "task_run:239(task t_0222f1e6)"
+   ]
+  },
+  {
+   "hex": "b666452bdbb1218cd129062e980a389c61f161478543dd4cc3512f7de5a4a4bc",
+   "class": "UNRESOLVED_AT_TIP",
+   "sources": [
+    "comment:416(task t_f274f603)",
+    "tasks:t_f274f603.result"
+   ]
+  },
+  {
+   "hex": "b90f9e1271146bd9ac2cdf4c5449949855ed517391d2d048c664788e23e06802",
+   "class": "RESOLVED_OUTSIDE_PROOFS",
+   "detail": "archive/retired_orphans_20261123_ENG-A1/contract_loop_proof.py:sha256_lf",
+   "sources": [
+    "task_run:343(task t_f7249cd2)",
+    "tasks:t_f7249cd2.result"
+   ]
+  },
+  {
+   "hex": "b95643cb6d430362d7175564ed3fd74b7da5b58574948f5b2dfae8dd409f2f95",
+   "class": "UNRESOLVED_AT_TIP",
+   "sources": [
+    "task_run:173(task t_84f7316a)"
+   ]
+  },
+  {
+   "hex": "baa00afd25fbf7972051f9c96eff316655d5cfbe6271985a27d8fcd7577e59b0",
+   "class": "RESOLVED_OUTSIDE_PROOFS",
+   "detail": "test/P13SplitLockCoverage.t.sol:sha256_lf",
+   "sources": [
+    "task_run:163(task t_p13a_view_code)",
+    "task_run:167(task t_p13b_view_pr)"
+   ]
+  },
+  {
+   "hex": "bc01f13ae65f53ce6040019bb6cfed7d0f85213932ee85f6b8c4068717acb93a",
+   "class": "UNRESOLVED_AT_TIP",
+   "sources": [
+    "comment:435(task t_16b1e37c)"
+   ]
+  },
+  {
+   "hex": "bc3c3e08b2c7ec0ba005ef1ae8feeeda8712b98379c79552e6f5796e5c42411c",
+   "class": "UNRESOLVED_AT_TIP",
+   "sources": [
+    "tasks:t_5de0a4ab.body",
+    "tasks:t_e19ac524.body"
+   ]
+  },
+  {
+   "hex": "bc9bbdcf05a9882ae486daa1aea7de29f3366a0985c63e45be8e1652dedd4289",
+   "class": "UNRESOLVED_AT_TIP",
+   "sources": [
+    "comment:426(task t_2d23c091)",
+    "comment:427(task t_ux2_audit)"
+   ]
+  },
+  {
+   "hex": "bdd133dc27174259900fbace7b9f3fad895633935da37af62aeca216d651386d",
+   "class": "RESOLVED_OUTSIDE_PROOFS",
+   "detail": "tests/test_w10_userop_map.py:sha256_lf",
+   "sources": [
+    "task_run:394(task t_cead034d)",
+    "task_run:396(task t_3dc1b947)"
+   ]
+  },
+  {
+   "hex": "be306b080247ad0d52f1bc52894c31b751bde6d6f7bff4d67754101858c2a460",
+   "class": "UNRESOLVED_AT_TIP",
+   "sources": [
+    "tasks:t_flux_c2.result"
+   ]
+  },
+  {
+   "hex": "c30a08369e479d41750998495d50f3c8237611a85ceb0e4f1c76869d67b8e1b8",
+   "class": "UNRESOLVED_AT_TIP",
+   "sources": [
+    "task_run:506(task t_2812bb4a)"
+   ]
+  },
+  {
+   "hex": "c3abed68bee790d7d40ddf9c467875865a2c19e35af2fb69e8b0def9549d15dd",
+   "class": "UNRESOLVED_AT_TIP",
+   "sources": [
+    "tasks:t_393a399e.body",
+    "tasks:t_7412b5e0.body"
+   ]
+  },
+  {
+   "hex": "c4af19ee15bac2a783cdee84de26ac419c44245556c8879c58336df70993e310",
+   "class": "ATTACHMENT_RESOLVED",
+   "sources": [
+    "task_run:445(task t_754021be)"
+   ]
+  },
+  {
+   "hex": "c702980e9b89f9b0b797456b3d7b0671cb6701fcb276f6729d9e1edf36a82b88",
+   "class": "UNRESOLVED_AT_TIP",
+   "sources": [
+    "comment:299(task t_dd4a18be)",
+    "task_run:209(task t_8b8a1a63)"
+   ]
+  },
+  {
+   "hex": "c807a730beeb7fb8ff2282e189ba417fcce2e57db7ee1a4f52b1a977aba891f7",
+   "class": "UNRESOLVED_AT_TIP",
+   "sources": [
+    "tasks:t_7065102b.body"
+   ]
+  },
+  {
+   "hex": "c835df855d1a94d1396ef5aa15f1a35dd5f393ca2ce3527acb0e53278252c3d9",
+   "class": "UNRESOLVED_AT_TIP",
+   "sources": [
+    "task_run:324(task t_0cb7907a)"
+   ]
+  },
+  {
+   "hex": "ca4fd68007d6001b46d204682fa16376049915d630095bf3eed050a16e17a4f6",
+   "class": "UNRESOLVED_AT_TIP",
+   "sources": [
+    "task_run:403(task t_0e57596c)",
+    "tasks:t_0e57596c.result"
+   ]
+  },
+  {
+   "hex": "cd18c849da254e65084e2fe3e293d3d9fd7e3a372760799265b8896ebc901081",
+   "class": "UNRESOLVED_AT_TIP",
+   "sources": [
+    "task_run:380(task t_3cbf9ec5)",
+    "tasks:t_3cbf9ec5.result"
+   ]
+  },
+  {
+   "hex": "ce6e20628c8b2c1f70a13fb3ac04dd64a10b082927a9c7424c191a2eb4ee3a8c",
+   "class": "UNRESOLVED_AT_TIP",
+   "sources": [
+    "task_run:314(task t_flux_c2)"
+   ]
+  },
+  {
+   "hex": "ce971e53f442c97eb75762d95cabba39c75793be7d59a66b2cd545a69814f35e",
+   "class": "RESOLVED_OUTSIDE_PROOFS",
+   "detail": "tests/test_overlay_disagreement.py:sha256_lf",
+   "sources": [
+    "task_run:394(task t_cead034d)",
+    "tasks:t_cead034d.result"
+   ]
+  },
+  {
+   "hex": "d08852d447a63bff907f33f07b605eed30e033d121484774a85dde2c4d994bda",
+   "class": "UNRESOLVED_AT_TIP",
+   "sources": [
+    "task_run:453(task t_d1647c1b)",
+    "tasks:t_d1647c1b.result"
+   ]
+  },
+  {
+   "hex": "d1292bfb55ae0d759dedecbaed088ac2fd0d50b43e17db8da6768b0e3edbbae3",
+   "class": "RESOLVED_OUTSIDE_PROOFS",
+   "detail": "test/DeployScriptGolden11255.t.sol:sha256_lf",
+   "sources": [
+    "task_run:460(task t_ca59a1ff)",
+    "tasks:t_ca59a1ff.result"
+   ]
+  },
+  {
+   "hex": "d45064cacea92c7ecd623d6ad01676be04237815ae2555b6609313706f8dc6fa",
+   "class": "UNRESOLVED_AT_TIP",
+   "sources": [
+    "task_run:223(task m4_p01a)"
+   ]
+  },
+  {
+   "hex": "d6f1743baaad76dd2925a5a15e04fc450a2a9748eac71eeda338bf41debdfced",
+   "class": "UNRESOLVED_AT_TIP",
+   "sources": [
+    "task_run:514(task t_afe7dcc1)"
+   ]
+  },
+  {
+   "hex": "d76f1b0c4a2bc508c112db4112eca480f4a12b631c49fcc9bcc81b52c1ad9162",
+   "class": "UNRESOLVED_AT_TIP",
+   "sources": [
+    "task_run:235(task t_4d70d038)"
+   ]
+  },
+  {
+   "hex": "d944981d6768ae4909a531b898f916625b10557654a3d3235d9ec4be861b56ab",
+   "class": "UNRESOLVED_AT_TIP",
+   "sources": [
+    "task_run:330(task t_2c233e6b)"
+   ]
+  },
+  {
+   "hex": "dbea72a0e9b885cff8340caed5d27d8d24b8c9f82da5bfddaed2d94de916c266",
+   "class": "RESOLVED_OUTSIDE_PROOFS",
+   "detail": "test/V2DefensiveMaskCorners.t.sol:sha256_lf",
+   "sources": [
+    "task_run:429(task t_66303ab9)",
+    "tasks:t_66303ab9.result"
+   ]
+  },
+  {
+   "hex": "dcd1e4d931bac3e394db8ce6b289a956f6b73f65afa93c017de3c10fc78cf9bc",
+   "class": "UNRESOLVED_AT_TIP",
+   "sources": [
+    "tasks:t_6630adeb.body"
+   ]
+  },
+  {
+   "hex": "dfa10567d78fd73808714b045f2223058bbbc1cbcb59903b53aebd572c85ea96",
+   "class": "RESOLVED_OUTSIDE_PROOFS",
+   "detail": "docs/W8_SEAT_GATE_SCHEMA_2026-11-16.md:sha256_lf",
+   "sources": [
+    "task_run:449(task t_364d9338)",
+    "tasks:t_364d9338.result"
+   ]
+  },
+  {
+   "hex": "dffad5263160f4085b38e5fc1c4e935f51dd85d1323cdd43d258877e51c75892",
+   "class": "UNRESOLVED_AT_TIP",
+   "sources": [
+    "comment:97(task t_6f65fbe1)"
+   ]
+  },
+  {
+   "hex": "e1fd175ae7cb55360b99d5cc0053bb1c11aa7f5605c35c481bdf7d1cbb08605c",
+   "class": "RESOLVED_OUTSIDE_PROOFS",
+   "detail": "test/MainlineRefundBranchOrder.t.sol:sha256_lf",
+   "sources": [
+    "task_run:355(task t_0a975d82)",
+    "tasks:t_0a975d82.result"
+   ]
+  },
+  {
+   "hex": "e3647712b1caa50117afe4fbd2c3b9ece4a9fabb9dc5ef97dbb349972e41c83b",
+   "class": "RESOLVED_OUTSIDE_PROOFS",
+   "detail": "services/bill_index.py:sha256_lf",
+   "sources": [
+    "task_run:394(task t_cead034d)",
+    "tasks:t_cead034d.result"
+   ]
+  },
+  {
+   "hex": "e4a85c14e30405a994df7aa16ad3802cc6b500bbce4d0fa55c163e84f53504e9",
+   "class": "UNRESOLVED_AT_TIP",
+   "sources": [
+    "task_run:489(task t_4aa11532)"
+   ]
+  },
+  {
+   "hex": "e7cedbd1c73dfdf3f7c6292d59862dbe92fa8aa33b1c64275043624e93bd8498",
+   "class": "UNRESOLVED_AT_TIP",
+   "sources": [
+    "task_run:404(task t_2a5cc6a7)",
+    "tasks:t_2a5cc6a7.result"
+   ]
+  },
+  {
+   "hex": "e861e53b78567d920b1f52eb99d010b57bea6b8ddf64cc447016a55e0faeae39",
+   "class": "UNRESOLVED_AT_TIP",
+   "sources": [
+    "task_run:223(task m4_p01a)"
+   ]
+  },
+  {
+   "hex": "ea304e43643c29a14117ccd0c1c4519edee57da1eba3b5041855a0a0612dfc0b",
+   "class": "UNRESOLVED_AT_TIP",
+   "sources": [
+    "comment:253(task t_1392cfb5)",
+    "comment:263(task t_1392cfb5)",
+    "comment:270(task t_1392cfb5)"
+   ]
+  },
+  {
+   "hex": "ea457ccc2118a0b388b7406706c48bfa645493a680681b45b9bc861c7629315c",
+   "class": "UNRESOLVED_AT_TIP",
+   "sources": [
+    "comment:483(task t_0d97a32f)",
+    "task_run:470(task t_eng30mock)",
+    "task_run:473(task t_0d97a32f)"
+   ]
+  },
+  {
+   "hex": "ea4e6e1aae0a528aef77754b02ca6b450b858a77e731dbcbdcff3899e3e2cb4b",
+   "class": "UNRESOLVED_AT_TIP",
+   "sources": [
+    "task_run:323(task t_9e21a7f4)",
+    "tasks:t_9e21a7f4.result"
+   ]
+  },
+  {
+   "hex": "eb6d566d53909228f2cb0cea3a8e75094194cb852375c8332c830031ecc0e7b7",
+   "class": "UNRESOLVED_AT_TIP",
+   "sources": [
+    "task_run:405(task t_a9f67ed4)",
+    "tasks:t_a9f67ed4.result"
+   ]
+  },
+  {
+   "hex": "ee163fa602ce563f4216a087b0f990a0235538e052c464f5ae3e509654f7ab03",
+   "class": "UNRESOLVED_AT_TIP",
+   "sources": [
+    "task_run:503(task t_27a6adc3)"
+   ]
+  },
+  {
+   "hex": "ee410f68d005f6c437b7b9b28f01c8221cac90a869567c52cc653efc8b0271ea",
+   "class": "UNRESOLVED_AT_TIP",
+   "sources": [
+    "task_run:326(task t_f6e6196c)"
+   ]
+  },
+  {
+   "hex": "eeb3c5024fdcda38b7cfe33976d71ac980763b5d19bd42c4f77110d994cd60fc",
+   "class": "UNRESOLVED_AT_TIP",
+   "sources": [
+    "task_run:494(task t_5fe210e7)"
+   ]
+  },
+  {
+   "hex": "efbf53154e9675bc5aebcd0ab55ee5dad630980add59aa59ea851336dc7f7dcd",
+   "class": "UNRESOLVED_AT_TIP",
+   "sources": [
+    "comment:217(task t_84f7316a)",
+    "comment:219(task t_84f7316a)",
+    "task_run:172(task t_3ca1d4c5)"
+   ]
+  },
+  {
+   "hex": "eff0744b1f89fc8e86a12530e858c23ed41cc295887d2cd8fcd2b24d531ff623",
+   "class": "UNRESOLVED_AT_TIP",
+   "sources": [
+    "task_run:312(task t_flux_c3)"
+   ]
+  },
+  {
+   "hex": "f0bf298b52d9d54436b020a3fa55cd7b23b9b194692b793dcf37d49325a8f4bd",
+   "class": "UNRESOLVED_AT_TIP",
+   "sources": [
+    "task_run:424(task t_90b6a647)",
+    "tasks:t_90b6a647.result"
+   ]
+  },
+  {
+   "hex": "f35d947224fed03a0746a6752bb5fb1407548f56363e5f68b1a7fdaa1e773b92",
+   "class": "UNRESOLVED_AT_TIP",
+   "sources": [
+    "task_run:344(task t_cd638bd6)"
+   ]
+  },
+  {
+   "hex": "f412ccd0d939ae2b6a69e11bcb40e17574cd8f2b984618cbf0e0aa9211b9aa5c",
+   "class": "UNRESOLVED_AT_TIP",
+   "sources": [
+    "task_run:265(task t_b3e207f9)"
+   ]
+  },
+  {
+   "hex": "f735b2efdfba12533efbd21c61456081009af78eb514fa098d7b620660311a00",
+   "class": "RESOLVED_OUTSIDE_PROOFS",
+   "detail": "docs/bridge/XIXI_MED_03_BRIEF_20261121.md:sha256_lf",
+   "sources": [
+    "comment:363(task t_42b925ba)",
+    "task_run:296(task t_42b925ba)"
+   ]
+  },
+  {
+   "hex": "f7573f39ef48cdcedae21ac2d0fc92e3cae5eba24d58ab9dc3eabd62d2d6e3c0",
+   "class": "UNRESOLVED_AT_TIP",
+   "sources": [
+    "task_run:252(task t_e0cdf891)"
+   ]
+  },
+  {
+   "hex": "f76566cfb0830be42e3ab88f8996d2adc8899c479fc2728272348ad373e804fd",
+   "class": "UNRESOLVED_AT_TIP",
+   "sources": [
+    "comment:319(task t_edd4a5e9)",
+    "task_run:236(task t_edd4a5e9)"
+   ]
+  },
+  {
+   "hex": "f773dabb5f94e351eed503ee4489f62c8de341bd052db4d538cbb56a797cb6e0",
+   "class": "UNRESOLVED_AT_TIP",
+   "sources": [
+    "tasks:t_c8bf2f8b.body"
+   ]
+  },
+  {
+   "hex": "f79d816bb06cf8b2eee823ba8a798d8ac56a0f918108372b4b97204059570bd0",
+   "class": "UNRESOLVED_AT_TIP",
+   "sources": [
+    "task_run:205(task t_92a43849)"
+   ]
+  },
+  {
+   "hex": "f9b1f410682028b7bc3d0bbffa0802d0bde0e873e07675fbb008ed2afb22e861",
+   "class": "UNRESOLVED_AT_TIP",
+   "sources": [
+    "task_run:215(task t_39c137ad)"
+   ]
+  },
+  {
+   "hex": "fa723e7424d7d892d0a295f1bbeaa4046536120400085e8dd88f11a1adf333aa",
+   "class": "RESOLVED_OUTSIDE_PROOFS",
+   "detail": "test/Engine36MaskRankFuzz.t.sol:sha256_lf",
+   "sources": [
+    "task_run:503(task t_27a6adc3)",
+    "tasks:t_27a6adc3.result"
+   ]
+  },
+  {
+   "hex": "fd5e4c9bbab5b21bbd3f67e0c278582974e3bb281f550406ccc78fa7df00c588",
+   "class": "UNRESOLVED_AT_TIP",
+   "sources": [
+    "task_run:241(task m4_harley)",
+    "tasks:m4_harley.result"
+   ]
+  },
+  {
+   "hex": "fd8012fe2ce8994ebcdb65c8323c29b832bbe05f416f89693dd6113b7c3229f2",
+   "class": "UNRESOLVED_AT_TIP",
+   "sources": [
+    "comment:301(task t_8ad3fbf8)",
+    "task_run:214(task t_8ad3fbf8)"
+   ]
+  },
+  {
+   "hex": "ff1d6578889a2fa4c001c4aeed7256bfa781919433ba39412e426050e297d6b9",
+   "class": "RESOLVED_OUTSIDE_PROOFS",
+   "detail": "test/MockHarnessArms30.t.sol:sha256_lf",
+   "sources": [
+    "task_run:473(task t_0d97a32f)",
+    "tasks:t_0d97a32f.result"
+   ]
+  }
+ ]
+}
