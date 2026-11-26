@@ -1,0 +1,157 @@
+{
+  "card": "t_1471a0c0",
+  "engine": 41,
+  "date": "2026-11-26",
+  "repo": "FluxNimbusAi/tanda",
+  "head_sha": "93b2bace7442894732d09c4abb4b950cb738d4e4",
+  "scope": {
+    "root": "agent-bench/tanda-sync working tree (tracked + untracked incl. ignored dirs: .worktrees/, scratch/, broadcast/, archive/)",
+    "excluded": [
+      ".git",
+      ".hermes-secrets",
+      ".mypy_cache",
+      ".pytest_cache",
+      "__pycache__",
+      "artifacts",
+      "cache",
+      "lib",
+      "node_modules",
+      "out",
+      "vault",
+      "*.db",
+      "*.exe",
+      "vault paths (none found in tree)"
+    ],
+    "note": "*.log.gz expanded and scanned; undecodable binaries skipped-listed"
+  },
+  "census": {
+    "files_scanned_text": 881,
+    "files_gz_expanded": 3,
+    "bytes_scanned": 10231751,
+    "binary_skipped": [],
+    "generic_64hex_occurrences": 1774,
+    "api_prefix_non_a2": [],
+    "api_prefix_non_a2_count": 0
+  },
+  "targets": {
+    "T1_voided_ident": [],
+    "T2_secretvar_hex64": [
+      {
+        "path": ".worktrees/e2e-demo/scripts/e2e_demo.py",
+        "line": 48,
+        "var": "PK_CREATOR",
+        "prefix": "ac0974"
+      },
+      {
+        "path": ".worktrees/e2e-demo/scripts/e2e_demo.py",
+        "line": 49,
+        "var": "PK_SEAT2",
+        "prefix": "59c699"
+      }
+    ],
+    "T2_api_a2": [],
+    "T2_sensitive_files": [
+      {
+        "path": ".worktrees/p14-settlement-vector/.env.sample",
+        "bytes": 1606,
+        "kind": "filename-match"
+      }
+    ],
+    "T3_retired_signer": [
+      {
+        "path": "docs/adr/ADR-0012-worldid-key-rotation-20261126.md",
+        "line": 27,
+        "prefix": "0x92CB24",
+        "class": "DOCUMENTED-RETIRED"
+      }
+    ],
+    "T3_other_signer_constants": [
+      {
+        "path": ".worktrees/false-return-matrix/scripts/contract_loop_proof_CLEAN_recovered.py",
+        "line": 57,
+        "var": "SIGNER_ADDR",
+        "prefix": "0x78dC32"
+      },
+      {
+        "path": ".worktrees/false-return-matrix/scripts/contract_loop_proof_V3.py",
+        "line": 57,
+        "var": "SIGNER_ADDR",
+        "prefix": "0x98D238"
+      },
+      {
+        "path": ".worktrees/false-return-matrix/scripts/deploy_hardened_4801.py",
+        "line": 10,
+        "var": "SIGNER_ADDR",
+        "prefix": "0x98D238"
+      },
+      {
+        "path": ".worktrees/fast-twin-matrix/scripts/contract_loop_proof_CLEAN_recovered.py",
+        "line": 57,
+        "var": "SIGNER_ADDR",
+        "prefix": "0x78dC32"
+      },
+      {
+        "path": ".worktrees/fast-twin-matrix/scripts/contract_loop_proof_V3.py",
+        "line": 57,
+        "var": "SIGNER_ADDR",
+        "prefix": "0x98D238"
+      },
+      {
+        "path": "archive/retired_orphans_20261123_ENG-A1/contract_loop_proof.py",
+        "line": 57,
+        "var": "SIGNER_ADDR",
+        "prefix": "0x78dC32"
+      },
+      {
+        "path": "scripts/contract_loop_proof_CLEAN_recovered.py",
+        "line": 57,
+        "var": "SIGNER_ADDR",
+        "prefix": "0x78dC32"
+      },
+      {
+        "path": "scripts/contract_loop_proof_V3.py",
+        "line": 57,
+        "var": "SIGNER_ADDR",
+        "prefix": "0x98D238"
+      },
+      {
+        "path": "scripts/deploy_hardened_4801.py",
+        "line": 10,
+        "var": "SIGNER_ADDR",
+        "prefix": "0x98D238"
+      }
+    ],
+    "T3_new_signer_census": [
+      {
+        "path": "docs/adr/ADR-0012-worldid-key-rotation-20261126.md",
+        "line": 26
+      }
+    ]
+  },
+  "value_discipline": "path+line+6-char prefix only; no full values persisted",
+  "adjudication": {
+    "T1_voided_ident": "CLEAN — zero in-scope text hits for app_e691*/rp_a779* across 881 files. Out-of-scope note: 2 excluded *.db binaries (bill_index.db, scratch/t2a0ebac9_catchup.db) contain voided-id bytes at data plane -> card t_c89c29d7.",
+    "T2_secretvar_hex64": "CLEAN (2/2 false-positive class): PK_CREATOR/PK_SEAT2 at .worktrees/e2e-demo/scripts/e2e_demo.py L48-49 are the universally published anvil devnet keys (file comment declares it; ac0974/59c699 = anvil accounts #0/#1). Not secret material. api_a2 prefix: 0 hits tree-wide; no non-a2 api_ tokens either. .env.sample: placeholders only (empty values, 'some-secret', app_1234567890).",
+    "T3_retired_signer": "CLEAN — single 0x92CB24 hit is ADR-0012 L27 itself (RETIRES line, documented retirement, canonical governance home). Zero stale live references to the ADR-0012-retired portal signer.",
+    "T3_other_signer_constants": "DEFECT (D1+D2): 0x78dC32 = pre-11-21-rotation on-chain signer. scripts/contract_loop_proof_CLEAN_recovered.py L57 pins it as live SIGNER_ADDR while L43 derives keys from post-rotation metamask-cli-wallet.txt (0x98D238 lineage per deploy_hardened_4801.py L10) -> L269 assert hard-fails every run; burned-key regression risk. scripts/contract_loop_proof_V3.py L23 docstring stale (code L57 correct). Historical receipts naming 0x78dC32 (CONTRACT_LOOP_STATE_PRE_V3, DEPLOY_RECEIPT_V3_HARDENED signer_verified, fasttwin_receipt) = audit record, not defects. -> cards t_d3b102d3, t_6e2afe71.",
+    "T3_new_signer": "CENSUS — 0xaB7dFA7a appears exactly once (ADR-0012 L26), consistent with portal-side custody; no client code carries signer literals per miniapp PR#51 grep law."
+  },
+  "verdict": "SWEEP COMPLETE: T1 clean (0 in-scope), T2 clean (0 real secrets; 1 documented anvil-key false class), T3: 0 stale portal-signer refs, 2 stale pre-rotation on-chain signer sites -> 1 defect card. 3 follow-up cards created.",
+  "follow_up_cards": [
+    {
+      "id": "t_d3b102d3",
+      "engine": 42,
+      "defect": "D1+D2 signer re-pin lane"
+    },
+    {
+      "id": "t_6e2afe71",
+      "engine": 43,
+      "defect": "stale .worktrees reap (carries pre-rotation copies)"
+    },
+    {
+      "id": "t_c89c29d7",
+      "engine": 44,
+      "defect": "voided-id residue in excluded *.db (data plane)"
+    }
+  ]
+}
