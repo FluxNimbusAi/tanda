@@ -1,0 +1,83 @@
+{
+  "proof": "ENGINE-34 VIEW_OOB_GOLDEN",
+  "tick": "2026-11-26T01:34-05:00",
+  "card": "tbd",
+  "base_commit": "1df1d9f6ccb1f192b89e9e9dbeaf954606a7a86c",
+  "forge_version": "Commit SHA: 6056c5845d34205a83cf7108042adb137325c9df",
+  "test_result": {
+    "suites_ran": 26,
+    "total": 290,
+    "passed": 290,
+    "failed": 0,
+    "new_suite": "ViewOobGolden34Test",
+    "new_legs": 9
+  },
+  "finding": {
+    "summary": "View-convention drift, both twins: isSeatConfirmed and settlementPayouts index settlements[] without bounds guard -> Solidity Panic 0x32 on OOB settlementId; claimablePayout (V2-only) returns 0. isSeatConfirmed short-circuits seatless wallets (raw==0 -> false) BEFORE the array index.",
+    "anchors": [
+      {
+        "contract": "TandaBillV2.sol",
+        "line": 529,
+        "item": "claimablePayout",
+        "behavior": "defensive OOB -> 0"
+      },
+      {
+        "contract": "TandaBillV2.sol",
+        "line": 548,
+        "item": "isSeatConfirmed",
+        "behavior": "OOB + seated wallet -> Panic 0x32 revert"
+      },
+      {
+        "contract": "TandaBillV2.sol",
+        "line": 556,
+        "item": "settlementPayouts",
+        "behavior": "OOB -> Panic 0x32 revert"
+      },
+      {
+        "contract": "FastTandaBillV2.sol",
+        "line": 429,
+        "item": "isSeatConfirmed",
+        "behavior": "OOB + seated wallet -> Panic 0x32 revert (twin parity)"
+      },
+      {
+        "contract": "FastTandaBillV2.sol",
+        "line": 437,
+        "item": "settlementPayouts",
+        "behavior": "OOB -> Panic 0x32 revert (twin parity)"
+      },
+      {
+        "contract": "FastTandaBillV2.sol",
+        "line": null,
+        "item": "claimablePayout",
+        "behavior": "absent by design (pinned by leg g9 staticcall)"
+      }
+    ],
+    "class": "off-chain footgun / API asymmetry; no fund-safety, no state-machine impact",
+    "fix_lane": "bounds-guard patch changes canonical blob (impl 3683cfe0 == on-chain) -> Flux anchor-rotation decision; golden must preserve guard ORDER per legs g3/g8"
+  },
+  "legs": {
+    "g1": "claimablePayout OOB->0 pre-init",
+    "g2": "isSeatConfirmed OOB seated->panic",
+    "g3": "seatless->false at OOB (order pin)",
+    "g4": "settlementPayouts OOB->panic",
+    "g5": "valid-id confirm readback",
+    "g6": "length boundary id==len panic",
+    "g7": "post-execute 100e6 claimable + OOB split",
+    "g8": "Fast twin panic + order",
+    "g9": "Fast panic + claimablePayout absence"
+  },
+  "files": {
+    "test/ViewOobGolden34.t.sol": {
+      "sha256_lf": "c87dc8b27a48e9571a1a24b2068326953ff837dcd1a1003ddc2878ac6c5195a8",
+      "bytes_lf": 8361
+    },
+    "contracts/TandaBillV2.sol": {
+      "sha256_lf": "1e965cad728ad23e278024eda248e6b5483c16d0689cc0239824259a32c28cfa",
+      "bytes_lf": 31681
+    },
+    "contracts/FastTandaBillV2.sol": {
+      "sha256_lf": "699bab40f222e79fb5916f111b74d0a0276661ab6151ffb6ba554d26feacdbd8",
+      "bytes_lf": 24101
+    }
+  }
+}
