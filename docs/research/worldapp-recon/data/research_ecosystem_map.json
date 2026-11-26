@@ -1,0 +1,328 @@
+{
+ "ecosystem_apps": [
+  {
+   "name": "Worldcoin",
+   "category": "Token claim",
+   "function": "Monthly WLD airdrop claim for verified humans; also available as passport-credential claims"
+  },
+  {
+   "name": "Kalshi Mini App",
+   "category": "Prediction market",
+   "function": "Trade US-regulated event contracts, funded with WLD converted via Zero Hash"
+  },
+  {
+   "name": "Polymarket",
+   "category": "Prediction market",
+   "function": "World App entry to the largest decentralized prediction market"
+  },
+  {
+   "name": "Morpho",
+   "category": "DeFi lending/savings",
+   "function": "Deposit WLD/USDC.e/WBTC into vaults to earn, or borrow against assets without selling"
+  },
+  {
+   "name": "Credit",
+   "category": "Lending",
+   "function": "Instant unsecured micro-loans up to $1,000 for verified humans"
+  },
+  {
+   "name": "Earn (World Money)",
+   "category": "Yield",
+   "function": "Native tab: Morpho-powered reward programs with boosted rates for Orb-verified users"
+  },
+  {
+   "name": "Trade (World Money)",
+   "category": "Exchange",
+   "function": "Native buy/sell of tokens and real-world assets like gold inside the wallet"
+  },
+  {
+   "name": "World Card",
+   "category": "Payments",
+   "function": "Crypto-backed card positioned as 'first card for the age of AI'"
+  },
+  {
+   "name": "Gift Cards",
+   "category": "Commerce utility",
+   "function": "Buy instant gift cards with wallet balance"
+  },
+  {
+   "name": "Cryptorefills",
+   "category": "Commerce utility",
+   "function": "Gift cards, flights and hotel bookings payable in WLD/USDC.e"
+  },
+  {
+   "name": "eSIM",
+   "category": "Utility",
+   "function": "Buy mobile data eSIMs instantly from the wallet"
+  },
+  {
+   "name": "Phone Top Ups",
+   "category": "Utility",
+   "function": "Prepaid airtime top-ups anywhere"
+  },
+  {
+   "name": "Add Money / Stripe onramp",
+   "category": "On-ramp",
+   "function": "Apple Pay \u2192 stablecoin funding of World Wallet via Stripe (US first)"
+  },
+  {
+   "name": "Offramp",
+   "category": "Off-ramp",
+   "function": "Spend World Chain USDC in real life"
+  },
+  {
+   "name": "InstaINR",
+   "category": "Off-ramp",
+   "function": "Instant crypto-to-INR settlement for India"
+  },
+  {
+   "name": "Bridge Money",
+   "category": "Remittance",
+   "function": "Move Worldcoin anywhere in seconds (cross-border transfers)"
+  },
+  {
+   "name": "El Dorado",
+   "category": "P2P trading",
+   "function": "Sell WLD peer-to-peer for cash"
+  },
+  {
+   "name": "DropWallet",
+   "category": "Wallet/airdrops",
+   "function": "Claim airdrops on World Chain, swap to USDC/WLD, earn HUB via check-ins (~1M verified humans cited)"
+  },
+  {
+   "name": "Holdstation Wallet",
+   "category": "Wallet",
+   "function": "Trade, transfer and earn tokens daily"
+  },
+  {
+   "name": "Human Vault",
+   "category": "Wallet",
+   "function": "Multisig wallet for verified humans"
+  },
+  {
+   "name": "Node Wallet / OrbId Wallet / AXO Wallet / DNA Wallet",
+   "category": "Wallets",
+   "function": "Alternative World Chain wallets with claim/reward loops"
+  },
+  {
+   "name": "Swap / Oku Trade",
+   "category": "DEX",
+   "function": "Gasless swaps and best-price DEX routing on World Chain"
+  },
+  {
+   "name": "DeFutures",
+   "category": "Trading",
+   "function": "x500 leverage trading on crypto, forex and gold"
+  },
+  {
+   "name": "FeeBack",
+   "category": "Cashback",
+   "function": "Earn cashback on every trade"
+  },
+  {
+   "name": "Nest Savings",
+   "category": "Savings",
+   "function": "Goal-based savings with crypto"
+  },
+  {
+   "name": "Cash Vault / KPK",
+   "category": "Savings/yield",
+   "function": "Earn yield using any token / on-chain yield"
+  },
+  {
+   "name": "RICK Loans",
+   "category": "Microfinance",
+   "function": "Microloans for entrepreneurs"
+  },
+  {
+   "name": "PoolTogether",
+   "category": "Yield lottery",
+   "function": "Prize-linked savings vault on World Chain"
+  },
+  {
+   "name": "TBD (Answer Polls / Predict)",
+   "category": "Surveys/prediction",
+   "function": "Answer polls and forecast the crowd to earn money"
+  },
+  {
+   "name": "Surveys / AskHumans / Surfey",
+   "category": "Surveys",
+   "function": "Paid surveys restricted to verified humans"
+  },
+  {
+   "name": "Pebbler",
+   "category": "Microtasks",
+   "function": "Short tasks, earn WLD"
+  },
+  {
+   "name": "Work / HumaGig / InfoJob / FreelanceFlow",
+   "category": "Gigs/jobs",
+   "function": "Post/search side gigs and jobs with verified humans"
+  },
+  {
+   "name": "Superhero",
+   "category": "Gigs/AI",
+   "function": "AI side-hustle tasks for cash and tokens"
+  },
+  {
+   "name": "Squadletics",
+   "category": "Health-to-earn",
+   "function": "Earn WLD by exercising at home"
+  },
+  {
+   "name": "Heutil Meter",
+   "category": "Move-to-earn",
+   "function": "Earn WLD for doing human things"
+  },
+  {
+   "name": "Ani Ads / Boost / Banner Hub / VidLook",
+   "category": "Ad-rewards",
+   "function": "Watch ads/content, earn USDC/WLD; advertisers reach verified humans"
+  },
+  {
+   "name": "Halo: Snap Receipts",
+   "category": "Receipt cashback",
+   "function": "Upload real receipts for rewards, bot-free"
+  },
+  {
+   "name": "RewardMe",
+   "category": "Shopping rewards",
+   "function": "Shop & earn rewards tied to World ID"
+  },
+  {
+   "name": "Deals / Local Deals / World Companies Finder",
+   "category": "Local commerce",
+   "function": "Discover discounts and merchants accepting World"
+  },
+  {
+   "name": "Mantica / Canopy / Yoso / SabeGol / Ground Truth / X3X",
+   "category": "Prediction (native)",
+   "function": "Small native prediction/forecast games on World Chain; none show material TVL"
+  },
+  {
+   "name": "World Vote / Polls / VIBE / TuringVote",
+   "category": "Voting",
+   "function": "One-human-one-vote polls and verified voting pilots"
+  },
+  {
+   "name": "Proof of Life / Human Pass / Human Actions / Hash Humanity / ImHuman",
+   "category": "Identity utility",
+   "function": "Broadcast or sell proof-of-humanity actions (liveness, offline verification)"
+  },
+  {
+   "name": "DSCVR / Yay! / Uman / World Blog / CapSha",
+   "category": "Social",
+   "function": "World ID-gated social feeds, community and posting-forhumans networks"
+  },
+  {
+   "name": "World Chat",
+   "category": "Messaging/payments",
+   "function": "Chat and payment app (XMTP-based) inside World App"
+  },
+  {
+   "name": "Fireside / TXT / Hachi / One human one conversation (Genuine)",
+   "category": "Messaging/dating",
+   "function": "Bot-free chat and dating among verified humans"
+  },
+  {
+   "name": "Sage / Bestie / Pryv / ZeroBot / Instaclaw / Mirror AI",
+   "category": "AI chat/agents",
+   "function": "AI companions and agent apps with human verification"
+  },
+  {
+   "name": "AgentBank",
+   "category": "Agentic payments",
+   "function": "Pay with AI agents and earn instant rewards"
+  },
+  {
+   "name": "Mystic Forge",
+   "category": "Game (puzzle economy)",
+   "function": "Element-crafting multiplayer economy with NFT artifacts, ~25k humans"
+  },
+  {
+   "name": "Tap-to-earn cluster (Human Tap, TapTapGG, TApp, TickX, Flappy Orb, etc.)",
+   "category": "Casual games",
+   "function": "Dozens of near-identical tap/claim mini games paying small WLD rewards"
+  },
+  {
+   "name": "MintArt / NFT Mint / GenomeX / YAMMIEZ / SLICE TCG",
+   "category": "NFT",
+   "function": "Mint and trade NFTs (note: NFT purchase buttons are restricted by review policy)"
+  },
+  {
+   "name": "WalletStats / Quizzly / EarnGuide / TradingSim / What is a Crypto",
+   "category": "Education/analytics",
+   "function": "Wallet analytics, brain games, crypto education and trading simulators"
+  },
+  {
+   "name": "Bridge (file share) / eSIM / DoorTap / Trampoline",
+   "category": "Utilities",
+   "function": "Private file sharing, C2C selling, IP marketplace"
+  },
+  {
+   "name": "Vouch / FlickShare / REP / Score",
+   "category": "Reputation",
+   "function": "Human-verified reviews and on-chain reputation"
+  },
+  {
+   "name": "Scam Check / Newsworthy / Crypto News 24/7 / Gusta",
+   "category": "News/trust",
+   "function": "Fake-news checking and curated news for verified humans"
+  },
+  {
+   "name": "Donations / Soonpay / Onboard",
+   "category": "Social good/education",
+   "function": "Crypto donations, worldwide education payments"
+  },
+  {
+   "name": "Cyclea / Breath / Innermost / PSIG / CreJoy",
+   "category": "Wellness",
+   "function": "Period tracking, meditation and wellness with proof-of-human"
+  },
+  {
+   "name": "Last Key",
+   "category": "Utility",
+   "function": "Secure digital legacy inheritance on-chain"
+  },
+  {
+   "name": "Coverage (Insurance)",
+   "category": "Insurance",
+   "function": "One-tap insurance coverage \u2014 only app of its kind in the catalog"
+  }
+ ],
+ "gaps": [
+  {
+   "gap": "DeFi depth is near-zero outside a single Morpho rail: lending, DEX liquidity, and yield products that anchor Base/Solana are barely present, leaving room for simple savings/yield apps",
+   "evidence": "DefiLlama lists ~31 protocols on World Chain with ~$30.2M chain TVL vs 932 protocols and ~$5,651M TVL on Base; top World Chain entries are Binance CEX ($84M), Morpho Blue ($28.6M), Uniswap (~$1.5M combined)."
+  },
+  {
+   "gap": "No x402 / HTTP-402 machine micropayments standard visible anywhere in the World ecosystem, while that is the fastest-growing app category on Base/Solana",
+   "evidence": "Full scrape of world.org/ecosystem returned 494 app listings; none is an x402 pay-per-call API marketplace or agent-payment storefront. Meanwhile x402 crossed 196M transactions / $42M settled by Nov 2026 with ~45% on Base and Visa/Mastercard/Stripe backing."
+  },
+  {
+   "gap": "Native prediction markets are tiny: the category exists only via US-regulated Kalshi/Polymarket bridges; on-chain prediction TVL is ~0",
+   "evidence": "X3X (the only prediction-market protocol listed for World Chain on DefiLlama) shows ~0 TVL; native games (Mantica, Yoso, Canopy, Ground Truth) are small mini apps, not liquidity venues."
+  },
+  {
+   "gap": "Token/memecoin launchpad economy is absent by design, unlike Base (Clanker) or Solana (pump.fun) \u2014 and partially blocked by policy",
+   "evidence": "Airdrop/claim apps dominate, but developer playbook lists 'NO token pre-sales' as a rejection trigger; only a ~0-TVL 'Meme Wallet' launchpad appears on DefiLlama."
+  },
+  {
+   "gap": "Creator-economy / content monetization (Zora/Farcaster-style mints, paid posts, subscriptions) is underdeveloped",
+   "evidence": "Among 494 ecosystem listings only marginal apps (Scribstack, Tessera, World Billboard, Post Chain) do creator monetization; no social-token economy exists."
+  },
+  {
+   "gap": "Simple group-money utilities are missing: no split-the-bill, group savings/ROSCA, escrow or subscription-management apps found",
+   "evidence": "Catalog scan found only solo savings (Nest, Cash Vault) and the single 'Coverage, one tap away' insurance app; World's own Morpho blog pitches 'reputation-based lending circles' and 'pay-as-you-go insurance' as unbuilt possibilities."
+  },
+  {
+   "gap": "Long-tail quality is low: flagship mini apps are run by funded teams while community apps vary, so a polished micro-fee utility can still stand out in a 500+ app store",
+   "evidence": "2026 guide: 'By May 2026, World App's Mini App directory carries more than 250 published applications... the long tail is community-built and varies in quality.'"
+  }
+ ],
+ "builder_economics": "builder_economics\": \"Dev Rewards (World Foundation): pilot launched ~April 1, 2025 at $25K/week paid in WLD (=$300K over 3 months) distributed pro-rata by verified-human usage of live Mini Apps (https://world.org/blog/announcements/world-launches-mini-apps-300k-dev-rewards-pilot-inspire-human-first-apps). It was raised to $100K/week from Sept 29\u2013Dec 31, 2025 with clearer usage/impact metrics, alongside stats of 500+ mini apps, 2M+ daily opens and 100M+ WLD transacted in mini apps (https://world.org/blog/announcements/dev-rewards-pilot-increases-to-100k-per-week-as-the-world-ecosystem-surpasses-500-mini-apps). One-time Retro Rewards paid 1M WLD to apps with \u226510,000 verified unique humans by May 16, 2025 (https://world.org/blog/developers/world-dev-summer-build-for-world-network-get-rewarded). STATUS CAUTION (UNVERIFIED): the latest official docs page still describes only the original $300K/3-month pilot and I found no 2026 announcement of the weekly pool's continuation after Dec 31, 2025 \u2014 confirm the live program and leaderboard via world.org/rfp before budgeting (https://docs.world.org/mini-apps/more/community-tools-perks, https://world.org/rfp). Grants: rolling Spark Track (idea\u2192working mini app) and Scale Track (grow live apps 10x) mini app grants via world.org/rfp, plus a Foundation Mini App Grants pool of up to 50M WLD (https://world.org/nl-nl/community-grants, https://docs.world.org/mini-apps/more/grants); grants program is open to US builders even where WLD eligibility rules differ (World Dev Summer blog). Incubators: World Build cohorts (FWB) \u2014 WB2 winners (Fram3s, Valor, Whole World Catalog) got Buenos Aires retreat + virtual program; World Build 3 (2026) has a $20K 4-day hackathon, Seoul Build Week, 3-month program, SF demo day; alumni raised $15M+ from VCs (https://world.org/blog/announcements/build-once-deploy-anywhere-minikit-2.0-is-live-for-world-developers, https://news.bitcoin.com/world-unveils-new-toolkit-expands-developer-program-with-world-build-3). World One residency: 3 months, $10K/month, up to 5 solo SF builders (https://world.org/one). Builder perks: Alchemy free enterprise tier + $500\u20132K credits, Cloudflare for Startups, thirdweb trial, Oculus analytics (~10K users routed to early apps) (https://docs.world.org/mini-apps/more/community-tools-perks, https://docs.world.org/mini-apps/ecosystem/ecosystem). Direct monetization: mini apps can charge fees/subscriptions/ads/commissions; payments run peer-to-peer between the user's self-custody wallet and the developer's wallet in USDC or WLD only \u2014 app-native tokens are NOT allowed as a payment method; gas is sponsored by World App via paymaster (Pimlico), so users rarely see fees (https://strapi.aurum.law/uploads/World_Mini_Apps_Developer_Legal_Guidelines_2026_d55dbc64a1.pdf, https://www.pimlico.io/case-studies/world-app). MiniKit 2.0 (April 2026) makes web app \u2192 mini app conversion ~2 lines (EIP-1193 aligned). Tax: developers owe tax/VAT/GST where resident and where users are.\"",
+ "pitfalls_raw": "pitfalls\": [\n    \"Mandatory review: every mini app must pass TFH review via Developer Portal before public listing; no SLA, and repeat rejections for the same issue slow subsequent reviews (https://docs.world.org/mini-apps/guidelines/policy, https://docs.world.org/mini-apps/more/faq).\",\n    \"Known rejection triggers (developer-reported checklist): chance-based games / RNG-determined prizes, token pre-sales, paid memberships that boost yield, 'official' wording, World logos/branding, NFT purchase buttons, and using 'World' in the app name (https://github.com/ElliotFriedman/harvest-world/blob/main/docs/infra-checklist.md).\",\n    \"App must ship a live World ID integration (IDKit or MiniKit) \u2014 you cannot launch as a plain webview app \u2014 and must be a final product, not beta/demo (https://docs.world.org/mini-apps/guidelines/policy).\",\n    \"Gambling law: any loop with consideration + chance + prize risks being classified as gaming/gambling; to stay unlicensed, drop staking, remove chance, or make prizes non-transferable/valueless. Prediction-market-like apps sit squarely in this zone; Kalshi works only because it is a CFTC-regulated venue with its own KYC and US focus (https://aurum.law/newsroom/World-Mini-Apps-2026-The-Legal-and-Compliance-Guide-for-Developers, https://world.org/blog/announcements/title-prediction-markets-launch-on-world).\",\n\n[... middle omitted \u2014 see footer ...]\n\n    \"Regulatory compliance is on the developer per jurisdiction; TFH can take down an app shown to users in a non-compliant jurisdiction \u2014 geo-gating is your job (https://docs.world.org/mini-apps/guidelines/policy).\",\n    \"WLD geography restrictions bleed into payouts: WLD (and therefore WLD-denominated dev rewards) excludes certain territories \u2014 historically US-wide, then after the May 1, 2025 US relaunch New York plus 'other restricted territories' remain excluded; verify your and your users' eligibility before choosing WLD revenue (https://world.org/not-available, https://world.org/blog/announcements/at-last-trust-in-the-age-of-ai).\",\n    \"Biometric/Orb regulatory hot zones: Orb verification is banned or restricted in Kenya, Hong Kong, South Korea (fine + pause), Indonesia (TDPSE suspension 2025); Philippines NPC issued a cease-and-desist Sept 23, 2025 and Thailand's PDPC banned iris scans Nov 24, 2025 ordering deletion of 1.2M scans \u2014 users there may have no or degraded World ID access (https://news.dextools.io/article/what-is-world-chain-worldcoin-l2-guide-2026, https://docs.barcoder.ai/docs/wallets/world-app).\",\n    \"The chain is open everywhere, but your addressable market = Orb/World ID availability; restricted markets dilute the one-human-one-account value prop (https://news.dextools.io/article/what-is-world-chain-worldcoin-l2-guide-2026).\",\n    \"Apple/Google marketplace risk compounds: App/Play store violations by a mini app can be treated as World App's violation, so TFH actively polices mini apps against marketplace policies too (https://aurum.law/newsroom/World-Mini-Apps-2026-The-Legal-and-Compliance-Guide-for-Developers).\",\n    \"Smart-contract upgradeability is restricted (only parameters like protocol fees), contracts must be whitelisted before submission, and fiat paths expose you to chargebacks and full refund/dispute duty (https://strapi.aurum.law/uploads/World_Mini_Apps_Developer_Legal_Guidelines_2026_d55dbc64a1.pdf, https://github.com/ElliotFriedman/harvest-world/blob/main/docs/infra-checklist.md).\",\n    \"Economic caveat: Dev Rewards was a pilot window (through Dec 31, 2025) and rewards are usage-based in WLD with shrinking token prices \u2014 don't build the business plan on the $100K/week pool without confirming the current program (UNVERIFIED status) (https://world.org/blog/announcements/dev-rewards-pilot-increases-to-100k-per-week-as-the-world-ecosystem-surpasses-500-mini-apps, https://docs.world.org/mini-apps/more/community-tools-perks).\",\n    \"Quality bar is high vs long tail: flagship apps are VC-funded teams (Kalshi, Morpho, Credit); a hobby-quality clone won't rank \u2014 retention/verified-usage is the scoreboard for both users and rewards (https://news.dextools.io/article/what-is-world-chain-worldcoin-l2-guide-2026).\"\n  ]",
+ "worldid_web_adoption": "worldid_web_adoption\": \"Sign-in / 'human-first web' adoption is broad but mostly integration-standard, not marquee partnerships: World ID 2.0 (Dec 2023) shipped community-built integrations for Reddit, Discord, Minecraft, Shopify, Mercado Libre and Telegram (explicitly 'not official endorsements' of World ID), plus existing Okta Auth0 integration, and OIDC/OAuth2 'Sign in with World ID' with PKCE for native apps (https://www.businesswire.com/news/home/20231213314816/en/Introducing-Worldcoins-World-ID-2.0-Delivers-enhanced-privacy-and-human-centered-digital-access-to-Shopify-Mercado-Libre-Minecraft-Reddit-and-Telegram, https://world.org/blog/announcements/introducing-world-id-2.0). Confirmed named partners today: Razer, Match Group, Okta Auth0 (https://world.org/faqs); official enterprise partnerships are Zoom (World ID for Zoom: 3-way biometric match, in-tile Human Badge, hosts can require Proof of Presence) and Docusign (https://marketplace.zoom.us/apps/sxFFXjFIQMqXcSIfu-k4zQ, https://world.org/world-id). Payhip: NOT confirmed in any source found \u2014 treat UNVERIFIED. 2026 direction: the pitch has shifted to agentic web \u2014 World ID for Agents with Browserbase, Exa, Okta and Vercel (AgentKit: delegated Proof of Human, human-in-the-loop verifiable intent; April 17, 2026), World ID for banking & finance unveiled at Money20/20 with Bain Capital, OpenExchange, Outtake, Pantera and VanEck as design partners (Proof of Human / Presence / Attributes; NYSE Orb; Oct 18, 2026), peaqOS bringing World ID to the machine economy (Sept 30, 2026), and Trusted Agent Delegation coalition with Cloudflare announced Nov 12, 2026 covering rate limiting without user identifiers (MoLE) and Web Bot Auth-style signing (https://world.org/blog/announcements/browserbase-exa-okta-world-id-for-agentic-web, https://world.org/blog/announcements/world-id-banking-finance-ai-safe, https://world.org/blog/announcements/trusted-agent-delegation-cloudflare-world). Scale: 18M+ Proof-of-Human holders (banking blog) / 38.3M app users incl. 17.8M verified as of Feb 2026 (aurum guide); World ID app live in 150+ countries. Chain-level human infra: free gas allowance + priority blockspace for verified humans, sybil resistance per-app (https://docs.world.org/world-chain).\",\n  \"pitfalls\": [\n    \"Mandatory review: every mini app must pass TFH review via Developer Portal before public listing; no SLA, and repeat rejections for the same issue slow subsequent reviews (https://docs.world.org/mini-apps/guidelines/policy, https://docs.world.org/mini-apps/more/faq).\",\n    \"Known rejection triggers (developer-reported checklist): chance-based games / RNG-determined prizes, token pre-sales, paid memberships that boost yield, 'official' wording, World logos/branding, NFT purchase buttons, and using 'World' in the app name (https://github.com/ElliotFriedman/harvest-world/blob/main/docs/infra-checklist.md).\",\n    \"App must ship a live World ID integration (IDKit or MiniKit) \u2014 you cannot launch as a plain webview app \u2014 and must be a final product, not beta/demo (https://docs.world.org/mini-apps/guidelines/policy).\",\n    \"Gambling law: any loop with consideration + chance + prize risks being classified as gaming/gambling; to stay unlicensed, drop staking, remove chance, or make prizes non-transferable/valueless. Prediction-market-like apps sit squarely in this zone; Kalshi works only because it is a CFTC-regulated venue with its own KYC and US focus (https://aurum.law/newsroom/World-Mini-Apps-2026-The-Legal-and-Compliance-Guide-for-Developers, https://world.org/blog/announcements/title-prediction-markets-launch-on-world).\",\n\n[... middle omitted \u2014 see footer ...]\n\n    \"Regulatory compliance is on the developer per jurisdiction; TFH can take down an app shown to users in a non-compliant jurisdiction \u2014 geo-gating is your job (https://docs.world.org/mini-apps/guidelines/policy).\",\n    \"WLD geography restrictions bleed into payouts: WLD (and therefore WLD-denominated dev rewards) excludes certain territories \u2014 historically US-wide, then after the May 1, 2025 US relaunch New York plus 'other restricted territories' remain excluded; verify your and your users' eligibility before choosing WLD revenue (https://world.org/not-available, https://world.org/blog/announcements/at-last-trust-in-the-age-of-ai).\",\n    \"Biometric/Orb regulatory hot zones: Orb verification is banned or restricted in Kenya, Hong Kong, South Korea (fine + pause), Indonesia (TDPSE suspension 2025); Philippines NPC issued a cease-and-desist Sept 23, 2025 and Thailand's PDPC banned iris scans Nov 24, 2025 ordering deletion of 1.2M scans \u2014 users there may have no or degraded World ID access (https://news.dextools.io/article/what-is-world-chain-worldcoin-l2-guide-2026, https://docs.barcoder.ai/docs/wallets/world-app).\",\n    \"The chain is open everywhere, but your addressable market = Orb/World ID availability; restricted markets dilute the one-human-one-account value prop (https://news.dextools.io/article/what-is-world-chain-worldcoin-l2-guide-2026).\",\n    \"Apple/Google marketplace risk compounds: App/Play store violations by a mini app can be treated as World App's violation, so TFH actively polices mini apps against marketplace policies too (https://aurum.law/newsroom/World-Mini-Apps-2026-The-Legal-and-Compliance-Guide-for-Developers).\",\n    \"Smart-contract upgradeability is restricted (only parameters like protocol fees), contracts must be whitelisted before submission, and fiat paths expose you to chargebacks and full refund/dispute duty (https://strapi.aurum.law/uploads/World_Mini_Apps_Developer_Legal_Guidelines_2026_d55dbc64a1.pdf, https://github.com/ElliotFriedman/harvest-world/blob/main/docs/infra-checklist.md).\",\n    \"Economic caveat: Dev Rewards was a pilot window (through Dec 31, 2025) and rewards are usage-based in WLD with shrinking token prices \u2014 don't build the business plan on the $100K/week pool without confirming the current program (UNVERIFIED status) (https://world.org/blog/announcements/dev-rewards-pilot-increases-to-100k-per-week-as-the-world-ecosystem-surpasses-500-mini-apps, https://docs.world.org/mini-apps/more/community-tools-perks).\",\n    \"Quality bar is high vs long tail: flagship apps are VC-funded teams (Kalshi, Morpho, Credit); a hobby-quality clone won't rank \u2014 retention/verified-usage is the scoreboard for both users and rewards (https://news.dextools.io/article/what-is-world-chain-worldcoin-l2-guide-2026).\"\n  ]",
+ "_note": "salvaged from agent transcript (child summary contained invalid JSON tail); raw spillover preserved in nimbus session cache"
+}
