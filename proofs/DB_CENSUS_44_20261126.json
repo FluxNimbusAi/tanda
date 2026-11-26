@@ -1,0 +1,109 @@
+{
+  "card": "t_c89c29d7",
+  "eng": "ENG-44",
+  "date": "2026-11-26",
+  "executed_by": "Nimbus",
+  "parent": "t_1471a0c0",
+  "scope": "Host-wide data-plane census of voided World portal identifiers app_e691*/rp_a779* (voided per ADR-0011/0012; canonical app_d3f03e8bce15b7c4580069bf4ea882c2 / rp_4fbd4454...) across all *.db files, with :8096 bill_index serve/validate determination and disposition.",
+  "method": {
+    "byte_scan": "regex (app_e691[0-9a-f]*|rp_a779[0-9a-f]*) over full bytes of every *.db under C:/Users/dbvis (agent-bench, AppData/Local/hermes, home roots, recursive, dedup by resolve)",
+    "db_files_scanned": 1987,
+    "hit_files": 7,
+    "permission_errors": 3,
+    "permission_error_note": "3 locked browser-store files (Edge auto_show_data/coupons_data, Chrome GPUPersistentCache) unreadable; none are TandaBill data plane",
+    "row_scan": "sqlite3 mode=ro full-table dump of every hit db; pattern re-applied per row text; distinct rp_id enumeration via GROUP BY"
+  },
+  "live_service_determination": {
+    "listener": "127.0.0.1:8096 PID 20204 = pythonw.exe C:/Users/dbvis/agent-bench/tanda-sync/services/bill_index.py",
+    "db_path_resolution": "services/bill_index.py L26-27: DB_PATH = env BILL_INDEX_DB or Path(__file__).parents[1]/bill_index.db; no BILL_INDEX_DB launcher found in command line -> LIVE DB = C:/Users/dbvis/agent-bench/tanda-sync/bill_index.db (REPO ROOT, one of the hit files)",
+    "health_parity": {
+      "health_probe": {"bills_indexed": 23, "bills_resolved": 5, "seat_grants": 13, "verifications": 20, "settlements": 4, "last_indexed_block": 37585963},
+      "repo_root_db_counts": {"bill_index": 23, "seat_grants": 13, "idkit_verifications": 20, "settlements": 4},
+      "services_db_counts": {"bill_index": 0, "seat_grants": 0, "idkit_verifications": 0, "settlements": 0},
+      "verdict": "exact parity with repo-root db; services/bill_index.db (102400 B, empty, untouched since 2026-11-22) is a decoy, NOT the live store"
+    },
+    "live_db_mtime": "2026-11-26T13:55:57-05:00 (active writes during census window)"
+  },
+  "serves_or_validates_voided": {
+    "serves_voided_values": false,
+    "serves_detail": "no GET route returns rp_id: /health exposes COUNT(*) only; /grants,/api/grants,/settlements,/api/settlements,/settlements/<bill>,/bills/by-userop/<h> serve bill/wallet/nullifier/settlement fields; _handle_grant response echoes bill/wallet/nullifier, never rp_id",
+    "validates_against_voided": false,
+    "validate_detail": "rp_id gate is shape-only RP_ID_RE ^rp_[a-z0-9]+$ (L92/L969); no app_ or rp_ value constants exist anywhere in services/bill_index.py (grep app_/rp_/portal: zero value literals); replay defense = PK (rp_id,nonce), so a stored voided-prefixed row blocks only replay of its own already-consumed fixture nonce; (rp_id,nullifier) index is non-unique by design",
+    "conclusion": ":8096 neither serves nor validates against any pre-migration app/rp value; the 3 residue rows are inert historical records"
+  },
+  "hit_files": [
+    {
+      "path": "C:/Users/dbvis/agent-bench/tanda-sync/bill_index.db",
+      "class": "LIVE :8096 store",
+      "bytes": 110592,
+      "byte_occurrences": 12,
+      "row_hits": 3,
+      "rows": "idkit_verifications rowid 1-3, rp_id='rp_a779c304e4f624ce', verified_at 2026-11-17T00:00:30Z / 00:03:23Z x2, bill_address 0x76f1939511b6f04a91d1b2be88e55842267843a3; row1 signal_hash='0xabc' + nullifier shared with row2 = handcrafted /grants replay-matrix fixture (2026-11-16/17 era, pre-migration)",
+      "occurrence_reconciliation": "12 byte hits = 3 rows x (table leaf + sqlite PK autoindex + idkit_nullifier_idx) + fragments on pages that absorbed rolled-back replay-matrix inserts (IntegrityError+rollback path, correction #4) before reuse",
+      "distinct_rp_population": {"rp_t77f8d4ea": 17, "rp_a779c304e4f624ce": 3},
+      "disposition": "DOCUMENT-AS-HISTORICAL; no purge",
+      "rationale": "rows are the audit trail behind 3 of the 13 live seat_grants-era nullifiers and the (rp_id,nonce) replay history itself; deleting erases provenance for zero security gain (no code path reads the value); card forbids touching the live db absent necessity; necessity not established"
+    },
+    {
+      "path": "C:/Users/dbvis/agent-bench/tanda-a1/bill_index.db",
+      "class": "stale A1 bench-lane copy (dead lane)",
+      "bytes": 69632,
+      "byte_occurrences": 12,
+      "row_hits": 3,
+      "rows": "byte-for-byte same 3 fixture rows as live store (same nonces/nullifiers); last write 2026-11-19T09:26:53-05:00; no process listens on any :809x besides PID 20204; a1 services/bill_index.py would default to this file only if relaunched",
+      "disposition": "DOCUMENT-AS-HISTORICAL",
+      "rationale": "not referenced by any live service or repo script (cross-grep clean); purging a dead-lane copy is churn, not hygiene; if the A1 lane is ever revived it must repoint to canonical anchors first (gate already lives in ADR-0012 sync-gate law)"
+    },
+    {
+      "path": "C:/Users/dbvis/agent-bench/tanda-sync/scratch/t2a0ebac9_catchup.db",
+      "class": "scratch artifact of completed card t_2a0ebac9",
+      "bytes": 110592,
+      "byte_occurrences": 12,
+      "row_hits": 3,
+      "rows": "same 3 fixture rows; static since 2026-11-23T12:04:21-05:00; catchup rehearsal copy of the repo-root db",
+      "disposition": "DOCUMENT-AS-HISTORICAL",
+      "rationale": "one-shot test artifact under scratch convention; deleting without a named successor gain is out of card scope (no-delete-without-backup rule applies)"
+    },
+    {
+      "path": "C:/Users/dbvis/AppData/Local/hermes/kanban.db",
+      "class": "agent board substrate",
+      "byte_occurrences": 31,
+      "disposition": "OUT-OF-SCOPE, no action",
+      "rationale": "occurrences are card bodies/comments quoting the voided ids to void them (incl. this card and the ENGINE-41 receipt text); editing board storage would falsify the audit record"
+    },
+    {
+      "path": "C:/Users/dbvis/AppData/Local/hermes/state.db",
+      "class": "default-profile session transcripts",
+      "byte_occurrences": 799,
+      "disposition": "OUT-OF-SCOPE, no action",
+      "rationale": "conversation history documenting the migration itself; transcript stores are the swarm's memory bus (ADR-0012 records-notation), never a purge target"
+    },
+    {
+      "path": "C:/Users/dbvis/AppData/Local/hermes/profiles/nimbus/state.db",
+      "class": "nimbus-profile session transcripts",
+      "byte_occurrences": 2326,
+      "disposition": "OUT-OF-SCOPE, no action",
+      "rationale": "same class as above; includes this census's own working text"
+    },
+    {
+      "path": "C:/Users/dbvis/AppData/Local/hermes/profiles/nimbus/cron/deliveries.db",
+      "class": "cron delivery records",
+      "byte_occurrences": 6,
+      "disposition": "OUT-OF-SCOPE, no action",
+      "rationale": "3x app_e691 + 3x rp_a779 prefix mentions inside delivered notifications about the void/migration"
+    }
+  ],
+  "clean_confirmations": [
+    "tanda-sync/services/bill_index.db (decoy): CLEAN",
+    "AppData/Local/hermes/cache/bill_index.db: CLEAN",
+    "C:/Users/dbvis/bill_index.db: CLEAN",
+    "all ~150 tanda-reorg/nudge/restart/stranding selftest *.db under AppData/Local/Temp: CLEAN",
+    "host-wide scan found ZERO app_e691* occurrences inside any TandaBill service db (the voided APP id never enters the bill_index data plane; only the truncated fixture RP id does)"
+  ],
+  "verdict": {
+    "risk": "NONE LIVE - voided identifiers exist in the data plane only as 3 historical fixture verification rows (replicated in two static copies); no route, validator, or code path consumes their value",
+    "disposition": "document-as-historical via docs/adr/ADR-0012a-data-plane-db-residue-20261126.md; purge-replace REJECTED for the live db (destroys replay history + audit linkage; card requires backup+restart only for deletes we are not performing)",
+    "follow_up": "decoy services/bill_index.db could be retired by a future hygiene card (rename to bill_index.db.unused or set BILL_INDEX_DB explicitly at launch); flagged inside the ADR note, not executed here to keep :8096 write-free this tick"
+  },
+  "value_discipline": "voided public identifiers are not secrets and are recorded as stored; the 32-hex production voided forms appear only as prefixes, matching ADR-0012 record style; no secrets touched"
+}
