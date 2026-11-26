@@ -1,0 +1,121 @@
+{
+ "apps": [
+  {
+   "name": "Cash App (USDC on Solana)",
+   "category": "money transfers",
+   "what_it_does": "P2P USD/USDC sends on Solana rails; every user gets a dedicated Solana address, incoming USDC auto-credits as USD and outgoing payments can go to any Solana wallet.",
+   "traction_evidence": "56M monthly active users; Solana chosen as the initial network for its 2026 stablecoin rollout (Blockworks State of Solana: Payments). Samsung Wallet USDC-on-Solana began rolling out Oct 2026 to 82M US Galaxy devices (solana.com October 2026 roundup).",
+   "revenue_model": "Free P2P USDC sends; monetizes instant-transfer/conversion spread and card interchange (fee details UNVERIFIED). Gas is negligible on Solana, so per-transfer microfee headroom is mostly spread-based.",
+   "retention_loop": "Money arrives and stays as a default balance; every friend-to-friend payment is a re-activation; recurring rent/remittance/bill sends each month.",
+   "build_size": 5,
+   "source_url": "https://app.blockworks.com/report/state-of-solana-payments"
+  },
+  {
+   "name": "Sendwave Wallet (Zepz)",
+   "category": "remittances + dollar savings",
+   "what_it_does": "USDC-on-Solana wallet embedded in the Sendwave remittance app: hold dollar balances, send P2P across 100+ countries, cash out to mobile money/bank/cpickup; a Bridge-powered Visa spend card launched in LatAm from early 2026.",
+   "traction_evidence": "Zepz: >9M customers, ~8M transactions/month, $17B transferred for customers in 2025; Sendwave brand alone >1M users (86,610 US App Store ratings, 4.7 stars) and ~2/3 of group revenue; built with Circle + Solana + Portal (docs.barcoder.ai wallet profile; TRM Labs/Zepz announcement Mar 26 2026).",
+   "revenue_model": "Remittance margin already compressed to 1-3% (WeeTracker/Zepz report); add FX spread on off-ramp, card interchange, and float yield on pooled USDC balances (operator keeps or shares yield per Upshift's remittance analysis).",
+   "retention_loop": "Diaspora users send home ~4x/month on a rhythm; holding balances in USDC between sends converts a one-off transfer app into a wallet/savings account; Visa card adds daily spend use.",
+   "build_size": 5,
+   "source_url": "https://www.trmlabs.com/resources/blog/trm-labs-and-zepz-join-forces-to-support-safer-stablecoin-remittances-for-migrant-communities"
+  },
+  {
+   "name": "KAST",
+   "category": "spending / stablecoin money app",
+   "what_it_does": "Stablecoin Visa card + money app funded by deposits on Solana; spend USDC/USDT/USDe at 150M+ merchants via Apple/Google Pay, with cashback and SOL-staking bonus points.",
+   "traction_evidence": "Processed $100.4M of Solana's record $141.1M October 2026 stablecoin card spend (~71%; 89.7% share in July 2026); Solana crossed $1B cumulative stablecoin card spend in Oct 2026, up 7x YoY (Coinotag; CryptoBriefing citing Paymentscan; solana.com October 2026 roundup).",
+   "revenue_model": "0.5-1.75% FX fee, $3+2% ATM fee, 2-5% conversion on non-stable deposits, card-interchange economics; cashback (1.5%) funds the loop (Spendnode review 2026).",
+   "retention_loop": "Card is top-of-wallet daily spend; cashback/points tiers and deposit-before-spend habit keep recurring top-ups on Solana.",
+   "build_size": 5,
+   "source_url": "https://cryptobriefing.com/solana-weekly-stablecoin-card-spending-record/"
+  },
+  {
+   "name": "DRiP (Haus)",
+   "category": "recurring micro-subscriptions / tipping",
+   "what_it_does": "Creator channel app: fans subscribe, claim weekly free (compressed) NFT drops, and tip 'Droplets' that auto-convert to USDC payouts for creators every 24h; micro-subscriptions work at $0.005-0.02 per creator.",
+   "traction_evidence": "36M+ collectibles minted at near-zero cost (68M NFTs for ~$12k, Nov 2023); 500k+ collectors; peak ~160k daily active wallets; bought all-cash by Jupiter Apr 2025 (RootData review; GreyArea Solana NFT timeline; MadeOnSol). Caveat: activity slowed \u2014 its X account had no own posts since April 2026 per Solana Compass.",
+   "revenue_model": "Droplet purchases (in-app currency sold via onramp), take on tip/subscription flow and secondary-market activity; free drops made viable by compressed-NFT cost structure.",
+   "retention_loop": "Scheduled weekly drops from followed creators + daily tasks/spin-to-win Droplets + supporter leaderboards; claim-and-open habit every few days.",
+   "build_size": 2,
+   "source_url": "https://madeonsol.com/tools/drip-haus"
+  },
+  {
+   "name": "Sprouts",
+   "category": "savings / round-ups",
+   "what_it_does": "Round-up savings for Solana phones: sweeps leftover 'dust' from swaps into a savings pot, visualized as a growing garden; also reclaims rent deposits from empty token accounts.",
+   "traction_evidence": "Won the $30,000 grand prize at Solana Mobile's CLOCK IN Seeker hackathon, announced 10 Nov 2026; user numbers not yet published (EARLY-STAGE, traction = expert validation only).",
+   "revenue_model": "None live yet; natural fit is yield on pooled round-ups minus user share, or premium pots/goals (UNVERIFIED).",
+   "retention_loop": "Every swap auto-deposits; the garden gives a visible streak/growth metaphor that rewards repeated small activity \u2014 the classic round-up banking loop ported on-chain.",
+   "build_size": 1,
+   "source_url": "https://solanacompass.com/news/solana-mobile-clock-in-hackathon-winners-sprouts-takes-30k-as-11-seeker-apps-split-135k"
+  },
+  {
+   "name": "Ample",
+   "category": "savings / prize-linked",
+   "what_it_does": "Prize-linked savings (UK Premium Bonds model) from the Layer3 team: deposit USDC, principal stays withdrawable, pooled lending yield funds weekly prize draws; deposits earn tickets, consistent saving boosts ticket weight up to ~1.91x.",
+   "traction_evidence": "All-time-high TVL $4.75M on Sep 23 2026; ~$318K total TVL by Oct 30 2026 (~$50K of it on Solana) \u2014 concept validated, current traction small and declining (DefiLlama protocol page).",
+   "revenue_model": "Spread between pooled yield earned and prizes paid; campaign/sponsor boosts to prize pools (exact take rate UNVERIFIED).",
+   "retention_loop": "Weekly draw cadence + 'balance stays yours' low-risk pitch; tickets accrue per cycle so skipping weeks loses entries \u2014 a recurring savings ritual.",
+   "build_size": 2,
+   "source_url": "https://defillama.com/protocol/ample"
+  },
+  {
+   "name": "Moonwalk Fitness",
+   "category": "proof-of-movement / engagement staking",
+   "what_it_does": "Staked step challenges: users deposit SOL/USDC/BONK on daily step goals; hit the goal, get the deposit back plus a share of what misses cost others; syncs Apple Health/Fitbit/Garmin, no NFT to start.",
+   "traction_evidence": "Backed by Binance Labs, Hack VC and Solana Mobile with live iOS/Android apps (MadeOnSol review 2026); user counts not disclosed (UNVERIFIED). Category context: move-to-earn as income is 'effectively dead in 2026'; STEPN is declining, Step App shut down Aug 2026 (Techilu, Oct 11 2026) \u2014 commitment-stake mechanics survived where pay-to-earn did not.",
+   "revenue_model": "Rake on forfeited stakes + token mechanics ($MF); brand campaigns can fund challenge pools.",
+   "retention_loop": "Daily step goal + money-at-risk loss aversion + streak/skins; win/wager settles every 24h.",
+   "build_size": 3,
+   "source_url": "https://madeonsol.com/tools/moonwalk"
+  },
+  {
+   "name": "Drift BET (+ Jupiter prediction aggregation)",
+   "category": "prediction markets",
+   "what_it_does": "Solana-native event contracts on top of Drift's exchange: trade prediction markets using 30+ tokens as yield-bearing cross-collateral; Jupiter's Prediction API lets Solana apps embed Kalshi/Polymarket markets natively, and DFlow tokenizes Kalshi YES/NO as SPL tokens.",
+   "traction_evidence": "Prediction markets 'became real on Solana in Q1 2026': weekly volume peaked just above $10M in early Feb with ~10k weekly users, then faded to $3-4M; Solana held <0.2% of total prediction volume (Galaxy Research, Q1 2026 Solana update). Sector context: Kalshi $37.7B + Polymarket $7.9B in July 2026 alone (TRM/The Block via Dropstab).",
+   "revenue_model": "Per-contract trading fees on event fills; Jupiter takes a cut on routed prediction volume through its app; brokers keep collateral yield (Drift's angle).",
+   "retention_loop": "Recurring sports/news event calendar (weekly games, elections, price markets); positions idle capital still earns, encouraging deposits that stay.",
+   "build_size": 4,
+   "source_url": "https://www.galaxy.com/insights/research/solana-q1-2026-dex-rwa-stablecoins-market-share"
+  },
+  {
+   "name": "CryptoRefills",
+   "category": "gift cards / everyday spend",
+   "what_it_does": "Guest checkout (email only, no account) to buy gift cards, mobile top-ups, eSIMs, flights and hotels from 6,600+ brands with SOL/USDC/USDT on Solana; native app in the Seeker dApp Store since Sep 15 2026.",
+   "traction_evidence": "Has taken USDC on Solana since Nov 2023 and launched into Solana Mobile's dApp Store Sep 2026; Steam/PlayStation/Xbox are its highest-volume gift categories (Solana Compass project profile + cryptorefills.com insights). Volume/user numbers not published \u2014 UNVERIFIED. Peer Bidali lists 4,700+ brands in 100+ countries on Solana.",
+   "revenue_model": "Margin/discount spread on wholesale gift-card inventory plus small processing fee at checkout (exact take UNVERIFIED).",
+   "retention_loop": "Gifting occasions, phone top-ups and travel bookings recur; stablecoin balances that need a place to be 'spent' make the store the off-ramp of choice.",
+   "build_size": 2,
+   "source_url": "https://solanacompass.com/projects/cryptorefills"
+  }
+ ],
+ "transferable_concepts": [
+  {
+   "concept": "Verified-circle group savings (chama / susu / ROSCA) with one World ID per seat",
+   "prior_art": "Zero live Solana winners: the category is filled only by off-chain iOS record-keeping apps (Savings Circle: Kameti & Chama, SUSU Circles on Stripe) and devnet MVPs (Ringio, an Anchor ROSCA program). Web2 scale proxies: Sendwave/Chipper show African users already run money through an app ~4x/month. Solana's round-up winner Sprouts shows the 'auto-sweep' UI pattern lands.",
+   "why_personhood_helps": "A ROSCA's only failure mode is a member defaulting or sybiling a seat. One human = one account means the payout rotation is enforced by identity instead of collateral: no multi-wallet farming of group slots, verifiable on-time history becomes a reputation score across circles, and strangers can join circles knowing every face is a unique person \u2014 enabling group formation far beyond close friends.",
+   "fee_angle": "Micro-fee (0.5-1%) per round payout settled in stablecoins, plus shared float yield on the pooled pot between rounds; reminders/claim gas free for verified users removes the friction that kills web2 group-payment apps."
+  },
+  {
+   "concept": "Human-priced micro-subscription fan economy (tips + recurring cents for creators)",
+   "prior_art": "DRiP Haus proved the loop at scale (500k+ collectors, ~160k peak daily wallets, Droplets auto-convert to USDC every 24h, subs from half a cent/month) \u2014 then plateaued after Jupiter acquired it, showing mechanics work but distribution stalls without a feed. Frogy LIVE pushes 90% USDC rev-share tipping to streamers.",
+   "why_personhood_helps": "Creator economies are poisoned by bot fans and fake engagement. With one human one account, 'subscriber' and 'tip' counts are provably unique people, so creators can charge more per real fan, sponsorships can pay per verified human attention, and airdrop/reward budgets leak zero to sybils (Solana's own data: bots drove ~50% of swaps in H1 2025 and up to ~95% of DEX trades by Mar 2026 per Helius/Stacy Muur).",
+   "fee_angle": "Take rate on every Droplet-style micro-tip (1-3%) plus weekly subscription recurrence; sub-cent fees are only economical on free-gas L2 rails \u2014 exactly what World Money balances + zero gas for verified humans give."
+  },
+  {
+   "concept": "One-human-one-entry prize-linked savings and round-up pots",
+   "prior_art": "Ample (premium-bonds model) hit $4.75M TVL in months but collapsed ~93% once attention moved; PoolTogether-style yield-lotteries are a proven web2-adjacent category; Sprouts (Seeker round-ups) won CLOCK IN's $30k prize in Nov 2026 on UX alone.",
+   "why_personhood_helps": "Prize pools are destroyed by multi-account entry farming \u2014 a known sybil tax that forces protocols into KYC or heavy caps. World ID makes 'everybody can win' credible: one entry per human means honest odds, and 'consistent saver' ticket boosts can't be gamed with wallets, letting prizes stay big enough to drive deposit growth.",
+   "fee_angle": "Keep the yield spread between pooled deposits and prizes, sell sponsor-funded prize boosts (brands pay per verified depositor), and take a tiny % on instant withdrawals; round-up sweeps make deposit frequency weekly-by-default."
+  },
+  {
+   "concept": "Sybil-free commitment markets: staked challenges and prediction micro-bets among verified humans",
+   "prior_art": "Moonwalk's stake-your-steps challenges (backed by Binance Labs, Solana Mobile) survived the move-to-earn die-off precisely because the wager \u2014 not the earn \u2014 is the product; Drift BET / Jupiter's prediction API put event contracts on Solana, yet the chain captured <0.2% of a >$50B/month category (Galaxy Q1 2026; Kalshi $37.7B in Jul 2026) partly due to liquidity/points farming distorted by bots (Pacifica's docs explicitly exclude self-trading and sybil activity from rewards).",
+   "why_personhood_helps": "Head-to-head challenge markets (fitness, habits, predictions, even bots-vs-humans games-as-quizzes) need opponents to be distinct real people: no shill opponents, no wash trading, no 1000-account points farming, and movement/goal attestation maps directly onto a device-bound verified human. A World ID gate lets an app run real-money challenge pools at small scale without manipulation risk.",
+   "fee_angle": "Rake on forfeited stakes and per-contract micro-fees (1-2%), plus brand-funded challenge pools (advertisers pay to reach verified humans, not bots); free gas keeps 50-cent entries practical."
+  }
+ ],
+ "notes": "Method: 14 web searches + page extracts (solana.com monthly roundups May-Oct 2026, Galaxy Q1-2026 report, Blockworks Q3-2026 Token Holder + State of Payments, DefiLlama, RootData, Solana Compass, MadeOnSol, Spark.money, TRM, CryptoBriefing). Macro backdrop: Solana app revenue hit $299.1M in Q3 2026 (+48% QoQ) but is dominated by trading apps (Pump.fun $121.5M, Collector Crypt $35M, Fomo $24.9M); non-game consumer winners in the requested money categories are mostly distribution-scale incumbents (Cash App 56M MAU on Solana rails, Zepz $17B/yr, KAST ~71-90% of a $141M monthly card-spend record) riding 14M stablecoin-holding addresses and 6.2M USDC senders/month (42% of all networks). Whitespace found on Solana: group savings/ROSCA (only devnet MVPs and off-chain iOS note-apps), and thin prediction volume (<0.2% share) despite a $50B+/mo global category \u2014 both are natural fits for a personhood-gated distribution channel. Warnings: DRiP stalled post-acquisition (engagement loops need distribution, not just mechanics); move-to-earn-as-income is dead (STEPN declining, Step App shut down Aug 2026) \u2014 only stake/commitment variants survive; HeyWallet (tweet/Discord tipping) shut down Sep 2026, showing single-feature tipping apps churn; KSNET's 330k-merchant Solana Pay rollout (Jul 2026) is an MOU, pre-commercial; x402 machine payments processed 23.2M tx on Solana in Sep 2026 \u2014 the 'bots economy' is real and personhood gating is the differentiation. Data discrepancy flagged: an Oct 2026 survey cites World at ~18M verified humans; our brief says 25M+ \u2014 treat 25M as the swarm's working number, 18M as the externally cited floor. Cross-ecosystem precedent already exists: Real Assets (Circle-partner listing) serves tokenized stocks/gold/T-bills to World App's 30M+ users with stablecoins bridging World Chain <-> Solana. UNVERIFIED items are marked inline (Sprouts users, CryptoRefills/Bidali volumes, Moonwalk users, Cash App fee detail, Ample take rate, KAST/Kilo-adjacent claims); Kilopay 'Kilo' could not be verified as active on Solana in late-2026 sources and was excluded on that basis. Build-size scale: 1=weekend MVP, 3=~month, 5=team-quarter (incumbent fintechs listed at 5 because their moat is licensing/distribution, not code \u2014 the cloneable product core of most of them is 2-3)."
+}
