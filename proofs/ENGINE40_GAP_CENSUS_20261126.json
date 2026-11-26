@@ -1,0 +1,69 @@
+{
+  "card": "t_afe7dcc1",
+  "engine": "ENGINE-40",
+  "family": "B1 forge gaps census + close-or-pin",
+  "date_utc": "2026-11-26",
+  "repo": "FluxNimbusAi/tanda",
+  "main_tip_census": "a279adebca088ffede480ca63777a0f1214bdfdf",
+  "forge": "1.9.0",
+  "census_command": "forge coverage --report gaps --report-file proofs/ENGINE40_GAPS_CENSUS_a279adebc.json",
+  "before": {
+    "file": "proofs/ENGINE40_GAPS_CENSUS_a279adebc.json",
+    "suite_summary": "Ran 28 test suites in 252.50s (297.93s CPU time): 295 tests passed, 0 failed, 0 skipped (295 total tests)",
+    "contracts_gap_items": 0,
+    "files": {
+      "script/TandaDeploy.s.sol": 2,
+      "script/TandaDeployV2.s.sol": 1,
+      "test/ViewOobGolden34.t.sol": 10
+    },
+    "equality_note": "before item set byte-shape identical to proofs/gaps_after_e37.json (same 13 items) - independent-run equality across a279adebc; contracts/ mutated between the two captures (6872247dc bounds guard) and stayed zero-gap"
+  },
+  "delta": {
+    "test": "test/Engine40GapArmSweep.t.sol",
+    "tests_added": 5,
+    "mock": "OobMockToken (defined in test/ViewOobGolden34.t.sol L12-36, imported per Engine37 cross-file sweep precedent)",
+    "arms_closed": {
+      "transfer_never_called": "8 items: [line L16] [function L16-21] [line L17] [branch L17 br0 path0 via e1] [branch L17 br0 path1 via e2] [line L18] [line L19] [line L20]",
+      "transferFrom": "2 items: [branch L24 br1 path0 balance-FAIL via e3] [branch L25 br2 path0 allowance-FAIL via e4]",
+      "total_viewoob_items_closed": 10
+    },
+    "laws_applied": [
+      "revert victims never hold balance (victim 0xDEAD never minted; e1/e3/e4 victims zero)",
+      "success legs self-route FUNDED->FUNDED (recipient pre-minted 1e18)",
+      "no vm.mockCall; exact ledger deltas + allowance-decrements-once pinned",
+      "sweep file carries zero Solidity branches so it stays absent from the after report"
+    ]
+  },
+  "after": {
+    "file": "proofs/ENGINE40_GAPS_AFTER_e40.json",
+    "suite_summary": "Ran 29 test suites in 263.60s (297.82s CPU time): 300 tests passed, 0 failed, 0 skipped (300 total tests)",
+    "contracts_gap_items": 0,
+    "files": {
+      "script/TandaDeploy.s.sol": 2,
+      "script/TandaDeployV2.s.sol": 1
+    }
+  },
+  "residual_adjudication": {
+    "verdict": "3 remaining items are DEAD DEFENSES in deploy-script post-deploy sanity requires - FAIL arms unreachable by construction, not harness limits; closing by test is physically impossible, closing by source-edit is out of scope (guards protect real forge script --broadcast runs). Do not card.",
+    "items": [
+      {
+        "file": "script/TandaDeploy.s.sol", "line": 45, "arm": "FALSE of require(address(bill.token()) == usdc, \"Token mismatch\")",
+        "proof": "contracts/TandaBill.sol L47 'IERC20 public immutable token' assigned from ctor arg at L96; script constructs 'new TandaBill(IERC20(usdc))' - getter returns the same arg it was given; no setter/upgrade lever exists on an immutable"
+      },
+      {
+        "file": "script/TandaDeploy.s.sol", "line": 47, "arm": "FALSE of require(bill.activeSeatCount() == 0, \"Should start with 0 seats\")",
+        "proof": "bill is deployed 4 statements above and run() calls no seat-mutating function between CREATE and the check; storage starts zeroed so activeSeatCount() (view over fresh contract, contracts/TandaBill.sol L260) is 0 by definition"
+      },
+      {
+        "file": "script/TandaDeployV2.s.sol", "line": 28, "arm": "FALSE of require(address(factory.implementation()) == address(impl), \"Impl mismatch\")",
+        "proof": "contracts/TandaBillFactory.sol L13 'address public immutable implementation' set from ctor arg; factory is deployed as 'new TandaBillFactory(address(impl))' on the immediately preceding line"
+      }
+    ],
+    "prior_pin": "same three items were already adjudicated dead-defense in test/DeployScriptGolden11255.t.sol @a279adebc ('Dead-defense pins (unreachable by construction, NOT harness limits)')"
+  },
+  "zero_gap_claim": {
+    "scope": "contracts/ (5 production contracts: TandaBill.sol, TandaBillV2.sol, FastTandaBillV2.sol, TandaBillFactory.sol, SafeERC20Minimal.sol)",
+    "status": "ZERO GAPS - contracts/ absent from both census and after reports at main tip a279adebc",
+    "method": "forge coverage --report gaps runs the full suite; file keys present in the JSON enumerate every open gap path; absence = complete line+branch coverage"
+  }
+}
