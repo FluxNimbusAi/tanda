@@ -1,0 +1,21 @@
+# Repo-pinned line endings: git blob = canonical LF (cross-node receipt law).
+# Removes dependence on per-machine core.autocrlf (PC=true, laptop may differ).
+* text=auto eol=lf
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.gz binary
+*.bz2 binary
+*.xz binary
+*.zip binary
+*.exe binary
+*.dll binary
+*.so binary
+*.db binary
+*.sqlite binary
+*.woff binary
+*.woff2 binary
+*.mp4 binary
+*.pdf binary
