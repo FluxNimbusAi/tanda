@@ -1,0 +1,75 @@
+{
+  "bare_defects": [],
+  "by_class": {
+    "BARE": 0,
+    "COMMENT": 2,
+    "INTENTIONAL-VOID-RETURN": 2,
+    "INTERFACE-DECL": 0,
+    "RETURN-CHECKED": 0,
+    "SAFE-LIB": 0
+  },
+  "card": "t_626f4ca7",
+  "contracts_scanned": [
+    "contracts/FastTandaBillV2.sol",
+    "contracts/SafeERC20Minimal.sol",
+    "contracts/TandaBill.sol",
+    "contracts/TandaBillFactory.sol",
+    "contracts/TandaBillV2.sol"
+  ],
+  "engine": "ENGINE-49",
+  "head": "a6f731c586ece126d3198bb82c2fac2a5bb8f071",
+  "hits": [
+    {
+      "class": "INTENTIONAL-VOID-RETURN",
+      "code": "IPermit2Transfer(PERMIT2).transferFrom(payer, address(this), uint160(amount), address(token));",
+      "file": "contracts/FastTandaBillV2.sol",
+      "fn": "fundEscrowFromPermit2",
+      "line": 282
+    },
+    {
+      "class": "COMMENT",
+      "code": "/// @dev  Why bare `require(token.transfer(...), bool)` is unsafe (HIGH-2, STRANDED):",
+      "file": "contracts/SafeERC20Minimal.sol",
+      "fn": null,
+      "line": 11
+    },
+    {
+      "class": "COMMENT",
+      "code": "// The old bare require(token.transfer(...), TokenTransferFailed())",
+      "file": "contracts/TandaBill.sol",
+      "fn": "executeSettlement",
+      "line": 217
+    },
+    {
+      "class": "INTENTIONAL-VOID-RETURN",
+      "code": "IPermit2Transfer(PERMIT2).transferFrom(payer, address(this), uint160(amount), address(token));",
+      "file": "contracts/TandaBillV2.sol",
+      "fn": "fundEscrowFromPermit2",
+      "line": 326
+    }
+  ],
+  "per_file_sha256_lf": {
+    "contracts/FastTandaBillV2.sol": {
+      "bytes": 24584,
+      "sha256_lf": "2e3c87418c77da2205259c2fa43242ecdddc82a467c29b324258f3af36040ada"
+    },
+    "contracts/SafeERC20Minimal.sol": {
+      "bytes": 2532,
+      "sha256_lf": "7e08fc51e49bef1173ac60b4d08a9c4f28b129427ed10c315a4b6c8ea8e8e1d8"
+    },
+    "contracts/TandaBill.sol": {
+      "bytes": 13255,
+      "sha256_lf": "645c2fc34715a25704b1fa4ac9327752cda08aa95ad5f43b0d16cac2cfa5bfec"
+    },
+    "contracts/TandaBillFactory.sol": {
+      "bytes": 3368,
+      "sha256_lf": "4121af0521ff554b64bf54c0ae87dc87bc751428e569e340c3af65cbcaa979ea"
+    },
+    "contracts/TandaBillV2.sol": {
+      "bytes": 32165,
+      "sha256_lf": "79d7b124fd6ccd3fac1b9274ca95b009c31f81666ed7958a1784e3bc24dfdda7"
+    }
+  },
+  "total_hits": 4,
+  "verdict": "CLEAN"
+}
