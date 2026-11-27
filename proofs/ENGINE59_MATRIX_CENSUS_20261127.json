@@ -1,0 +1,63 @@
+{
+  "proof": "ENGINE59_MATRIX_CENSUS_20261127",
+  "card": "t_bdd19d4d",
+  "engine": "ENGINE-59 (family B1: forge test-matrix census + coverage gap landscape at tip 142c5b3cb)",
+  "generated_utc": "2026-11-27T11:38:15Z",
+  "repo": "FluxNimbusAi/tanda",
+  "main_tip": "142c5b3cbf31430d51ac43c63592318932b053c3",
+  "method": "forge test --match-path test/* full suite, then forge coverage --report gaps at same tip; all hashes = sha256 over LF-normalized disk bytes, recomputed in the same script that wrote this file",
+  "suite_summary_line": "Ran 29 test suites in 119.07s (134.06s CPU time): 300 tests passed, 0 failed, 0 skipped (300 total tests)",
+  "coverage": {
+    "production_contracts": [
+      "contracts/FastTandaBillV2.sol",
+      "contracts/SafeERC20Minimal.sol",
+      "contracts/TandaBill.sol",
+      "contracts/TandaBillFactory.sol",
+      "contracts/TandaBillV2.sol"
+    ],
+    "production_files_with_gaps": {},
+    "production_gap_item_count": 0,
+    "remaining_gap_items": [
+      {
+        "file": "script/TandaDeploy.s.sol",
+        "kind": "branch",
+        "contract": "TandaDeploy",
+        "function": "run",
+        "line": 45,
+        "snippet": "require(address(bill.token()) == usdc, \"Token mismatch\")"
+      },
+      {
+        "file": "script/TandaDeploy.s.sol",
+        "kind": "branch",
+        "contract": "TandaDeploy",
+        "function": "run",
+        "line": 47,
+        "snippet": "require(bill.activeSeatCount() == 0, \"Should start with 0 seats\")"
+      },
+      {
+        "file": "script/TandaDeployV2.s.sol",
+        "kind": "branch",
+        "contract": "TandaDeployV2",
+        "function": "run",
+        "line": 28,
+        "snippet": "require(address(factory.implementation()) == address(impl), \"Impl mismatch\")"
+      }
+    ],
+    "gap_items_total": 3
+  },
+  "verdict": "GREEN: Ran 29 test suites in 119.07s (134.06s CPU time): 300 tests passed, 0 failed, 0 skipped (300 total tests). contracts/ GAP-FREE: 0 gap items across all 5 production contract files (none appear with items in the gaps report). 3 residual branch gaps exist only in script/ deploy paths: TandaDeploy.run L45, TandaDeploy.run L47, TandaDeployV2.run - future family-B4 E2E-harness targets, not contract defects. No new test cards warranted this tick.",
+  "evidence": {
+    "engine59_gaps.json": {
+      "bytes_lf": 1154,
+      "sha256_lf": "1459b904260be498c1dea0df4fb64e47a6261c70b508a648ff7351733bfa6c6d"
+    },
+    "engine59_forge.log": {
+      "bytes_lf": 26496,
+      "sha256_lf": "5cecbea9c7efda6f68203f33900607096d232791ca93a7b7e75239ecc16ed402"
+    },
+    "engine59_cov.log": {
+      "bytes_lf": 26510,
+      "sha256_lf": "adbf11e827a0ffe4a7d1c6043b01cd79ca42fe08b32a367428fd772a7a495bca"
+    }
+  }
+}
