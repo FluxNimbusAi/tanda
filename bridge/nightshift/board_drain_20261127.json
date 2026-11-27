@@ -1,0 +1,33 @@
+{
+ "job": "flux-nightshift",
+ "run_id": "manual-replay-20261127T1435Z",
+ "board_drain": {
+  "open_cards": [
+   "t_2eefc765",
+   "t_dfa0bd1a",
+   "t_86b44100",
+   "t_9d3c71e2"
+  ],
+  "actions": [
+   {
+    "card": "t_9d3c71e2",
+    "action": "hold at review gate \u2014 ruling already issued, awaiting approval; no reversible promote"
+   },
+   {
+    "card": "t_2eefc765",
+    "action": "prioritized: no runtime attached, drain deferred to next 21:30 fire unless anchor-reversible"
+   },
+   {
+    "card": "t_dfa0bd1a",
+    "action": "prioritized: no runtime attached, drain deferred to next 21:30 fire unless anchor-reversible"
+   },
+   {
+    "card": "t_86b44100",
+    "action": "prioritized: no runtime attached, drain deferred to next 21:30 fire unless anchor-reversible"
+   }
+  ],
+  "count_open": 4
+ },
+ "main_head_anchor": "98a0fbbb8a5979808a79ac622bf23790d11aa86a",
+ "silence_note": "14:00 check-in fired silent; 13:00 wake already actioned"
+}
