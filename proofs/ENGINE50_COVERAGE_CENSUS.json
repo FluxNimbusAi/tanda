@@ -1,0 +1,62 @@
+{
+ "card": "t_91ca8bfe",
+ "engine": "ENGINE-50",
+ "lane": "B1 coverage-gap census + C receipt-grading (continuity tick)",
+ "executed_by": "nimbus",
+ "generated_utc": "2026-11-27T03:45Z",
+ "main_tip": "bd35e753d4c37f197295308c17f820b7c4963dd3",
+ "forge_full_suite": {
+  "suites": 29,
+  "tests_passed": 300,
+  "failed": 0,
+  "skipped": 0,
+  "wall_s": 262.02,
+  "cpu_s": 281.9
+ },
+ "coverage_gaps": {
+  "command": "forge coverage --report gaps --report-file proofs/ENGINE50_GAPS_SNAPSHOT.json",
+  "contracts_files_present": false,
+  "verdict_production": "GAP-FREE: contracts/ absent from gaps report at bd35e753d",
+  "residual_files": [
+   "script/TandaDeploy.s.sol",
+   "script/TandaDeployV2.s.sol"
+  ],
+  "residual_branch_gaps": 3,
+  "residual_adjudication": "deploy-script asserts; ENGINE-47 dead-defense verdict f9dc4eed9 (CALL-shape mockCall probe)"
+ },
+ "engine49_grading": {
+  "proof_file": "proofs/ENGINE49_TWIN_SCAN.json",
+  "per_file_sha256_lf": "5 of 5 MATCH (recomputed from disk bytes this tick)",
+  "files": {
+   "contracts/FastTandaBillV2.sol": {
+    "bytes": 24584,
+    "sha256_lf": "2e3c87418c77da2205259c2fa43242ecdddc82a467c29b324258f3af36040ada"
+   },
+   "contracts/SafeERC20Minimal.sol": {
+    "bytes": 2532,
+    "sha256_lf": "7e08fc51e49bef1173ac60b4d08a9c4f28b129427ed10c315a4b6c8ea8e8e1d8"
+   },
+   "contracts/TandaBill.sol": {
+    "bytes": 13255,
+    "sha256_lf": "645c2fc34715a25704b1fa4ac9327752cda08aa95ad5f43b0d16cac2cfa5bfec"
+   },
+   "contracts/TandaBillFactory.sol": {
+    "bytes": 3368,
+    "sha256_lf": "4121af0521ff554b64bf54c0ae87dc87bc751428e569e340c3af65cbcaa979ea"
+   },
+   "contracts/TandaBillV2.sol": {
+    "bytes": 32165,
+    "sha256_lf": "79d7b124fd6ccd3fac1b9274ca95b009c31f81666ed7958a1784e3bc24dfdda7"
+   }
+  }
+ },
+ "ci": {
+  "repo": "FluxNimbusAi/tanda",
+  "run": 45925996529,
+  "head": "bd35e753d",
+  "status": "completed",
+  "conclusion": "success"
+ },
+ "snapshot_sha256_lf": "1459b904260be498c1dea0df4fb64e47a6261c70b508a648ff7351733bfa6c6d",
+ "snapshot_bytes": 1154
+}
