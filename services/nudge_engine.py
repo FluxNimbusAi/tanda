@@ -401,7 +401,11 @@ def evaluate_bill(b, now_ts, grants):
                 if not due_ok(key, now_ts, due, s["initiatedAt"], b["max_hold"]):
                     continue
                 if key == "N2a":
-                    msg = f"You're 1 of {k} holding up {short_bill(bill)} — tap to confirm"
+                    # G2G card 3 (docs.world.org notification guidelines, fetched 11-27):
+                    # World substitutes ${username} per RECIPIENT server-side, so one
+                    # chunked POST personalizes every wallet in the batch. Suffix
+                    # placement keeps the pinned lead substring stable for tests.
+                    msg = f"You're 1 of {k} holding up {short_bill(bill)}, ${{username}} — tap to confirm"
                 elif key == "N2b":
                     h = max(0, b["max_hold"] // 3600 - (now_ts - s["initiatedAt"]) // 3600)
                     msg = (f"Settlement expires in {h}h — confirm now or escrow "
@@ -433,8 +437,8 @@ def evaluate_bill(b, now_ts, grants):
             for i, w in unclaimed:
                 rank = payout_rank(s["expectedMask"], i)
                 amt = s["payouts"][rank] if rank < len(s["payouts"]) else 0
-                msg = (f"Your {format_usdc(amt)} payout is ready to claim on "
-                       f"{short_bill(bill)}")
+                msg = (f"Your {format_usdc(amt)} payout is ready to claim, "
+                       f"${{username}} — on {short_bill(bill)}")
                 cands.append(Candidate("N3b", bill, sid, w, msg, due, f"{sid}:{wave}"))
     return cands
 

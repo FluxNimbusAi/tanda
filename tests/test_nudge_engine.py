@@ -411,6 +411,7 @@ class TestTriggerMatrix(BaseCase):
         cands = ne.evaluate_bill(b, T0 + 2 * 3600, {WA, WC})
         self.assertEqual([c.wallet for c in cands], [WC])
         self.assertIn("You're 1 of 1 holding up", cands[0].msg)
+        self.assertIn("${username}", cands[0].msg)  # G2C card 3: per-recipient substitution token
 
     def test_n2a_count_of_holders_up(self):
         s = mk_settlement(emask=0b0111, cmask=0)  # all three unconfirmed
@@ -473,6 +474,7 @@ class TestTriggerMatrix(BaseCase):
         by = {c.wallet: c for c in cands}
         self.assertEqual(set(by) , {WB, WC})  # WA claimed-out; none inactive
         self.assertIn("Your $3.75 payout is ready to claim", by[WB].msg)
+        self.assertIn("${username}", by[WB].msg)
         self.assertIn("Your $1.25 payout is ready to claim", by[WC].msg)
         self.assertEqual(by[WB].period, "0:1")
 
