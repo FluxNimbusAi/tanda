@@ -1,0 +1,107 @@
+{
+ "card": "t_6eb97b06",
+ "engine": "ENGINE-55",
+ "date_utc": "2026-11-27T08:2xZ",
+ "repo_tips": {
+  "tanda-sync origin/main": "11c590948cdd65ba3bf45074e1f1588889d9e165",
+  "tanda-miniapp origin/main": "3b743693e3488cd54f916fcb24ada2de7b627347"
+ },
+ "method": "worktree-reap-law: fetch --prune fresh, merge-base ancestor + cherry -v patch-equivalence, status -uall dirty scan, kanban.db live-lane probe, blob-level content-equivalence for unmerged lanes",
+ "reaped": [
+  {
+   "path": "agent-bench/v3-build",
+   "tip": "b5239d5b0",
+   "verdict": "LANDED (ancestor of origin/main), clean, detached, 13M"
+  },
+  {
+   "path": "agent-bench/cov1125-before",
+   "tip": "7d3dadceb",
+   "verdict": "LANDED, 1 untracked file REDUNDANT: proofs/gaps_before_measured_1125.json sha256-LF 717417d50217a41fc5bf987b9b84d900769cbaa4f7104bfce177dac1533aedec == origin/main blob; log --all d35c7bf46. 12M"
+  },
+  {
+   "path": "agent-bench/tanda-a1",
+   "tip": "9e80ab74a",
+   "branch": "w2/a1-settlement-watcher",
+   "verdict": "PATCH-LANDED (cherry plus=0), dir removed, ref -D; dirty preserved",
+   "preserved": [
+    "tanda-a1/diff_HEAD.patch 2670B sha256 0e8de687e2997a726efe328276522f65216b8fbc159a9c7da53b0a4fc739869b",
+    "tanda-a1/bill_index.db 69632B sha256 6704233666c0d5c830b1395f7f3ebd93a1007293396a3cf8a9bc399d7e63d939"
+   ],
+   "freed": "1.9M"
+  },
+  {
+   "path": "agent-bench/tanda-v1-wt",
+   "tip": "1e3dc616b",
+   "branch": "fix/tanda-v1-safetransfer",
+   "verdict": "LANDED (ancestor), ref -D; staged diff preserved",
+   "preserved": [
+    "tanda-v1-wt/diff_HEAD.patch 6317B sha256 02ea92d5a38f11f7ce611cd69d8823f842497e678a6083490cc0b92fad271fcb"
+   ],
+   "freed": "6.7M"
+  }
+ ],
+ "preserved_worktrees": [
+  {
+   "path": "agent-bench/tanda-a2",
+   "tip": "90961dbc6",
+   "branch": "w2/a2-txlane-wrap",
+   "why": "UNMERGED plus=2 (tx-lane race wrap + INSERT fix, never in main)"
+  },
+  {
+   "path": "tanda-miniapp/.worktrees/e2e-demo",
+   "tip": "7a1b7aa",
+   "branch": "p-a/e2e-demo",
+   "why": "UNMERGED plus=1; e2e/join_leg.mts + verify_fixture_server.mjs MISSING-ON-MAIN"
+  },
+  {
+   "path": "tanda-miniapp/.worktrees/p03-badge-tests",
+   "tip": "717f6df",
+   "branch": "test/p03-seat-badge",
+   "why": "UNMERGED plus=2; route.test.ts/ci.yml/vitest.config DIFFER on main"
+  },
+  {
+   "path": "tanda-miniapp/.worktrees/w254-invites",
+   "tip": "1833b5f",
+   "branch": "w25-4/username-invites",
+   "why": "UNMERGED plus=1; InvitePanel/inviteLink DIFFER, bill/[address]/page.tsx MISSING-ON-MAIN"
+  },
+  {
+   "path": "hermes/kanban/workspaces/t_8ad3fbf8/app",
+   "tip": "f6fcb7c",
+   "branch": "w2-f1c/join-golden-test",
+   "why": "UNMERGED plus=3; seat-join.golden.test.tsx MISSING-ON-MAIN (card done; lane kept per never-force-reap law)"
+  }
+ ],
+ "miniapp_scratch_cleared": {
+  "removed": [
+   "dbg_ugly1.mts (unique never-committed, preserved)",
+   "scratch/c4_ship.sh",
+   "scratch/p03/probe.cjs",
+   "scratch/p03/seatVerification.cjs",
+   "scratch/ux2_dev.log",
+   "scratch/ux2_dev2.log",
+   "nul (Windows reserved-name artifact)"
+  ],
+  "all_preserved_in_tar": true
+ },
+ "preserve_tar": {
+  "path": "scratch/eng55_preserve/eng55_preserve_1127.tar.gz",
+  "bytes": 25849,
+  "sha256": "44ca78088cbec4f1843304b135440ad10400c782e27119e48a48251cd701978d"
+ },
+ "disk_freed_mb": 33.6,
+ "zero_commit_loss_assertion": "Only ancestor/patch-equivalent refs deleted (w2/a1-settlement-watcher, fix/tanda-v1-safetransfer). All unmerged tips retain both dir and ref. Every deleted untracked byte hashed into preserve tar.",
+ "post_state": {
+  "sync_worktrees": [
+   "tanda-sync@11c590948 main",
+   "tanda-a2@90961dbc6 (preserved)"
+  ],
+  "miniapp_worktrees": [
+   "main@3b74369",
+   "e2e-demo",
+   "p03-badge-tests",
+   "w254-invites",
+   "t_8ad3fbf8/app (4 preserved)"
+  ]
+ }
+}
