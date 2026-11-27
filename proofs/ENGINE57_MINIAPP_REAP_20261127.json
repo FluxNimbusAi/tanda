@@ -1,0 +1,66 @@
+{
+  "card": "t_300ec051",
+  "engine": "ENGINE-57",
+  "lane": "B3 CI/showroom hygiene + B1 coverage containment (continuity tick)",
+  "executed_by": "nimbus",
+  "generated_utc": "2026-11-27T10:13Z",
+  "tanda_sync_main_tip": "d878998d55b6017d2502de396dee621455dafa91",
+  "miniapp_main_tip": "3b743693e3488cd54f916fcb24ada2de7b627347",
+  "b1_coverage_containment": {
+    "command": "git log --oneline bd35e753d..origin/main -- contracts/ test/",
+    "result": "empty",
+    "verdict": "GAP-FREE holds at d878998d5 by containment: zero contracts/ or test/ commits since ENGINE-50 census (300/300 pass, contracts/ absent from gaps report at bd35e753d). No suite re-run needed; full-suite authority 300 tests remains current.",
+    "prior_census": "proofs/ENGINE50_COVERAGE_CENSUS.json"
+  },
+  "b3_miniapp_branch_reap_census": {
+    "repo": "FluxNimbusAi/tanda-miniapp",
+    "pre_ls_remote_heads": {
+      "main": "3b743693e3488cd54f916fcb24ada2de7b627347",
+      "feat/share-deeplink": "bfa457f7aa4ede7a7c67c9acb69b5cbaebdc4f3c",
+      "nimbus/brand-1-voice": "33a98f45fa796de097a2e9081c406021d31e4bfa",
+      "nimbus/bridge2-seat-burn": "0d7a1a09d34fc4faefe15a8241466ebe135851c2",
+      "nimbus/ugly1-direct-truth": "4f8285f07b64a19e932f1ece4537fe140b23a0ff",
+      "qt/https-proof-t_b3e207f9": "69ccc9d4ec8bee3abd53df000182f69b37929b20",
+      "w2-f1a/verify-client-join": "301e7a83c523832e528649a55bb3b199685e3393"
+    },
+    "method": "fetch full refspec + prune; merge-base --is-ancestor; git cherry patch-id; gh api squash merge_commit_sha; tree diff tip..squash; file-level containment for unmerged tips",
+    "reaped": {
+      "feat/share-deeplink": {
+        "pr": 56,
+        "squash_in_main": "e0dc74a22fab66b42f24175c3b305473a489710c",
+        "proof": "tip==PR head bfa457f7; cherry patch-id '-' (zero plus); squash contained in main"
+      },
+      "nimbus/brand-1-voice": {
+        "pr": 43,
+        "squash_in_main": "9f4f88c92beaadc2e3cce2dbcbf4f12ebbe1d294",
+        "proof": "tip==PR head 33a98f45; cherry patch-id '-' (zero plus); squash contained in main"
+      },
+      "nimbus/ugly1-direct-truth": {
+        "pr": 40,
+        "squash_in_main": "2d0bfa7b1790e73016fa8c4f78b1e6d18d10323d",
+        "proof": "tip==PR head 4f8285f0; git diff tip..squash EMPTY (tree equivalence); squash contained in main"
+      }
+    },
+    "preserved": {
+      "nimbus/bridge2-seat-burn": {
+        "reason": "UNMERGED CONTENT: tip 0d7a1a09d3 is 1 commit past PR#46 head cc0988809e (fix(bridge-2): burn rides factory.callBill lane + viem hex-bytes correction, committed 2026-11-24 14:41:43 -05:00, ~2 min AFTER #46 squash merged 19:39:55Z/14:39:55 ET). File-level diff vs main on touched files: 2 files, +36/-28 non-empty. Subject-grep on main finds no carrier PR.",
+        "flag": "candidate for re-PR or owner ruling"
+      },
+      "qt/https-proof-t_b3e207f9": {
+        "reason": "NO PR EVER OPENED; single docs commit 2026-11-20 (hosting/tunnels/cloudflared.md +24/-6). Likely superseded by 265891e (#25 tunnel runbooks) but patch containment UNPROVEN - preserve per law."
+      },
+      "w2-f1a/verify-client-join": {
+        "reason": "NO PR EVER OPENED; single commit 2026-11-19 (src/components/Verify/index.tsx +116/-17) predates canonical verify-lane rework (#45 0803d24). Containment UNPROVEN - preserve per law."
+      }
+    },
+    "post_ls_remote_heads": {
+      "main": "3b743693e3488cd54f916fcb24ada2de7b627347",
+      "nimbus/bridge2-seat-burn": "0d7a1a09d34fc4faefe15a8241466ebe135851c2",
+      "qt/https-proof-t_b3e207f9": "69ccc9d4ec8bee3abd53df000182f69b37929b20",
+      "w2-f1a/verify-client-join": "301e7a83c523832e528649a55bb3b199685e3393"
+    },
+    "zero_commit_loss": true
+  },
+  "service_health": ":8096 UP (HTTP 200 /health, PID 20204)",
+  "board_census": "t_9d3c71e2 scheduled/awaiting_review - parked, fires only at approval tick (ruling intact)"
+}
