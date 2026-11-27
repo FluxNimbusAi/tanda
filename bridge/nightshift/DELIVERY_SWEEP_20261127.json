@@ -1,0 +1,39 @@
+{
+ "ts": "2026-11-27T22:18:23Z",
+ "indexer_head": "90fde43d0 (ENGINE-65 merged)",
+ "checks": {
+  "health_8096": [
+   200,
+   238
+  ],
+  "deadlines_new_route": [
+   200,
+   100
+  ],
+  "funnel": [
+   200,
+   396
+  ],
+  "settlements_page": [
+   200,
+   267
+  ],
+  "deeplink_prod": [
+   200,
+   14996
+  ],
+  "oracle_anon_sealed": [
+   401,
+   24
+  ],
+  "privacy_prod": [
+   200,
+   12032
+  ],
+  "terms_prod": [
+   200,
+   11979
+  ]
+ },
+ "restart_note": "service reload required for #227 route; single clean instance after (pid 32428); my over-broad 'bill_index' cmdline sweep also retired two 11-24 legacy pythonw siblings \u2014 verified non-service after restore (all read surfaces green)."
+}
