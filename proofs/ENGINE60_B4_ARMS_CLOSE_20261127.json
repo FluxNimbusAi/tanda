@@ -1,0 +1,79 @@
+{
+ "card": "t_b7ce8be4 (ENGINE-60 B4)",
+ "date": "2026-11-27T09:15-05:00",
+ "base_tip": "098bbea3f885e5d5facd4260cf9a94d961989456",
+ "head_before_commit": "098bbea3f885e5d5facd4260cf9a94d961989456",
+ "verdict": "FULL GAP CLOSE: forge coverage --report gaps at patched tip = 0 items repo-wide (files={}); baseline census had exactly 3.",
+ "method": "forge test --match-contract DeployScriptGolden11255 (1/1 green) then forge coverage --no-match-test 'test/_archive/.*' --report gaps --report-file engine60_gaps.json (exit 0; 29 suites, 300/300 passed, 289.48s wall). Same report type + sha256-LF convention as ENGINE-59.",
+ "baseline_gap_items": [
+  {
+   "file": "script/TandaDeploy.s.sol",
+   "kind": "branch",
+   "contract": "TandaDeploy",
+   "function": "run",
+   "line": 45,
+   "snippet": "require(address(bill.token()) == usdc, \"Token mismatch\")"
+  },
+  {
+   "file": "script/TandaDeploy.s.sol",
+   "kind": "branch",
+   "contract": "TandaDeploy",
+   "function": "run",
+   "line": 47,
+   "snippet": "require(bill.activeSeatCount() == 0, \"Should start with 0 seats\")"
+  },
+  {
+   "file": "script/TandaDeployV2.s.sol",
+   "kind": "branch",
+   "contract": "TandaDeployV2",
+   "function": "run",
+   "line": 28,
+   "snippet": "require(address(factory.implementation()) == address(impl), \"Impl mismatch\")"
+  }
+ ],
+ "cracks": [
+  {
+   "file": "script/TandaDeploy.s.sol",
+   "line": 45,
+   "arm": "Token mismatch",
+   "lever": "vm.mockCall(bill1, token() -> 0xB0A7, injectCode=false); bill1 = vm.computeCreateAddress(DEF_SENDER, vm.getNonce(DEF_SENDER))"
+  },
+  {
+   "file": "script/TandaDeploy.s.sol",
+   "line": 47,
+   "arm": "Should start with 0 seats",
+   "lever": "vm.mockCall(bill2, owner() -> address(this)) crosses L46 honestly, then activeSeatCount() -> 1 FAILs L47; token() stays real so L45 SUCCESS arm re-exercises"
+  },
+  {
+   "file": "script/TandaDeployV2.s.sol",
+   "line": 28,
+   "arm": "Impl mismatch",
+   "lever": "vm.mockCall(facAddr, implementation() -> 0xDEAD, injectCode=false); facAddr = computeCreateAddress(DEF_SENDER, live nonce +1) (impl at n, factory at n+1)"
+  }
+ ],
+ "harness_laws_measured": [
+  "PROBE-60: every in-script CREATE under startBroadcast in forge test is charged to Foundry default sender 0x1804c8AB1F12E6bbf3894d4083f33e07309d1f38 nonce \u2014 NOT the script contract (call shape) nor address(this) (delegatecall shape). Reverted runs roll nonce back.",
+  "PROBE-61: default 3-arg vm.mockCall ETCHES 1 byte into codeless callees (vendored lib/forge-std/src/Vm.sol:2644 docs); an etched byte on the next live create address = CreateCollision -> executor nonce-walk -> ~1.02B-gas dataless OOG. Therefore: precise single-address targets from vm.getNonce + 4-arg mockCall(...,injectCode=false) everywhere.",
+  "Ghost-PASS impossible: wrong create-address guess -> real code answers getter -> expected require never fires -> expectRevert fails loudly.",
+  "USDC_ADDRESS single-writer law preserved: all three crack legs stay inside the ONE serialized test function."
+ ],
+ "evidence": {
+  "engine60_gaps.json": {
+   "bytes_lf": 34,
+   "sha256_lf": "a60477c75697e970a7828b56ae9a9b148b74cb342e21d276e0bbf762efe08e3e",
+   "content": {
+    "version": 1,
+    "files": {}
+   }
+  },
+  "engine60_cov.log": {
+   "bytes_lf": 32082,
+   "sha256_lf": "cb963b7c6f78a60ad56c5675b01882a5f47b0bc55067b7e94a756c03977ea2eb"
+  },
+  "test/DeployScriptGolden11255.t.sol": {
+   "bytes_lf": 12093,
+   "sha256_lf": "460f780d9a6133fba52f8e237b43cdba87ab80510fe2741df0ef0e9044699e05"
+  }
+ },
+ "repro": "git checkout <merged tip> && forge test --match-contract DeployScriptGolden11255 && forge coverage --no-match-test 'test/_archive/.*' --report gaps --report-file g.json && python -c \"import json;assert json.load(open('g.json'))['files']=={}\""
+}
