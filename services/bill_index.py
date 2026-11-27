@@ -88,6 +88,8 @@ RPC_LOG_CAP = int(os.environ.get("BILL_INDEX_MAX_CHUNK", "100"))
 
 HEX64 = re.compile(r"^0x[0-9a-fA-F]{64}$")
 ADDR_RE = re.compile(r"^0x[a-fA-F0-9]{40}$")
+# ENGINE-65: mirrors the contract MAX_HOLD (refundSettlement gate, 72h).
+MAX_HOLD_SECONDS = 72 * 3600
 SETTLEMENTS_PAGE_SIZE = 20  # M4-2 issue #19 SR-RV-A1: page window for GET /api/settlements
 RP_ID_RE = re.compile(r"^rp_[a-z0-9]+$")
 
@@ -371,6 +373,17 @@ def get_db():
     )""")
     db.execute("CREATE INDEX IF NOT EXISTS settlement_events_bill_idx"
                " ON settlement_events (bill_id, block, log_index)")
+    # ENGINE-65: timeout-escalation ledger (additive-only; one row per
+    # (bill, settlement), escalation is a monotonic latch -> idempotent sweeps).
+    db.execute("""CREATE TABLE IF NOT EXISTS settlement_deadlines (
+        bill_id TEXT NOT NULL,
+        settlement_id NUMERIC NOT NULL,
+        initiated_at NUMERIC NOT NULL,
+        max_hold_until NUMERIC NOT NULL,
+        refunded_seen INTEGER NOT NULL DEFAULT 0,
+        escalated INTEGER NOT NULL DEFAULT 0,
+        UNIQUE (bill_id, settlement_id)
+    )""")
     # W2.5-2 gap 2: block_hash on the ledger for pre-existing DBs (additive).
     if "block_hash" not in [r[1] for r in db.execute("PRAGMA table_info(settlement_events)")]:
         db.execute("ALTER TABLE settlement_events ADD COLUMN block_hash TEXT")
@@ -534,6 +547,63 @@ def _reorg_sweep(db, head):
     return n_pruned, n_bills
 
 
+def _timeout_sweep(db, now_ts=None):
+    """ENGINE-65 settlement-timeout escalation (clock + DB only, NO RPC —
+    stricter than _reorg_sweep which needs canonical-block reads). Mirrors
+    the rowcount/idempotency law: UNIQUE(bill_id, settlement_id) + the
+    monotonic escalated latch guarantee ONE app_event per timed-out
+    settlement, forever. Initiation truth is read from the LEDGER event
+    (at_ts), never from the summary, per the contract-state-is-authority
+    law. Refunded or settled rows can never escalate (checked at
+    escalation time, not just at track time)."""
+    now = int(now_ts if now_ts is not None else time.time())
+    for r in db.execute(
+            "SELECT s.bill_id, s.settlement_id, e.at_ts"
+            " FROM settlements s"
+            " JOIN settlement_events e ON e.bill_id = s.bill_id"
+            "   AND e.settlement_id = s.settlement_id"
+            "   AND e.event = 'SettlementInitiated'"
+            " WHERE s.settled_at IS NULL AND e.at_ts IS NOT NULL"):
+        db.execute(
+            "INSERT INTO settlement_deadlines"
+            " (bill_id, settlement_id, initiated_at, max_hold_until)"
+            " VALUES (?,?,?,?)"
+            " ON CONFLICT(bill_id, settlement_id) DO NOTHING",
+            (r["bill_id"], r["settlement_id"], r["at_ts"], r["at_ts"] + MAX_HOLD_SECONDS))
+    db.execute(
+        "UPDATE settlement_deadlines SET refunded_seen=1 WHERE EXISTS ("
+        " SELECT 1 FROM settlement_events e WHERE e.bill_id=settlement_deadlines.bill_id"
+        "  AND e.settlement_id=settlement_deadlines.settlement_id"
+        "  AND e.event='SettlementRefunded')")
+    n_esc = 0
+    for d in db.execute(
+            "SELECT bill_id, settlement_id FROM settlement_deadlines"
+            " WHERE escalated=0 AND refunded_seen=0 AND max_hold_until < ?",
+            (now,)).fetchall():
+        row = db.execute(
+            "SELECT settled_at, refunded FROM settlements"
+            " WHERE bill_id=? AND settlement_id=?",
+            (d["bill_id"], d["settlement_id"])).fetchone()
+        if row is None or row["settled_at"] is not None or row["refunded"]:
+            continue
+        creator = db.execute(
+            "SELECT creator FROM bill_index WHERE bill_address=?",
+            (d["bill_id"],)).fetchone()
+        db.execute("UPDATE settlement_deadlines SET escalated=1"
+                   " WHERE bill_id=? AND settlement_id=?",
+                   (d["bill_id"], d["settlement_id"]))
+        if creator:
+            # whitelist-legal event: ('action','n2c') already permitted by
+            # KINDS/SOURCES — ops attribution to the bill creator, local lane.
+            db.execute(
+                "INSERT INTO app_events (ts, kind, source, bill_id, wallet)"
+                " VALUES (?,?,?,?,?)",
+                (now, "action", "n2c", d["bill_id"], creator["creator"]))
+        n_esc += 1
+    tracked = db.execute("SELECT count(*) c FROM settlement_deadlines").fetchone()["c"]
+    return {"tracked": tracked, "escalated": n_esc}
+
+
 def scan_pass(db, head=None):
     """One hardened indexer pass: sweep orphans -> ingest
     [last_indexed_block + 1 - REORG_OVERLAP .. head] through the shared
@@ -556,6 +626,7 @@ def scan_pass(db, head=None):
     else:
         from_block = max(0, last + 1 - REORG_OVERLAP)
     pruned, bills_reorged = _reorg_sweep(db, head)
+    deadlines = _timeout_sweep(db)
     known = {r[0].lower() for r in db.execute(
         "SELECT bill_address FROM bill_index WHERE bill_address IS NOT NULL")}
     n_events = n_bills = 0
@@ -1132,6 +1203,34 @@ class Handler(BaseHTTPRequestHandler):
                                 "share_opens": opens.get("share", 0),
                                 "badge_bar_15pct_any": badge_eligible})
 
+    def _handle_deadlines(self):
+        """ENGINE-65 GET /api/settlements/deadlines — aggregate-only
+        (SR-RV-A1, same posture as /api/funnel): counts + per-bill timeout
+        masks; wallet addresses NEVER appear in the payload."""
+        now = int(time.time())
+        db = get_db()
+        one = lambda q, *a: db.execute(q, a).fetchone()["c"] if a else db.execute(q).fetchone()["c"]  # noqa: E731
+        bills = [{"bill": r["bill_id"], "settlement": int(r["settlement_id"]),
+                  "past_due": 1 if r["max_hold_until"] < now else 0,
+                  "escalated": r["escalated"], "refunded": r["refunded_seen"]}
+                 for r in db.execute(
+                     "SELECT bill_id, settlement_id, max_hold_until, escalated,"
+                     " refunded_seen FROM settlement_deadlines"
+                     " ORDER BY max_hold_until LIMIT 50")]
+        return self._json(200, {
+            "total_tracked": one("SELECT count(*) c FROM settlement_deadlines"),
+            "open": one("SELECT count(*) c FROM settlement_deadlines d WHERE"
+                        " d.refunded_seen=0 AND EXISTS (SELECT 1 FROM settlements s"
+                        " WHERE s.bill_id=d.bill_id AND s.settlement_id=d.settlement_id"
+                        " AND s.settled_at IS NULL)"),
+            "past_max_hold": one("SELECT count(*) c FROM settlement_deadlines"
+                                 " WHERE max_hold_until < ?", now),
+            "escalated": one("SELECT count(*) c FROM settlement_deadlines"
+                             " WHERE escalated=1"),
+            "refunded_seen": one("SELECT count(*) c FROM settlement_deadlines"
+                                 " WHERE refunded_seen=1"),
+            "bills": bills})
+
     def do_GET(self):
         if self.path.startswith("/api/funnel"):
             return self._handle_funnel()
@@ -1158,6 +1257,8 @@ class Handler(BaseHTTPRequestHandler):
             db = get_db()
             rows = db.execute("SELECT wallet_address, nullifier, verified_at FROM seat_grants WHERE bill_address=?", (bill,)).fetchall()
             return self._json(200, {"grants": {r["wallet_address"]: {"nullifier": r["nullifier"], "verified_at": r["verified_at"]} for r in rows}})
+        if self.path.startswith("/api/settlements/deadlines"):
+            return self._handle_deadlines()
         if self.path.startswith("/api/settlements"):
             # M4-2 / issue #19 SR-RV-A1 (t_m4_p01a): canonical query-form read
             # GET /api/settlements?bill=0x<addr>&page=<n> — auth-free local
