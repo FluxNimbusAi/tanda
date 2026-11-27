@@ -5,6 +5,22 @@ name: CI
 # so no submodule step is needed — CI works from a plain clone.
 # Foundry is pinned to v1.9.0 to match the PC/laptop lanes (dist build
 # 6056c584, released 2026-11-02).
+#
+# KAIZEN-3-FU hardening (t_47d2c344, 2026-11-27): a GitHub artifact
+# outage 504'd the foundryup download chain (installer pinned to
+# foundry-rs/foundryup@a27902ef04dcb43061fabf343365cb5afc95fc48 +
+# foundry attestations/62819811/download), killing the INSTALL step of
+# the foundry job (evidence: run 46048026765 @ a237c4f92; docs-only PR
+# #221 blocked 3 runs by it). Two layers so an outage can never gate a
+# merge:
+#   1. actions/cache on ~/.foundry/bin keyed on the forge pin + foundryup
+#      commit — a cache-hit install never touches release endpoints.
+#   2. `changes` path filter — docs-only diffs (SECURITY.md, audits/,
+#      docs/) skip the foundry job entirely: no forge, no exposure.
+# Fail-closed: any diff-computation error makes foundry RUN.
+# Provenance discipline kept: the toolchain action is pinned to the exact
+# commit whose installer is the audited foundryup commit above, and it
+# installs forge v1.9.0.
 
 on:
   push:
@@ -13,18 +29,115 @@ on:
     branches: [main]
 
 jobs:
-  foundry:
+  # Path filter: is the foundry gate actually needed for this diff?
+  # Two-dot BASE..HEAD diff == exactly what a squash-merge applies.
+  # pull_request shas come from the event payload; push uses before..sha.
+  # An all-zero / unresolvable base fails CLOSED (code=true).
+  changes:
     runs-on: ubuntu-latest
+    outputs:
+      code: ${{ steps.filter.outputs.code }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          # Repo is tiny (~1.2 MB .git); the filter needs both diff ends.
+          fetch-depth: 0
+
+      - name: Detect code-path changes (fail-closed)
+        id: filter
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha || github.event.before }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set +e
+          CODE=true  # default: foundry must run
+          if [ -n "$BASE_SHA" ] && ! printf '%s' "$BASE_SHA" | grep -q '^0*$' \
+             && git cat-file -e "$BASE_SHA^{commit}" 2>/dev/null \
+             && git cat-file -e "$HEAD_SHA^{commit}" 2>/dev/null; then
+            CHANGED=$(git diff --name-only "$BASE_SHA" "$HEAD_SHA" -- \
+              contracts src lib test foundry.toml remappings.txt \
+              .github/workflows)
+            if [ $? -eq 0 ] && [ -z "$CHANGED" ]; then
+              CODE=false
+              echo "docs-only diff — foundry job will be skipped"
+            else
+              printf 'code-touching paths:\n%s\n' "$CHANGED" | head -20
+            fi
+          else
+            echo "unresolvable diff range ($BASE_SHA..$HEAD_SHA) — fail-closed, foundry runs"
+          fi
+          echo "code=$CODE" >> "$GITHUB_OUTPUT"
+
+  foundry:
+    needs: changes
+    if: needs.changes.outputs.code == 'true'
+    runs-on: ubuntu-latest
+    env:
+      # Single source of truth for the toolchain pins (cache key + install).
+      FOUNDRY_VERSION: v1.9.0
+      FOUNDRYUP_COMMIT: a27902ef04dcb43061fabf343365cb5afc95fc48
     steps:
       - uses: actions/checkout@v7
 
-      - name: Install Foundry (pinned v1.9.0)
-        uses: foundry-rs/foundry-toolchain@v1
+      - name: Restore cached Foundry toolchain
+        id: foundry-cache
+        uses: actions/cache@v4
         with:
-          version: v1.9.0
+          # bin = the toolchain per card spec; compilers = forge's solc
+          # downloads, which ride the SAME GitHub artifact endpoints and
+          # would re-expose the build step to the identical outage class.
+          path: |
+            ~/.foundry/bin
+            ~/.foundry/compilers
+          key: foundry-${{ runner.os }}-${{ runner.arch }}-${{ env.FOUNDRY_VERSION }}-foundryup-${{ env.FOUNDRYUP_COMMIT }}
+
+      - name: Put (cached) toolchain on PATH
+        # The toolchain action only exports PATH when it installs; on a
+        # cache hit that step is skipped, so PATH is wired here instead.
+        run: echo "$HOME/.foundry/bin" >> "$GITHUB_PATH"
+
+      - name: Install Foundry (pinned v1.9.0 + sha256; skipped on cache hit)
+        if: steps.foundry-cache.outputs.cache-hit != 'true'
+        # foundry-toolchain@v1 (dba66c2705) is deliberately OUT: its
+        # installer (foundry-rs/foundryup@a27902ef04dc) self-fetches from
+        # foundryup/releases/latest and, on a 504, falls back to
+        # `git checkout a27902ef...` inside a foundry-rs/foundry CLONE —
+        # a27902ef is a foundryup-repo commit that never exists in the
+        # foundry repo, so the fallback is deterministically fatal
+        # (proved: run 46051130964, PR #223). Direct tagged-asset fetch +
+        # embedded sha256 pins the exact bytes — stricter provenance than
+        # the old chain, and zero dependency on releases/latest redirects
+        # or attestation endpoints.
+        env:
+          SHA_AMD64: 8d17599b42e3139f1a9c171be3798c4ed8e743ae17b84cc3435e57bf2a51ae99
+          SHA_ARM64: 22d3060fa83515fb901690a2c59a5f552bd41c241886195b2159562fc4947abc
+        run: |
+          set -euo pipefail
+          case "$(uname -m)" in
+            x86_64)  ARCH_TAG=amd64;  EXPECTED="$SHA_AMD64" ;;
+            aarch64) ARCH_TAG=arm64;  EXPECTED="$SHA_ARM64" ;;
+            *) echo "unsupported arch: $(uname -m)" >&2; exit 1 ;;
+          esac
+          ASSET="foundry_${FOUNDRY_VERSION}_linux_${ARCH_TAG}.tar.gz"
+          URL="https://github.com/foundry-rs/foundry/releases/download/${FOUNDRY_VERSION}/${ASSET}"
+          mkdir -p "$HOME/.foundry/bin"
+          TMP="$(mktemp -d)"
+          # -L follows releases->objects CDN; retries ride out transient 5xx.
+          curl -fSL --retry 8 --retry-all-errors --retry-delay 5 \
+               --connect-timeout 20 -o "$TMP/$ASSET" "$URL"
+          echo "$EXPECTED  $TMP/$ASSET" | sha256sum -c -
+          tar -xzf "$TMP/$ASSET" -C "$TMP"
+          # Archive puts forge/cast/anvil/chisel at the tar root; move all
+          # ELF payloads so a layout change can never silently no-op.
+          find "$TMP" -maxdepth 2 -type f ! -name '*.tar.gz' -exec mv -t "$HOME/.foundry/bin/" {} +
+          test -x "$HOME/.foundry/bin/forge"
+          rm -rf "$TMP"
 
       - name: Show forge version
-        run: forge --version
+        # Hard assertion: a stale/poisoned cache must fail here, loudly.
+        run: |
+          forge --version | tee forge-version.txt
+          grep -F "1.9.0" forge-version.txt
 
       - name: Build
         run: forge build
