@@ -1,0 +1,98 @@
+{
+ "scan_id": "RECON-63_KAIZEN_BENCHMARK_SCAN",
+ "timestamp": "2026-11-27 13:12 ET",
+ "method": "web recon of public repos + live app pages; external text treated as untrusted data; ideas distilled to design principles, no code copied, no license contamination (all sources MIT/Apache2 per repo metadata)",
+ "targets": [
+  {
+   "repo": "astapchikartem/InvoBase",
+   "chain": "Base",
+   "license": "MIT",
+   "stars": 26,
+   "what_they_do": "Invoice-as-NFT lifecycle Draft->Issued->Paid->Cancelled; separate escrow contract; partial payments; external-payment recording",
+   "transferable_ideas": [
+    "Explicit lifecycle state machine with single transition authority",
+    "Partial-payment support on escrow (TandaBill gap)",
+    "recordExternalPayment off-chain-ref linkage"
+   ]
+  },
+  {
+   "repo": "StabilityNexus/Chainvoice",
+   "chain": "EVM multi-chain incl. Base 8453",
+   "license": "GPL-3.0",
+   "note": "GPL-3.0 = no code derivation allowed; ideas only",
+   "what_they_do": "keccak256 invoice-hash on-chain + off-chain encrypted payload; no-owner non-upgradeable contract; per-chain deployment manifest (Deployments.md)",
+   "transferable_ideas": [
+    "On-chain commitment hash + off-chain private payload = privacy without central store",
+    "Immutable, non-upgradeable stance as trust feature",
+    "Deployment manifest as provenance artifact \u2014 matches our ENGINE census discipline"
+   ]
+  },
+  {
+   "repo": "karinasvatk/SubBase",
+   "chain": "Base",
+   "license": "MIT",
+   "stars": 27,
+   "what_they_do": "Modular subscription engine: PlanModule/SubscriptionModule/ChargeModule/AutomationModule; Chainlink Automation recurring charges; grace period + retry logic",
+   "transferable_ideas": [
+    "Status flow Active->PastDue->Suspended with 3 retries and reactivate path \u2014 directly applicable to TandaBill recurring-bill lane",
+    "Grace-period semantics: failure is not cancellation",
+    "Batch processing cap per tx (50) as gas/throughput discipline"
+   ]
+  },
+  {
+   "repo": "kartsan03/StableInvoice",
+   "chain": "Solana",
+   "license": "MIT",
+   "what_they_do": "PDA escrow funded upfront; milestone accept moves no tokens; settle pays lump sum when all milestones accepted; settlement record PDA",
+   "transferable_ideas": [
+    "Accept != payment separation (audit trail before money moves)",
+    "Idempotent ATA/vault creation",
+    "Permanent settlement-record account per invoice = our receipt-law equivalent on-chain"
+   ]
+  },
+  {
+   "repo": "Worqen-Labs/Worqen-Solana",
+   "chain": "Solana mainnet live",
+   "license": "Apache-2.0",
+   "what_they_do": "Two engines sharing one Config/treasury: milestone escrow + hourly v2 (period vault, per-invoice PDA, review window, permissionless auto-payout); fee-on-top commission; dust-safe drain-to-actual-balance; cumulative-delta commission",
+   "transferable_ideas": [
+    "Dust-DoS safety: drain vault to actual balance, end at exactly 0",
+    "Cumulative-delta commission so per-invoice sums equal single-shot \u2014 money-math invariant worth a test in TandaBill",
+    "Permissionless deadline safety net (platform can't strand funds)",
+    "Honest SECURITY.md self-disclosure of custody risks"
+   ]
+  },
+  {
+   "repo": "wienerlabs/square-solana",
+   "chain": "Solana",
+   "license": "Apache-2.0",
+   "what_they_do": "Compliance-gated settlement: mandate as salted Poseidon commitment on-chain, ZK proof gate before release, OFAC screening, challenge windows, receivable sale",
+   "transferable_ideas": [
+    "Policy commitments on-chain without revealing policy \u2014 future TandaBill compliance lane",
+    "Refusing-proof refund path = deterministic no-payment semantics"
+   ]
+  },
+  {
+   "repo": "Vinisilva0010/invoicechain",
+   "chain": "Solana+Base hybrid",
+   "license": "none stated -> ideas only",
+   "what_they_do": "Payment-link generation, webhook settles on Base, status update on Solana program",
+   "transferable_ideas": [
+    "Webhook-driven funnel/track architecture mirrors our :8096 listener \u2014 theirs is the reference pattern for link->settlement->status"
+   ]
+  },
+  {
+   "repo": "bit-nexus-labs/solana-pay-mini-kit",
+   "chain": "Solana",
+   "license": "open-source",
+   "what_they_do": "Invoice generator + RPC signature verification before marking invoice paid",
+   "transferable_ideas": [
+    "Verify exact transaction signature before status flip \u2014 grounds our funnel 200/401 auth discipline"
+   ]
+  }
+ ],
+ "kaizen_actions_open": [
+  "TandaBill gap check: partial payments (InvoBase), grace/retry state machine (SubBase), dust-safe drain + commission-sum invariant (Worqen) \u2014 propose as ENGINE-64 test cards",
+  "Recurring-bill lane design card: PlanModule/ChargeModule separation for bill_index"
+ ]
+}
