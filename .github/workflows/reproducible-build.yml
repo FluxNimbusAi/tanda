@@ -1,0 +1,76 @@
+name: Reproducible build
+
+# KAIZEN-4 (H7): the deployed TandaBillV2 pair on World Chain Sepolia (4801)
+# must be byte-reproducible from the pinned source commit recorded in
+# docs/DEPLOY_STATE.json (0e3966dc9), built with the pinned toolchain
+# (forge v1.9.0 + solc 0.8.38 — the pin-era foundry.toml carries NO solc
+# pin, so the checker passes --use explicitly; without it forge drifts to
+# latest solc and false-alarms on the metadata tail).
+#
+# 10 gates, zero keys, read-only RPC + local compile:
+#   rpc.agrees        alchemy + thirdweb return identical runtime (2/2)
+#   build.archive     git archive <pinned sha> -> throwaway tree -> forge build
+#   impl.zero-diff    built runtime == live bytecode byte-exact (9817 B)
+#   impl.pin-keccak   live keccak == DEPLOY_STATE lineage pin (3683cfe0…)
+#   factory.masked    artifact vs live differs ONLY in ADR-0007 immutable
+#                     bake windows + CBOR metadata tail; anything else falsifies
+#   receipt.anchor    CREATE tx receipt.contractAddress == pinned factory
+#   create.initcode   live CREATE input == rebuilt factory initcode + abi(impl)
+#   accessor.roundtrip implementation() eth_call == pinned impl
+#
+# Runs on contracts/**-touching push/PR and weekly on schedule — the schedule
+# is the drift alarm: if the chain or the pin moves without a code change,
+# this badge goes red even though ci.yml stays green.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "contracts/**"
+      - "docs/DEPLOY_STATE.json"
+      - "tools/reproducible_build_check.py"
+      - ".github/workflows/reproducible-build.yml"
+  pull_request:
+    branches: [main]
+    paths:
+      - "contracts/**"
+      - "docs/DEPLOY_STATE.json"
+      - "tools/reproducible_build_check.py"
+      - ".github/workflows/reproducible-build.yml"
+  schedule:
+    - cron: "17 6 * * 3"   # weekly, Wed 06:17 UTC
+
+jobs:
+  reproducible-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          # the gate runs `git archive <pinned sha>` — a depth-1 checkout
+          # cannot see that ancestor commit. Repo .git is ~1.2 MB; full fetch
+          # is cheap (same reasoning as the ci.yml provenance job).
+          fetch-depth: 0
+
+      - name: Install Foundry (pinned v1.9.0)
+        uses: foundry-rs/foundry-toolchain@v1
+        with:
+          version: v1.9.0
+
+      - name: Set up Python (pinned 3.12)
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Reproducible-build gate (10 checks, exit 0 = PASS)
+        run: |
+          rc=0
+          python tools/reproducible_build_check.py --out proof.json || rc=$?
+          test -f proof.json || echo '{"verdict": "CRASH"}' > proof.json
+          exit $rc
+
+      - name: Upload proof
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: reproducible-build-proof
+          path: proof.json

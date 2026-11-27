@@ -1,0 +1,87 @@
+{
+  "built": {
+    "factory_deployed_sha256": "857cdb3cbd62860f106a48b07668238bed1886c5e7c5fdca1b27110e14c9b219",
+    "factory_init_sha256": "50eee8df5bc67823b913951d3c8bbd5511c91edec5272b212c0a9e398fa70334",
+    "impl_deployed_sha256": "271f60875fcdc8e1c61a35d86288719032d00c4d2531e55933527cf5b0050f68",
+    "impl_init_sha256": "33726682b4e0d00fcae1e3f49e73203045edb5739f9925ba26a482893000a1e0"
+  },
+  "chain_id": 4801,
+  "checks": [
+    {
+      "detail": "forge Version: 1.9.0",
+      "name": "toolchain.forge",
+      "pass": true
+    },
+    {
+      "detail": "2 providers 2/2 identical runtime (impl 9817 B, factory 1402 B)",
+      "name": "rpc.agrees",
+      "pass": true
+    },
+    {
+      "detail": "git archive 0e3966dc9b -> 2396160 B tar, extracted via stdlib tarfile",
+      "name": "build.archive",
+      "pass": true
+    },
+    {
+      "detail": "solc 0.8.38 @ 0e3966dc9b",
+      "name": "build.forge",
+      "pass": true
+    },
+    {
+      "detail": "built runtime == live @4801 byte-exact (9817 B)",
+      "name": "impl.zero-diff",
+      "pass": true
+    },
+    {
+      "detail": "keccak 3683cfe0de28d6e0\u2026 == DEPLOY_STATE pin, size 9817 == 9817",
+      "name": "impl.pin-keccak",
+      "pass": true
+    },
+    {
+      "detail": "len(live)==1402 B; diff ranges: [143..163) immutable bake -> impl addr; [350..370) immutable bake -> impl addr",
+      "name": "factory.masked-match",
+      "pass": true
+    },
+    {
+      "detail": "tx 0x5eced1cf1c86\u2026 contractAddress == 0x010872d47bd7bb001037577a15d090556bfd24c3",
+      "name": "receipt.anchor",
+      "pass": true
+    },
+    {
+      "detail": "live CREATE input (1566 B) starts with rebuilt factory initcode (1534 B) + abi(impl) tail",
+      "name": "create.initcode",
+      "pass": true
+    },
+    {
+      "detail": "implementation() -> 0xd0cc3595679a36b64c860568217b623605980e6a",
+      "name": "accessor.roundtrip",
+      "pass": true
+    }
+  ],
+  "create_tx": {
+    "init_bytes": 1534,
+    "input_bytes": 1566,
+    "tx": "0x5eced1cf1c860bbd1a4a6b431afb4ace667f8495305c6f2ffe65e5d29029062f"
+  },
+  "factory": {
+    "address": "0x010872d47bd7bb001037577a15d090556bfd24c3",
+    "bytes": 1402,
+    "keccak256": "b3e4af1340f5c1db3a1405a42348f7effdbc5ef05fc0f28eb526fe897e8338bf",
+    "sha256": "de8e890895bd069d96f3003a12244b92bcc866886290be80992d732d42d0f5cf"
+  },
+  "forge": "forge Version: 1.9.0",
+  "gate": "KAIZEN-4 reproducible-build (H7)",
+  "impl": {
+    "address": "0xd0cc3595679a36b64c860568217b623605980e6a",
+    "bytes": 9817,
+    "keccak256": "3683cfe0de28d6e06e53f74b6879789a81a6286a0ea1d69b1997880999eba0d8",
+    "sha256": "271f60875fcdc8e1c61a35d86288719032d00c4d2531e55933527cf5b0050f68"
+  },
+  "providers": [
+    "alchemy",
+    "thirdweb"
+  ],
+  "solc": "0.8.38",
+  "source_main_sha": "0e3966dc9ba5f3f9c71107684645b7586826b50e",
+  "verdict": "PASS"
+}
