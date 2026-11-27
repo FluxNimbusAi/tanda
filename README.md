@@ -1,4 +1,5 @@
 [![CI](https://github.com/FluxNimbusAi/tanda/actions/workflows/ci.yml/badge.svg)](https://github.com/FluxNimbusAi/tanda/actions/workflows/ci.yml)
+[![Reproducible build](https://github.com/FluxNimbusAi/tanda/actions/workflows/reproducible-build.yml/badge.svg)](https://github.com/FluxNimbusAi/tanda/actions/workflows/reproducible-build.yml)
 
 # Tanda
 
