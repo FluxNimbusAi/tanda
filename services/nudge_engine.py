@@ -476,13 +476,13 @@ def plan(rpc, bills_state, grants_by_bill, now_ts):
 
 # ─── Dispatcher POST (§2, §5, §7 payload shape) ──────────────────────────────
 
-def notify_payload(wallet_addrs, title, message, idem_key):
+def notify_payload(wallet_addrs, title, message, idem_key, path="/home"):
     title = title[:72]
     message = message[:280]  # dispatcher re-enforces (route.ts L99-105); engine too
     return {
         "wallet_addresses": list(wallet_addrs),
         "localisations": [{"language": "en", "title": title, "message": message}],
-        "mini_app_path": "/home",
+        "mini_app_path": path,  # G2G-6: ?src=<kind> attribution (open-rate funnel)
         "idempotency_key": idem_key,
     }
 
@@ -613,7 +613,8 @@ def run_once(now_ts=None, rpc=None, post=None, send=True, quiet=False):
         stats["candidates"] = len(chosen)
         stats["batches"] = len(batches)
         for b in batches:
-            payload = notify_payload(b["wallets"], TITLES[b["kind"]], b["msg"], b["idem"])
+            payload = notify_payload(b["wallets"], TITLES[b["kind"]], b["msg"], b["idem"],
+                                       path=f"/home?src={b['kind'].lower()}")
             stats.setdefault("plan", []).append(payload)
             if not send:
                 continue
@@ -642,6 +643,18 @@ def run_once(now_ts=None, rpc=None, post=None, send=True, quiet=False):
                            f"WHERE dedup_key IN ({q})", (_ts_iso(now_ts), *keys))
                 db.commit()
                 stats["sent"] += len(keys)
+                # G2G-6 notify_sent funnel event -> keyed indexer track lane.
+                # Env-gated: self-test runs with no TRACK_URL => zero network.
+                tu = os.environ.get("TANDA_TRACK_URL")
+                if tu:
+                    try:
+                        post(tu + "/api/track",
+                             {"Content-Type": "application/json",
+                              "Authorization": f"Bearer {os.environ.get('INDEX_WRITE_KEY', '')}"},
+                             {"kind": "notify_sent", "source": b["kind"].lower(),
+                              "bill": b["bill"]})
+                    except Exception:
+                        pass  # analytics must NEVER break delivery
             else:
                 if code == 501:
                     stats["notes"].append("dispatcher not-configured (retry next run)")

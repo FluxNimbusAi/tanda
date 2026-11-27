@@ -402,6 +402,15 @@ def get_db():
         PRIMARY KEY (bill_id, settlement_id, seat_id),
         UNIQUE (tx_hash, log_index)
     )""")
+    db.execute("""CREATE TABLE IF NOT EXISTS app_events (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        ts INTEGER NOT NULL,
+        kind TEXT NOT NULL,
+        source TEXT,
+        bill_id TEXT,
+        wallet TEXT
+    )""")
+    db.execute("CREATE INDEX IF NOT EXISTS ix_events_ts ON app_events(ts)")
     return db
 
 
@@ -852,6 +861,20 @@ class Handler(BaseHTTPRequestHandler):
         self.wfile.write(body)
 
     def do_POST(self):
+        if self.path == "/api/track":
+            # G2G-6 (analytics funnel): keyed event ingest. The BROWSER NEVER
+            # HOLDS THE KEY - the Next /api/track route proxies server-side
+            # (notify-route posture). ts is server-clock; client clocks lie.
+            if not self._authed():
+                return self._json(401, {"error": "bad write key"})
+            n = int(self.headers.get("Content-Length", 0))
+            if n > 4096:
+                return self._json(413, {"error": "body too large"})
+            try:
+                body = json.loads(self.rfile.read(n).decode())
+            except Exception:
+                return self._json(400, {"error": "invalid json"})
+            return self._track_insert(body)
         if self.path == "/grants":
             return self._handle_grant()
         if self.path == "/bills/tx":
@@ -1053,7 +1076,65 @@ class Handler(BaseHTTPRequestHandler):
             "overlay": "on" if OVERLAY_ENABLED else "off",
         })
 
+    SOURCES = ("n1", "n2a", "n2b", "n2c", "n3a", "n3b",
+               "organic", "share", "notify_sent")
+    KINDS = ("open", "action", "notify_sent")
+
+    def _track_insert(self, body):
+        if not isinstance(body, dict):
+            return self._json(400, {"error": "object required"})
+        kind = body.get("kind", "")
+        source = body.get("source", "")
+        if kind not in self.KINDS or source not in self.SOURCES:
+            return self._json(400, {"error": "kind/source not whitelisted"})
+        bill = (body.get("bill") or "").lower()
+        wallet = (body.get("wallet") or "").lower()
+        if bill and not ADDR_RE.match(bill):
+            return self._json(400, {"error": "bad bill"})
+        if wallet and not ADDR_RE.match(wallet):
+            return self._json(400, {"error": "bad wallet"})
+        db = get_db()
+        db.execute("INSERT INTO app_events (ts, kind, source, bill_id, wallet) VALUES (?,?,?,?,?)",
+                   (int(time.time()), kind, source, bill or None, wallet or None))
+        # 90-day retention, cheap prune every insert (dev-scale volumes)
+        db.execute("DELETE FROM app_events WHERE ts < ? - 90*86400", (int(time.time()),))
+        db.commit()
+        return self._json(201, {"ok": True})
+
+    def _handle_funnel(self):
+        """GET /api/funnel?days=7 -> aggregate-only open-rate view (auth-free
+        like /api/grants: numbers, never raw rows; no wallet ever returned)."""
+        qs = self.path.split("?", 1)[1] if "?" in self.path else ""
+        params = dict(p.split("=", 1) for p in qs.split("&") if "=" in p)
+        try:
+            days = max(1, min(30, int(params.get("days", "7"))))
+        except ValueError:
+            return self._json(400, {"error": "bad days"})
+        since = int(time.time()) - days * 86400
+        db = get_db()
+        def grp(kind):
+            rows = db.execute(
+                "SELECT source, count(*) c FROM app_events WHERE kind=? AND ts>=? GROUP BY source",
+                (kind, since)).fetchall()
+            return {r["source"]: r["c"] for r in rows}
+        opens = grp("open")
+        sent = grp("notify_sent")
+        funnel = {}
+        for src in ("n1", "n2a", "n2b", "n2c", "n3a", "n3b"):
+            s_n = sent.get(src, 0)
+            o_n = opens.get(src, 0)
+            funnel[src] = {"sent": s_n, "opens": o_n,
+                           "open_rate": round(o_n / s_n, 4) if s_n else None}
+        badge_eligible = any(v["open_rate"] is not None and v["open_rate"] >= 0.15
+                             for v in funnel.values())
+        return self._json(200, {"days": days, "funnel": funnel,
+                                "organic_opens": opens.get("organic", 0),
+                                "share_opens": opens.get("share", 0),
+                                "badge_bar_15pct_any": badge_eligible})
+
     def do_GET(self):
+        if self.path.startswith("/api/funnel"):
+            return self._handle_funnel()
         if self.path == "/health":
             return self._handle_health()
         if self.path.startswith("/api/grants"):
