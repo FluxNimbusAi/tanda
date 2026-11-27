@@ -1,0 +1,29 @@
+{
+ "card": "t_6146f604",
+ "engine": "ENGINE-66",
+ "lane": "B1 test-matrix deepening: whole-repo coverage-gap sweep (continuity tick)",
+ "executed_by": "nimbus",
+ "generated_utc": "2026-11-27T23:45Z",
+ "main_tip": "923e4af51f58fcacf76dc93ad53669f063717813",
+ "forge": "forge Version: 1.9.0",
+ "forge_full_suite": {
+  "suites": 29,
+  "tests_passed": 300,
+  "failed": 0,
+  "skipped": 0,
+  "wall_s": 272.01,
+  "cpu_s": 295.86,
+  "command": "forge coverage --report gaps --report-file engine66_gaps_before.json"
+ },
+ "gaps_report": {
+  "version": 1,
+  "files": {}
+ },
+ "verdict": "WHOLE-REPO GAP-FREE at 923e4af51: gaps report files map is EMPTY. First capture where script/ files are also absent.",
+ "delta_vs_engine50": {
+  "engine50_census": "proofs/ENGINE50_COVERAGE_CENSUS.json (main bd35e753d): contracts/ absent, residual_files script/TandaDeploy.s.sol + script/TandaDeployV2.s.sol, residual_branch_gaps 3",
+  "engine66": "residual_branch_gaps 0 - the 3 deploy-script gaps closed between bd35e753d and 923e4af51 (DeployScriptGolden11255.t.sol lineage)",
+  "regression_check": "contracts/ still absent vs ENGINE-50 post-#195 - no coverage regression across #225/#227/#228 merges"
+ },
+ "consequence": "Coverage-delta goldens exhausted repo-wide; next B1 deepening must shift axis (mutation-style or invariant hardening)."
+}
