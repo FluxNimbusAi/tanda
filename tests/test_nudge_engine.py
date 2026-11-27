@@ -1078,5 +1078,24 @@ class TestCli(unittest.TestCase):
         self.assertIn(b"SELF-TEST OK", r.stdout)
 
 
+class FunnelAttribution(unittest.TestCase):
+    """G2G-6: notification deep-links carry ?src=<kind>; notify_payload default
+    stays bare /home (pinned by existing test at L933)."""
+
+    def test_payload_default_home(self):
+        p = ne.notify_payload(["0x" + "11" * 20], "t", "m", "k")
+        self.assertEqual(p["mini_app_path"], "/home")
+
+    def test_payload_src_path(self):
+        p = ne.notify_payload(["0x" + "11" * 20], "t", "m", "k", path="/home?src=n2a")
+        self.assertEqual(p["mini_app_path"], "/home?src=n2a")
+
+    def test_src_enum_matches_kinds(self):
+        # every nudge kind maps to a whitelisted indexer source (lowercase)
+        for kind in ne.PRIORITY:
+            self.assertIn(kind.lower(),
+                          ("n1", "n2a", "n2b", "n2c", "n3a", "n3b"))
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)
