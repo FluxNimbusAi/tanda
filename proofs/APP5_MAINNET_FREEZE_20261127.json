@@ -1,0 +1,52 @@
+{
+  "gate": "APP-5 MAINNET audit-freeze artifact @ main tip",
+  "card": "t_40503cdc",
+  "date_utc": "2026-11-27",
+  "chain_target": 480,
+  "source_main_sha": "cc104d69fae25887dafb3358a6deb58a1ebb7b3d",
+  "contracts_changed_since_census": "none (diff 923e4af51..tip on contracts/ empty)",
+  "v2_sol_sha256_LF": "79d7b124fd6ccd3fac1b9274ca95b009c31f81666ed7958a1784e3bc24dfdda7",
+  "arm": "foundry.toml pinned production (optimizer=true runs=200), forge 1.9.0, solc 0.8.38",
+  "impl": {
+    "runtime_bytes": 11069,
+    "runtime_sha256": "02aafaf635d0675377e53c904ad49bd10d63e8b7a653e2829c006d189e8913e6",
+    "runtime_keccak": null,
+    "initcode_bytes": 11097,
+    "initcode_sha256": "ac08a790b195b1c5cdd7b08a6fab0c039ccb8af384e3551b8b2cece9253bc443",
+    "eip170_margin_bytes": 13507
+  },
+  "factory": {
+    "runtime_bytes": 1402,
+    "runtime_sha256": "605767c50de72a2933f65623f8deed248fcce3a610d615b696b16fd29c893f79",
+    "initcode_bytes": 1534,
+    "initcode_sha256": "94fdbce36d9acb4ca6d56d9646bd8ae1b964ab8575443e48bc35d5ed84834455"
+  },
+  "tests": {
+    "suites": 29,
+    "passed": 300,
+    "failed": 0,
+    "run_utc": "2026-11-28T01:34:30.775724Z"
+  },
+  "vs_deployed_4801": {
+    "note": "tip impl is the FIRST-GEN post-#195 blob; deployed 0xd0cc (9817B keccak 3683cfe0) predates #195 \u2014 new deploy mandatory on any chain",
+    "impl_growth_bytes": 1252
+  },
+  "chain_facts_480": {
+    "providers": [
+      "worldchain-mainnet.g.alchemy.com/public",
+      "480.rpc.thirdweb.com"
+    ],
+    "block": 38248645,
+    "gas_price_wei": 1500000,
+    "usdc": "0x79A02482A880bCe3F13E09da970dC34dB4cD24D1",
+    "usdc_check": "2/2 code=1852B symbol=USDC decimals=6; Circle docs + circle.com/multi-chain-usdc/world-chain concur",
+    "permit2": "0x000000000022D473030F116dDEE9F6B43aC78BA3",
+    "permit2_check": "live code 9152B on 480",
+    "tanda_code_present": "none (impl/factory addresses empty on 480 \u2014 mainnet undeployed, as expected)",
+    "deployer_balance_wei": 0,
+    "signer_new_balance_wei": 0
+  },
+  "sim480": "forge script TandaDeployV2 --rpc-url 480 --sender 0x78dC..9E7A: maxFee quote 874161700 wei (<0.001 ETH) for both deploys",
+  "funding_need": "0.01 ETH on 480 to deployer = ~3500x deploy cost headroom",
+  "verdict": "FREEZE-READY: artifacts pinned, chain facts attested, zero human-money touched"
+}
