@@ -1,0 +1,34 @@
+{
+  "proof": "ENGINE68_TWIN_FUZZ_20261128",
+  "card": "t_9e2dfe2b",
+  "engine": "ENGINE-68 (family B1: cross-twin settlement payout-conservation fuzz at main tip 7d8a7709d)",
+  "generated_utc": "2026-11-28T07:19:22Z",
+  "repo": "FluxNimbusAi/tanda",
+  "base_main_tip": "7d8a7709dd0d324e3b54ec893b904014a891bfd2",
+  "test_commit": "fe2962b3c6e0433949eb078d24e66e6cd83f6177",
+  "test_branch": "engine68/twin-fuzz-conservation",
+  "test_file": "test/Engine68TwinFuzzConservation.t.sol",
+  "git_blob_sha1": "9e54993fac331273b7d089198a0d1e3877928b2d",
+  "diff_sha256_LF": "c73dafee05d6ffd52537e5951102c10addde7e00cbf79bbe42f89eb4bea52c81",
+  "diff_bytes": 12075,
+  "diff_scope": "sha256-LF of `git diff 7d8a7709d fe2962b3c --no-color`; contracts/ + test/ single-file add only, zero contract edits",
+  "forge_version": "1.9.0",
+  "rerun_evidence": {
+    "command": "forge test --match-path test/Engine68TwinFuzzConservation.t.sol -vv (branch HEAD, contracts identical to base)",
+    "result": "3 passed; 0 failed; 0 skipped",
+    "per_test": {
+      "testFuzz_e68_twin_payout_parity": "PASS runs=256",
+      "testFuzz_e68_fast_push_conservation": "PASS runs=256",
+      "testFuzz_e68_mainline_claim_conservation": "PASS runs=256"
+    },
+    "total_fuzz_runs": 768,
+    "suite_time_ms": 126.87
+  },
+  "properties": {
+    "P1": "cross-twin parity: identical addExpense legs on V2 + Fast twin produce element-wise identical settlementPayouts vectors; sum(payouts)==sum(legs) both sides",
+    "P2": "fast push conservation: executeSettlement drains clone to zero; every seat balance delta == its vector slot exactly",
+    "P3": "mainline claim conservation: claimablePayout pre-claim == post-claim delta == vector slot; full drain; double-claim reverts PayoutAlreadyClaimed"
+  },
+  "verdict": "PASS - zero conservation violations in 768 randomized runs; new B1 axis (cross-twin drift) now covered by shared-input fuzz",
+  "adjudication": "contracts untouched; suite closes the gap noted ENGINE-66 (per-twin selector ladders cannot see mask/rank arithmetic drift between twins)"
+}
