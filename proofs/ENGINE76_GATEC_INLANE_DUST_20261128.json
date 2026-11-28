@@ -1,0 +1,72 @@
+{
+ "card": "t_9e53c65e",
+ "claim_adjudication": {
+  "claim": "funded signer dust TX 11:54:58Z, balance 2.7e-6 ETH >= cost 2e-7, nonce 0",
+  "resolution": "No owner/Flux funding needed: in-lane dust seatB(0xA46268)->signer using resident lane key (same key class the script itself dusts in phase 6/7, reversed direction). Leaked lineage 0x78dC untouched on both chains (mainnet 480 re-pulse @14:31Z: 0 wei).",
+  "verdict": "SUPERSEDED-BY-ENGINE-75-RUN then gas-depleted: @14:33Z live readback signer nonce=12, balance=43286296740 wei (4.33e-8) << remaining-legs need ~1.56e-7. GATE_STATUS snapshot referred to pre-loop funding era (ENGINE-75 proof chain_facts_vs_gate_status concurs)."
+ },
+ "date": "2026-11-28",
+ "dust_tx": {
+  "from": "0xa462682762816ae238e1ad9795cdceba809f44e2",
+  "hash": "0xd54ed9d9989e9023896bd374052de6ae43993f69f8945776f058e8c5945c1bcb",
+  "max_fee_per_gas_wei": 300000,
+  "post_dust_signer_wei": 301100863384,
+  "receipt_live": {
+   "block_number": 37664559,
+   "gas_used": 21000,
+   "status": "0x1",
+   "tx_hash_receipt": "0xd54ed9d9989e9023896bd374052de6ae43993f69f8945776f058e8c5945c1bcb"
+  },
+  "to": "0x98d2389c44438da07d603a148239e706892497d7",
+  "value_wei": 300000000000
+ },
+ "engine": 76,
+ "gate_status_bus_file": {
+  "bytes": 582,
+  "content": "{\n \"gates\": [\n  {\n   \"id\": \"APP-5\",\n   \"type\": \"HUMAN_GATE\",\n   \"scope\": \"Mainnet 480 funding/deploy only\",\n   \"blocker\": \"deployer wallet 0 wei on chain 480; requires @d3b0m3n transfer decision\"\n  },\n  {\n   \"id\": \"V3-4801\",\n   \"type\": \"EXECUTABLE (reclassified by Flux ruling 2026-11-28)\",\n   \"status\": \"assigned to Nimbus via [COMMAND]\",\n   \"evidence\": \"funded signer dust TX 11:54:58Z, balance 2.7e-6 ETH >= cost 2e-7, nonce 0\",\n   \"deliverable\": \"tx hash + receipt SHA in Decision-Packet shape\"\n  }\n ],\n \"ratified_by\": \"Flux (@ValorEthosBot)\",\n \"date_utc\": \"2026-11-28T13:35Z\"\n}",
+  "path": "GATE_STATUS.json",
+  "sha256_LF": "9c6d5362770eb658d8cd707175475ea8b4a41effedfc661be04ace487d5f0317",
+  "tracked": false
+ },
+ "loop_state_at_launch": {
+  "bill": "0xaa008477ef17c1229cbf7be003455ba9172816c3",
+  "bill_usdc_balance": 20000,
+  "chain_id": 4801,
+  "escrowBalance_view": 0,
+  "execute_ready_utc": "2026-11-28T15:36:26Z (ready_at=fullyConfirmedAt+3602)",
+  "fail_check_classification": "script L591-592 'state.escrowBalance>=expense' fails on resume path BY DESIGN of contract: TandaBillV2.sol L371 `escrowBalance -= unsettled` inside initiateSettlement. Post-initiate truth = settlement struct amount 20000 + bill USDC 20000 + refunded=false (all verified live). Not a chain defect; resume-variant script check needs Flux sign-off before touching scope-law-untouchable script.",
+  "phases_done_pre_resume": [
+   "create",
+   "expense",
+   "fund",
+   "initiate"
+  ],
+  "settlements0_decoded": {
+   "amount": 20000,
+   "claimedMask": 0,
+   "confirmedMask": 3,
+   "expectedMask": 3,
+   "fullyConfirmedAt": 1795876584,
+   "initiatedAt": 1795873674,
+   "refunded": false,
+   "settledAt": 0
+  },
+  "window_end_epoch": 1795880184
+ },
+ "mainnet_app5_recheck": {
+  "blocker": "0x78dC32F6a4edF80c538A75e1F7664505B1969E7A balance @480 = 0 wei (GATE PULSE 6 @14:31Z alchemy public) - HUMAN_GATE unchanged"
+ },
+ "resume_launch": {
+  "concurrency_guard": "Next tick: DO NOT relaunch while loop_v3_resume_1441z.log mtime < 15 min or pid 2876 alive; finalize only (copy log+receipts to proofs/, pin 10/10 legs, close lineage card).",
+  "legs_observed_in_log": {
+   "confirm_owner": "PASS (8a)",
+   "confirm_seat": "PASS (8b, fullyConfirmedAt=1795876584)",
+   "event.SeatConfirmed.leg": "PASS",
+   "event.SettlementFullyConfirmed": "PASS",
+   "phase9": "wait window 3600s+2"
+  },
+  "log": "loop_v3_resume_1441z.log (repo root, untracked until finalize)",
+  "process": "proc_46a1e4a388e3 pid 2876, launched 2026-11-28T14:41Z"
+ },
+ "task": "GATE-C fire: adjudicate GATE_STATUS 13:35Z claim post-consumption, in-lane gas dust, launch idempotent --resume loop"
+}
