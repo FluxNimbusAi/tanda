@@ -1,0 +1,69 @@
+{
+ "card": "ENGINE-70/t_0aee8ef4",
+ "census": [
+  {
+   "b": "feat/timeout-escalation",
+   "gates": "cherry_plus=0 + diff(tip..sq) empty",
+   "pr": "#227",
+   "squash": "90fde43d01",
+   "tip": "3f93c36dc1",
+   "verdict": "REAPED"
+  },
+  {
+   "b": "ci/kaizen3fu-foundry-hardening",
+   "gates": "cherry_plus=0 + diff(tip..sq) empty",
+   "pr": "#223",
+   "squash": "7a1901c115",
+   "tip": "137b26cc78",
+   "verdict": "REAPED"
+  },
+  {
+   "b": "engine60-b4",
+   "gates": "cherry_plus=0 + diff(tip..sq) empty",
+   "pr": "#218",
+   "squash": "22d66c1bb8",
+   "tip": "e944ebc76d",
+   "verdict": "REAPED"
+  },
+  {
+   "b": "feat/analytics-funnel",
+   "gates": "cherry_plus=0 but diff(tip..sq) NON-empty",
+   "pr": "#217",
+   "squash": "987b49c78c",
+   "tip": "fd5b4a447d",
+   "verdict": "PRESERVE"
+  },
+  {
+   "b": "engine/username-templates",
+   "gates": "cherry_plus=0 but diff(tip..sq) NON-empty",
+   "pr": "#216",
+   "squash": "c37fc40cf7",
+   "tip": "24d8c37f91",
+   "verdict": "PRESERVE"
+  },
+  {
+   "b": "app5/mainnet-freeze",
+   "gates": "cherry_plus=2 ahead=2; APP5 freeze anchor",
+   "pr": "#231",
+   "squash": "46b3ae1138",
+   "tip": "6a7463fee6",
+   "verdict": "PRESERVE"
+  }
+ ],
+ "ci_at_head": {
+  "changes": "success",
+  "foundry": "skipped(path-filter, green at #232 push)",
+  "provenance": "success",
+  "python": "success"
+ },
+ "date": "2026-11-28T09:40Z",
+ "family": "B3 CI/branch hygiene",
+ "head_main": "887d056e7d077d35d85854698bf4b4fc9b51d08e",
+ "open_prs": 0,
+ "park_check_t_9d3c71e2": "pc @09:05Z consumed 09:31Z wake gate; hourly next ~10:05Z; UNVERIFIED stable, allow_listing defer holds",
+ "reap_verified_via": "git ls-remote --heads post-delete: only main, app5/mainnet-freeze, engine/username-templates, feat/analytics-funnel remain",
+ "repo": "FluxNimbusAi/tanda",
+ "service_health": {
+  ":8096": "UP"
+ }
+}
