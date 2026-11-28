@@ -10,7 +10,7 @@
   "impl": {
     "runtime_bytes": 11069,
     "runtime_sha256": "02aafaf635d0675377e53c904ad49bd10d63e8b7a653e2829c006d189e8913e6",
-    "runtime_keccak": null,
+    "runtime_keccak": "0x3ea7b47c2e4811efce6bd40d3f6a2abded8aacddf5ee06ad882d6f713ad0f040",
     "initcode_bytes": 11097,
     "initcode_sha256": "ac08a790b195b1c5cdd7b08a6fab0c039ccb8af384e3551b8b2cece9253bc443",
     "eip170_margin_bytes": 13507
@@ -19,7 +19,8 @@
     "runtime_bytes": 1402,
     "runtime_sha256": "605767c50de72a2933f65623f8deed248fcce3a610d615b696b16fd29c893f79",
     "initcode_bytes": 1534,
-    "initcode_sha256": "94fdbce36d9acb4ca6d56d9646bd8ae1b964ab8575443e48bc35d5ed84834455"
+    "initcode_sha256": "94fdbce36d9acb4ca6d56d9646bd8ae1b964ab8575443e48bc35d5ed84834455",
+    "runtime_keccak": "0x7631c75daddcb9582b203f79e81b804a69a2fd972accc5f8a98fbaaf625a7f28"
   },
   "tests": {
     "suites": 29,
@@ -48,5 +49,5 @@
   },
   "sim480": "forge script TandaDeployV2 --rpc-url 480 --sender 0x78dC..9E7A: maxFee quote 874161700 wei (<0.001 ETH) for both deploys",
   "funding_need": "0.01 ETH on 480 to deployer = ~3500x deploy cost headroom",
-  "verdict": "FREEZE-READY: artifacts pinned, chain facts attested, zero human-money touched"
+  "verdict": "FREEZE-READY: artifacts pinned (incl. keccak anchors), chain facts attested, zero human-money touched"
 }
