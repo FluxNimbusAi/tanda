@@ -1,0 +1,47 @@
+{
+  "proof": "ENGINE-71 FASTTWIN-CEI executeSettlement reentry proof suite",
+  "card": "t_8d3eac89",
+  "date": "2026-11-28T11:28Z",
+  "repo": "FluxNimbusAi/tanda",
+  "head_main": "d7ceeab783f7717693fc3f4e9c8887b5cb30ecd6",
+  "toolchain": {
+    "forge": "forge Version: 1.9.0",
+    "solc": "0.8.38"
+  },
+  "test_file": {
+    "path": "test/Engine71FastExecReentry.t.sol",
+    "sha256_LF": "265717b0d644bcfd1e9127be882bb28bd2d830d50fe28ce94dea2eda18d39815",
+    "bytes": 9508,
+    "lines": 191
+  },
+  "results": {
+    "suite": "Engine71FastExecReentryTest",
+    "tests": [
+      {
+        "name": "test_e71_fast_execute_reentry_double_pays_overfunded_escrow",
+        "verdict": "PASS",
+        "gas": 1569645,
+        "finding": "DEFECT REPRO: hook-before-debit token reenters executeSettlement during first push (Fast:382) because settledAt is written AFTER the loop (Fast:388), so the gate (Fast:371) stays open. F=3x expense over-funded escrow pays 2T: alice 100e6, owner 100e6, bill 100e6 \u2014 surplus leg drained; all views read a normal single round."
+      },
+      {
+        "name": "test_e71_fast_execute_reentry_reverts_at_exact_escrow",
+        "verdict": "PASS",
+        "gas": 1538132,
+        "finding": "BOUND: F==T exact escrow \u2014 outer resume hits token balance guard, tx-wide rollback, settledAt back to 0, nobody paid. Revert string pinned to Fast inline lib: 'SafeERC20: strict-bool transfer required'. Scope-correction: the Fast:380-381 comment's 'all-or-nothing revert protects' claim holds ONLY at F==T."
+      },
+      {
+        "name": "test_e71_fast_refund_leg_cei_holds",
+        "verdict": "PASS",
+        "gas": 1457198,
+        "finding": "CONTRAST: refund leg sets s.refunded=true (Fast:403) BEFORE safeTransfer (Fast:405) \u2014 hook reentry dies AlreadySettled; single refund payout, surplus untouched. This is exactly the write-ordering the execute path lacks."
+      }
+    ],
+    "full_suite": "306 tests / 31 suites, 0 failures @ head d7ceeab78 (300 frozen + ENGINE-68 fuzz + ENGINE-71 x3)"
+  },
+  "structural_comparison": {
+    "V2_mainline": "immune \u2014 executeSettlement performs ZERO transfers (pull model, V2:418); claimSettlement sets claimedMask bit BEFORE safeTransfer (V2:444).",
+    "Fast_twin": "push-loop payout (Fast:382) with post-loop settledAt write (Fast:388) = CEI gap."
+  },
+  "production_adjudication": "Pinned mainnet token USDC-480 0x79A02482A880bCe3F13E09da970dC34dB4cD24D1 has NO transfer hooks (Circle-concurred) \u2014 attack requires hostile ERC20, NOT exploitable in production scope. Over-funding (F>T) is reachable via fundEscrow surplus.",
+  "decision_needed": "FLUX: (a) hold documented boundary (proof-only, zero diff) OR (b) one-line CEI hardening: move s.settledAt write to before payout loop (Fast:388 -> before loop). Option (b) is behavior-identical for hook-free tokens; any diff touches post-freeze main -> owner ruling required."
+}
