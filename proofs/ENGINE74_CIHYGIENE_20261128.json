@@ -1,0 +1,148 @@
+{
+  "engine": "ENGINE-74",
+  "card": "t_85b432aa",
+  "date_utc": "2026-11-28T13:20Z",
+  "family": "B3 CI/showroom hygiene",
+  "method": "gh api porcelain; no dashboard guessing",
+  "ci_census": {
+    "tanda": {
+      "repo": "FluxNimbusAi/tanda",
+      "main_head": "98dafff895d8b5c00c4c7c370ca4a60ae56e5065",
+      "open_pr_count": 0,
+      "recent_runs": [
+        {
+          "name": "CI",
+          "branch": "main",
+          "status": "completed",
+          "conclusion": "success",
+          "sha": "98dafff895d8b5c00c4c7c370ca4a60ae56e5065"
+        },
+        {
+          "name": "CI",
+          "branch": "engine73",
+          "status": "completed",
+          "conclusion": "success",
+          "sha": "c62f47cb2322a738f94cea2c1f65df13cf6904f1"
+        },
+        {
+          "name": "CI",
+          "branch": "main",
+          "status": "completed",
+          "conclusion": "success",
+          "sha": "8d47aa606b5e9ce42ddfeff3c26d9ed8c9c1f019"
+        },
+        {
+          "name": "CI",
+          "branch": "main",
+          "status": "completed",
+          "conclusion": "success",
+          "sha": "466710e9299309a83edd3c925b0279e7551e396c"
+        },
+        {
+          "name": "CI",
+          "branch": "main",
+          "status": "completed",
+          "conclusion": "success",
+          "sha": "d7ceeab783f7717693fc3f4e9c8887b5cb30ecd6"
+        }
+      ],
+      "main_head_run_conclusion": "success"
+    },
+    "tandabill-website": {
+      "repo": "FluxNimbusAi/tandabill-website",
+      "main_head": "8af686fc0274b276aff4c7689dcc775b18c570f9",
+      "open_pr_count": 0,
+      "recent_runs": [
+        {
+          "name": "static-site",
+          "branch": "main",
+          "status": "completed",
+          "conclusion": "success",
+          "sha": "8af686fc0274b276aff4c7689dcc775b18c570f9"
+        },
+        {
+          "name": "static-site",
+          "branch": "chore/security-docs",
+          "status": "completed",
+          "conclusion": "success",
+          "sha": "e3f2b83a193de5e7223d2f3acaf7a8f44ec03826"
+        },
+        {
+          "name": "static-site",
+          "branch": "main",
+          "status": "completed",
+          "conclusion": "success",
+          "sha": "98ecd8ac088ce13ba05728b7c84980346b158806"
+        },
+        {
+          "name": "static-site",
+          "branch": "fix/m5-honest-copy",
+          "status": "completed",
+          "conclusion": "success",
+          "sha": "5ed22a3efc1f8f382bf1c5faa8512fb5005be9df"
+        },
+        {
+          "name": "static-site",
+          "branch": "main",
+          "status": "completed",
+          "conclusion": "success",
+          "sha": "aa27963570df09fbfd96343bf23c8649f8e11948"
+        }
+      ],
+      "main_head_run_conclusion": "success"
+    },
+    "tanda-miniapp": {
+      "repo": "FluxNimbusAi/tanda-miniapp",
+      "main_head": "1a929aa21c968a80ed977e5764579515e712ba22",
+      "open_pr_count": 0,
+      "recent_runs": [
+        {
+          "name": "CI",
+          "branch": "main",
+          "status": "completed",
+          "conclusion": "success",
+          "sha": "1a929aa21c968a80ed977e5764579515e712ba22"
+        },
+        {
+          "name": "Lighthouse Mobile Audit (Performance)",
+          "branch": "main",
+          "status": "completed",
+          "conclusion": "success",
+          "sha": "8f3ef8b3b184edd72100e075628b43b7cfff9380"
+        },
+        {
+          "name": "CI",
+          "branch": "main",
+          "status": "completed",
+          "conclusion": "success",
+          "sha": "8f3ef8b3b184edd72100e075628b43b7cfff9380"
+        },
+        {
+          "name": "Lighthouse Mobile Audit (Performance)",
+          "branch": "main",
+          "status": "completed",
+          "conclusion": "success",
+          "sha": "ede93d263463c0f2a33e46c8eb4b527a172b16d4"
+        },
+        {
+          "name": "CI",
+          "branch": "main",
+          "status": "completed",
+          "conclusion": "success",
+          "sha": "ede93d263463c0f2a33e46c8eb4b527a172b16d4"
+        }
+      ],
+      "main_head_run_conclusion": "success"
+    }
+  },
+  "all_recent_green": true,
+  "branch_reap": {
+    "branch": "engine73",
+    "tip_sha": "c62f47cb2322a738f94cea2c1f65df13cf6904f1",
+    "squash_merge_sha": "98dafff895d8b5c00c4c7c370ca4a60ae56e5065",
+    "pr": "#234",
+    "verification": "git cherry '-' patch-equivalent AND git diff trees equal (TREES_EQUAL); origin sha ls-remote-checked before delete",
+    "actions": "origin/engine73 deleted; local engine73 deleted"
+  },
+  "verdict": "CI HYGIENE CLEAN: 15/15 recent runs green across 3 repos; 0 open PRs; 1 merged branch reaped with dual verification"
+}
