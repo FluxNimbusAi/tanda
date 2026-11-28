@@ -1,0 +1,70 @@
+{
+  "card": "t_5dbc6910",
+  "kaisen": "KAIZEN-9",
+  "law": "username-over-address display law (World mini-app guidelines)",
+  "law_source": "https://docs.world.org/mini-apps/guidelines/app-guidelines",
+  "law_verified": "2026-11-27 live fetch",
+  "repo": "FluxNimbusAi/tanda-miniapp",
+  "pr": 71,
+  "pr_url": "https://github.com/FluxNimbusAi/tanda-miniapp/pull/71",
+  "squash_commit": "8e6c4f4d69131c9333e015e2fb092348d5a715ac",
+  "parent_commit": "0b8d4be7ad21ae853bd1c77e235693073dea9500",
+  "staged_diff_sha256_LF": "587c61c127ff5446d213cee5142b4376a70e017d8e891d28eea79c05485b25a2",
+  "gates": {
+    "tsc": "0 errors",
+    "vitest": "41 files / 318 tests passed (post-rebase 0b8d4be base)",
+    "next_build": "clean exit 0",
+    "ci": [
+      "web pass",
+      "docker-build pass",
+      "Vercel pass",
+      "Vercel Preview Comments pass"
+    ]
+  },
+  "blob_verification": "8/8 sha256-LF of git show 8e6c4f4:<file> equal recorded anchors (measured 2026-11-27)",
+  "surfaces_fixed": [
+    "src/components/TandaBill/index.tsx Badge: '@username . shortaddr' -> identityLabel (username INSTEAD)",
+    "src/components/TandaBill/index.tsx pending-burn rows: labelFor + async lookupUsernamesForWallets, fail-soft",
+    "src/components/SettlementVector/index.tsx: Wallet column, expenseTrace paidBy, sr-only canonical text -> labelFor"
+  ],
+  "non_targets_untouched": [
+    "inviteLink bill shortener",
+    "Explorer short() bill/tx-hash",
+    "/bill query-address echo",
+    "SeatBadge nullifier"
+  ],
+  "anchors": {
+    "src/components/SettlementVector/__snapshots__/SettlementVectorTable.golden.html": {
+      "sha256_LF": "b37989386f445d0688823e009a6fda7d715ff02c24b084d025967e1c351dd560",
+      "bytes": 3905
+    },
+    "src/components/SettlementVector/__tests__/render.golden.test.ts": {
+      "sha256_LF": "c891b990ea35a54dd607d3ca238cef055803f30f7df30193ac2b338792ebc5c2",
+      "bytes": 9209
+    },
+    "src/components/SettlementVector/index.tsx": {
+      "sha256_LF": "6892d6e454ed29fc1dbdd1087bc787c6cef12c4bdec80756d135062f3636a414",
+      "bytes": 3909
+    },
+    "src/components/TandaBill/index.tsx": {
+      "sha256_LF": "f1bc761828a24a31dd5d1966ad939c0c8703967186cfdad90021b5d6958c9642",
+      "bytes": 45281
+    },
+    "src/lib/__tests__/identityDisplay.test.ts": {
+      "sha256_LF": "5dfffa41deba1510c79a9f7dfa087f487cc150aedba8092d897bcdc737bd8131",
+      "bytes": 2085
+    },
+    "src/lib/__tests__/settlementVector.test.ts": {
+      "sha256_LF": "3e885a3b7091172f62236b9b76b479dfd0fe7bdb9b29303a826e8bbbc02aa063",
+      "bytes": 15215
+    },
+    "src/lib/identityDisplay.ts": {
+      "sha256_LF": "03013c1baa748602613bbd4e13c9f3172156333827dec43f8cf34ddf125d53f4",
+      "bytes": 2477
+    },
+    "src/lib/settlementVector.ts": {
+      "sha256_LF": "b47e4d4518a8302a4b94047b6da883d5c3e1c5bd93644fc125ad1eaade264a66",
+      "bytes": 16623
+    }
+  }
+}
