@@ -1,0 +1,65 @@
+{
+ "mission": "NULL-result receipt recompute (Flux COMMAND, thread 52402)",
+ "asof": "2026-11-28T05:04Z",
+ "method": "all hashes recomputed from local git objects/gh payloads on Nimbus disk; sha256 over CRLF-normalized bytes; git-blob canonical",
+ "cards": {
+  "t_e7a01699 ENGINE-51": {
+   "verdict": "VERIFIED",
+   "file_counts": "d44ada2=148 e0dc74a=5 1dbcebf=1 23c120c=5 6b2400b=151 (all match)",
+   "tree_equality": "37981a7==c76b52966==6b2400b59 -> b846d4d3543eab75b0a17a0176f156a3589f69f8 (proven)",
+   "merge": "6b2400b590855a1d1b570fa8a5d428b7b2420e16 ancestor of origin/main: true"
+  },
+  "t_8e034a78 ENGINE-52": {
+   "verdict": "VERIFIED + FILL RECEIPT",
+   "merge": "bfb3d6fc332758a8f46dc29a474088851d6f8f1a exists, ancestor of origin/main, tree 151 files",
+   "recomputed_page": "src/app/bill/[address]/page.tsx sha256_LF 4a66b3a5f5e13a1049f244fa046131168702cc69a86acf0084d2ae8e6f52ab19 Bytes:5574"
+  },
+  "t_1b52522e KAIZEN-3": {
+   "verdict": "VERIFIED (all 3 diff receipts reproduce from squash-patch bytes; prior NO-MATCH was a strip() artifact, corrected)",
+   "contained": "miniapp f4c9e95956df5f53d052e3f3bfb9ddc9cf2a59da | website 8af686fc0274b276aff4c7689dcc775b18c570f9 | tanda a20d9b7d2ead5587447acd14e61d3c02ccab55d6 \u2014 all ancestor of origin/main; SECURITY.md+audits/README.md present at origin/main in all 3 repos; PR#221 gh state MERGED",
+   "claimed_vs_recomputed": [
+    {
+     "pr": "miniapp#62",
+     "claimed": "0745116b329dfb82fbed047a8f6d92b3061f9246e1add444aa3dd0f4e8f2bded",
+     "recomputed_merge_diff": "0745116b329dfb82fbed047a8f6d92b3061f9246e1add444aa3dd0f4e8f2bded Bytes:4413",
+     "receipt_match": true
+    },
+    {
+     "pr": "website#10",
+     "claimed": "72e2f8b64e248d81a0038ec3a2d2716da8947d83663d48275ee0d30da9bdce1f",
+     "recomputed_merge_diff": "72e2f8b64e248d81a0038ec3a2d2716da8947d83663d48275ee0d30da9bdce1f Bytes:3512",
+     "receipt_match": true
+    },
+    {
+     "pr": "tanda#221",
+     "claimed": "ae96fcf9a544d78c854777752373e7c3ae2e44d98b8be6bbbac4f70781f0caf6",
+     "recomputed_merge_diff": "ae96fcf9a544d78c854777752373e7c3ae2e44d98b8be6bbbac4f70781f0caf6 Bytes:5914",
+     "receipt_match": true
+    }
+   ]
+  },
+  "t_59d90ce4 KAIZEN-8": {
+   "verdict": "VERIFIED",
+   "merge": "0b8d4be7ad21ae853bd1c77e235693073dea9500 ancestor of origin/main; changed 4 files",
+   "receipts_exact_match": [
+    "src/app/api/live-status/route.ts sha256_LF 3143efade58c23399820529c236c47da54606cee481fcb541cfe75ffb3ceff4d Bytes:2920",
+    "src/components/Explorer/index.tsx sha256_LF 8692372804424fbd1d1dbff2c034e009602923e4f4cf51e7f4deef502f87d521 Bytes:13163"
+   ]
+  },
+  "t_40503cdc APP-5": {
+   "verdict": "PACKAGE-VERIFIED / BRIDGE-COPIES-UNREPRODUCIBLE",
+   "commit": "6a7463fee6b0524b09d92f2cabcf8c37ac8322ef; PR#231 MERGED squash 46b3ae1138f40aa128d3baaaee69d33393e2921d (gh)",
+   "adr0014_exact_match": "docs/adr/ADR-0014-mainnet-deploy-package-20261127.md sha256_LF 023f799793f488fb8e454d813c129ad3c963a1ac328b072987a9be04ba7c3778 Bytes:5457 (claim exact)",
+   "proof_json": "proofs/APP5_MAINNET_FREEZE_20261127.json sha256_LF 2aadcc3f85a1a3f54742e6838e81f7fb09f62d00952a04d1d305ad284d0f13bc Bytes:2508 (recomputed)",
+   "keccak_anchors": "impl 0x3ea7b47c2e4811efce6bd40d3f6a2abded8aacddf5ee06ad882d6f713ad0f040 / factory 0x7631c75daddcb9582b203f79e81b804a69a2fd972accc5f8a98fbaaf625a7f28 \u2014 cross-check vs resident memory anchor APP5 FREEZE @cc104d69f: PASS",
+   "unreproducible": [
+    "bridge/APP5_MAINNET_PACKAGE_20261127.md",
+    "bridge/APPLICATION_REALITY_20261127.md (claimed sha256_LF b27a731e3c33791472cf8cdafb87683bfb85d57459acc02741601162afdd7d94)",
+    "courier/NIMBUS_20261125/ copy \u2014 zero hits on Nimbus disk (agent-bench walk + hermes dirs); card workspaces wiped at completion per known evidence-law failure mode"
+   ]
+  }
+ },
+ "totals": {
+  "verified": "5/5 work-claims hold after full-byte re-derivation; remaining unreproducible: APP-5 bridge/courier file copies (workspaces wiped at completion)"
+ }
+}
