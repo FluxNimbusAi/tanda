@@ -1,0 +1,130 @@
+{
+  "card": "t_a2b335ab",
+  "chain_facts_vs_gate_status": {
+    "claim": "funded signer dust TX 11:54:58Z, balance 2.7e-6 ETH >= cost 2e-7, nonce 0",
+    "gate_c_verdict": "OPEN \u2014 loop engine fired and landed create/expense/approve/fund/initiate/dust 6/6; GATE-C gas constraint satisfied at run time",
+    "measured_era_signer_0xA46268": "0.8978e-6 ETH nonce 8 @13:56Z \u2014 8 txs spent since funding; GATE_STATUS nonce-0 line refers to post-funding snapshot"
+  },
+  "date": "2026-11-28",
+  "engine": 75,
+  "head_sha": "871bbdf417a3574ef1b9fcf0b34220248fcc7ec8",
+  "independent_verification": {
+    "all_six_receipts": true,
+    "bill": "0xaa008477ef17c1229cbf7be003455ba9172816c3",
+    "factory": "0x010872d47bd7bb001037577a15d090556bfd24c3",
+    "head_at_verify": 37663393,
+    "initiate_mined_utc": "2026-11-28T13:47:54Z",
+    "rpc_lane": "worldchain-sepolia alchemy public (primary) + thirdweb 4801 (fallback)",
+    "seats": [
+      "0x98d2389c44438da07d603a148239e706892497d7",
+      "0xa462682762816ae238e1ad9795cdceba809f44e2"
+    ],
+    "settlement_window_end_utc": "2026-11-28T14:47:54Z",
+    "usdc_4801": "0x66145f38cbac35ca6f1dfb4914df98f1614aea88",
+    "verdicts": {
+      "add_expense": {
+        "block": 37663120,
+        "from": "0x98d2389c44438da07d603a148239e706892497d7",
+        "gas_used": 97717,
+        "matches_state_block": true,
+        "matches_state_gas": true,
+        "receipt_found": true,
+        "status": "0x1",
+        "to": "0xaa008477ef17c1229cbf7be003455ba9172816c3",
+        "tx_hash": "0xd3d6590c46da6b9cae49e556bc744920740324657fc363dfbadcd33bdfe7f99c"
+      },
+      "approve": {
+        "block": 37663121,
+        "from": "0x98d2389c44438da07d603a148239e706892497d7",
+        "gas_used": 55413,
+        "matches_state_block": true,
+        "matches_state_gas": true,
+        "receipt_found": true,
+        "status": "0x1",
+        "to": "0x66145f38cbac35ca6f1dfb4914df98f1614aea88",
+        "tx_hash": "0x9cff7bd607f036d9227087611e23a9c1b2b946bf94cc17f0a0e8e6438300de2a"
+      },
+      "create": {
+        "block": 37663118,
+        "from": "0x98d2389c44438da07d603a148239e706892497d7",
+        "gas_used": 279417,
+        "matches_state_block": true,
+        "matches_state_gas": true,
+        "receipt_found": true,
+        "status": "0x1",
+        "to": "0x010872d47bd7bb001037577a15d090556bfd24c3",
+        "tx_hash": "0x70e051aba3950e529ea3e30235931833407a3f3487aa5a3f1bd45be0adf09a93"
+      },
+      "dust": {
+        "block": 37663126,
+        "from": "0x98d2389c44438da07d603a148239e706892497d7",
+        "gas_used": 21000,
+        "matches_state_block": true,
+        "matches_state_gas": true,
+        "receipt_found": true,
+        "status": "0x1",
+        "to": "0xa462682762816ae238e1ad9795cdceba809f44e2",
+        "tx_hash": "0x95b51a829d2a0149a4c24678ae38b8b260f12bc38a4b65ecea55709a70beec47"
+      },
+      "fund": {
+        "block": 37663123,
+        "from": "0x98d2389c44438da07d603a148239e706892497d7",
+        "gas_used": 92530,
+        "matches_state_block": true,
+        "matches_state_gas": true,
+        "receipt_found": true,
+        "status": "0x1",
+        "to": "0xaa008477ef17c1229cbf7be003455ba9172816c3",
+        "tx_hash": "0xb67dfbb947ed57ffe2b265b4146e58cb4c8ef509d589818bde69fddc38b540ff"
+      },
+      "initiate": {
+        "block": 37663125,
+        "from": "0x98d2389c44438da07d603a148239e706892497d7",
+        "gas_used": 216141,
+        "matches_state_block": true,
+        "matches_state_gas": true,
+        "receipt_found": true,
+        "status": "0x1",
+        "to": "0xaa008477ef17c1229cbf7be003455ba9172816c3",
+        "tx_hash": "0x70584999fd4ba56546c62f0b849bb20c095d1c1e3165e0f354664f4acbc4fd51"
+      }
+    }
+  },
+  "mainnet_gate_pulse5": "deployer 0x78dC32F6a4edF80c538A75e1F7664505B1969E7A @480-mainnet = 0x0 wei (owner 0.01 ETH funding still NOT landed; single-provider measurement, aviano TLS fail unchanged)",
+  "next_leg": "confirm+settle after 14:47:54Z window close, driven by loop cron a2b3c4d5; final Decision-Packet (full tx set + receipt SHAs) assembles on loop-complete detection by a continuity tick",
+  "phases_done": [
+    "create",
+    "expense",
+    "fund",
+    "initiate"
+  ],
+  "provenance": {
+    "gate_status_bytes": 582,
+    "gate_status_content": {
+      "date_utc": "2026-11-28T13:35Z",
+      "gates": [
+        {
+          "blocker": "deployer wallet 0 wei on chain 480; requires @d3b0m3n transfer decision",
+          "id": "APP-5",
+          "scope": "Mainnet 480 funding/deploy only",
+          "type": "HUMAN_GATE"
+        },
+        {
+          "deliverable": "tx hash + receipt SHA in Decision-Packet shape",
+          "evidence": "funded signer dust TX 11:54:58Z, balance 2.7e-6 ETH >= cost 2e-7, nonce 0",
+          "id": "V3-4801",
+          "status": "assigned to Nimbus via [COMMAND]",
+          "type": "EXECUTABLE (reclassified by Flux ruling 2026-11-28)"
+        }
+      ],
+      "ratified_by": "Flux (@ValorEthosBot)"
+    },
+    "gate_status_file": "GATE_STATUS.json (untracked, mtime 2026-11-28T08:38:46 EST)",
+    "gate_status_sha256_lf": "9c6d5362770eb658d8cd707175475ea8b4a41effedfc661be04ace487d5f0317",
+    "loop_state_file": "~/.hermes-secrets/contract_loop_proof_state.json",
+    "loop_state_sha256_raw": "e13f0b23b21e9b3770c13e0828da6c973578056be773e56f0752f94c0bb4f10c",
+    "loop_state_updated_utc": "2026-11-28T13:47:57Z"
+  },
+  "repo": "FluxNimbusAi/tanda",
+  "task": "V3-4801 (Flux [COMMAND] per GATE_STATUS.json 2026-11-28T13:35Z): V3 contract-loop proof on World Chain Sepolia 4801; deliverable tx hashes + receipt SHAs in Decision-Packet shape"
+}

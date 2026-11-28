@@ -209,8 +209,18 @@ class Signer:
         if est is None:
             raise RuntimeError(f"estimateGas failed 4x for {label}")
         gas_limit = gas or int(est * 13 // 10)
-        gp = max(int(rpc("eth_gasPrice", []), 16) * 12 // 10, 1_000_000)
+        # KAIZEN-2 (Flux ruling 2026-11-28): the 1e6-wei legacy floor inflated want ~10x
+        # vs this lane's 1e5 baseFee and starved the confirm legs -> cap at bf*3,
+        # and assert have>=want BEFORE send (self-validating, no blind retry).
+        _fh = rpc("eth_feeHistory", ["0x1", "latest", [50]]) or {}
+        _bf = int((_fh.get("baseFeePerGas") or ["0x186a0"])[-1], 16)
+        gp = min(max(int(rpc("eth_gasPrice", []) or "0x1e8480", 16) * 12 // 10, _bf * 2), _bf * 3)
+        want = gas_limit * gp + value
+        have = int(rpc("eth_getBalance", [from_addr, "pending"]) or "0x0", 16)
+        if have < want:
+            raise RuntimeError(f"BUDGET {label}: {from_addr} have {have} < want {want}")
         nonce = get_nonce(from_addr)
+
         tx = {"nonce": nonce, "gasPrice": gp, "gas": gas_limit,
               # eth_account >=0.14 enforces strict EIP-55 on `to`; decoded/state
               # addresses arrive lowercase — normalize at the signing boundary.
@@ -606,8 +616,12 @@ def main():
 
     # ---- phase 6: dust seat (enables the bill:confirm leg from an external wallet) ----
     step("7 dust seatB")
-    gp = max(int(rpc("eth_gasPrice", []), 16), 1_000_000)
-    need = gp * 200_000 * 4
+    # KAIZEN-2: same bf-based sizing; 1e6 floor over-dusted 10x and drained the signer
+    _fh7 = rpc("eth_feeHistory", ["0x1", "latest", [50]]) or {}
+    _bf7 = int((_fh7.get("baseFeePerGas") or ["0x186a0"])[-1], 16)
+    # seat legs (confirm+claim) ~120k gas TOTAL at bf*3 pricing; the 200k*4 figure was
+    # sized for the old 1e6 floor and over-dusted, starving the signer's own legs.
+    need = _bf7 * 3 * 120_000
     if int(rpc("eth_getBalance", [seat.addr, "latest"]), 16) < need:
         rd = signer.send(seat.addr, "0x", value=need, label="dust", gas=21_000)
         st["txs"]["dust"] = rd
